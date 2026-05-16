@@ -1,0 +1,56 @@
+@model HeThongDatLichVaKhamBenh.Models.ViewModels.LoginViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Hệ thống đặt lịch và hỗ trợ khám bệnh</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="auth-page">
+    <main class="auth-shell">
+        <section class="auth-visual" aria-label="Hệ thống đặt lịch và hỗ trợ khám bệnh">
+            <div class="brand-mark">+</div>
+            <div class="doctor-visual">
+                <img class="login-doctor-image" src="~/images/br.png" alt="Bác sĩ hỗ trợ đặt lịch khám" />
+            </div>
+        </section>
+
+        <section class="auth-panel">
+            <div class="auth-card">
+                <h1>Hệ thống đặt lịch và hỗ trợ khám bệnh</h1>
+                <form asp-action="Login" method="post" class="login-form">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="form-group">
+                        <label asp-for="TenDangNhap"></label>
+                        <input asp-for="TenDangNhap" class="form-control" placeholder="Nhập tên đăng nhập của bạn" autocomplete="username" />
+                        <span asp-validation-for="TenDangNhap" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="MatKhau"></label>
+                        <input asp-for="MatKhau" class="form-control" placeholder="Nhập mật khẩu của bạn" autocomplete="current-password" />
+                        <span asp-validation-for="MatKhau" class="text-danger small"></span>
+                    </div>
+
+                    <button type="submit" class="primary-pill">Đăng nhập</button>
+                </form>
+
+                <p class="auth-register">Chưa có tài khoản? <a href="#">Đăng ký</a></p>
+            </div>
+        </section>
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>

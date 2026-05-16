@@ -1,0 +1,78 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Trang chủ bác sĩ";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="role-page doctor-theme">
+    <aside class="role-sidebar">
+        <div class="role-logo">+</div>
+        <nav>
+            <a class="active" href="#">Trang chủ</a>
+            <a href="#">Khám bệnh</a>
+            <a href="#">Lịch làm việc</a>
+            <a href="#">Đổi mật khẩu</a>
+        </nav>
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit">Đăng xuất</button>
+        </form>
+    </aside>
+
+    <main class="role-main">
+        <header class="role-header">
+            <div>
+                <span class="eyebrow">Bác sĩ</span>
+                <h1>Xin chào, @ViewBag.HoTen</h1>
+            </div>
+            <time>@ViewBag.Today</time>
+        </header>
+
+        <section class="search-panel">
+            <label for="patientSearch">Tìm kiếm bệnh nhân</label>
+            <input id="patientSearch" type="search" placeholder="Nhập tên hoặc số điện thoại" />
+        </section>
+
+        <section class="table-section">
+            <h2>Danh sách bệnh nhân hôm nay</h2>
+            <div class="data-table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Tên bệnh nhân</th>
+                            <th>Điện thoại</th>
+                            <th>Ca khám</th>
+                            <th>Phòng khám</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Lê Văn Thành</td>
+                            <td>0965432109</td>
+                            <td>Chiều</td>
+                            <td>Phòng Nội khoa 1</td>
+                            <td><span class="status waiting">Chờ khám</span></td>
+                        </tr>
+                        <tr>
+                            <td>Trần Hồng Nhung</td>
+                            <td>0976543210</td>
+                            <td>Chiều</td>
+                            <td>Phòng Nội khoa 1</td>
+                            <td><span class="status waiting">Chờ khám</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

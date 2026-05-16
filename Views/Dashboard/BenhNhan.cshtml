@@ -1,0 +1,70 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Trang chủ bệnh nhân";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="role-page patient-theme">
+    <aside class="role-sidebar">
+        <div class="role-logo">+</div>
+        <nav>
+            <a class="active" href="#">Trang chủ</a>
+            <a href="#">Đặt lịch khám</a>
+            <a href="#">Quản lý lịch hẹn</a>
+            <a href="#">Hồ sơ bệnh án</a>
+            <a href="#">Hóa đơn</a>
+            <a href="#">Đổi mật khẩu</a>
+        </nav>
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit">Đăng xuất</button>
+        </form>
+    </aside>
+
+    <main class="role-main">
+        <header class="role-header">
+            <div>
+                <span class="eyebrow">Bệnh nhân</span>
+                <h1>Xin chào, @ViewBag.HoTen</h1>
+            </div>
+            <div class="quick-status">Lịch hẹn sắp tới</div>
+        </header>
+
+        <section class="patient-grid">
+            <article class="appointment-panel">
+                <div class="panel-heading">Lịch hẹn sắp tới</div>
+                <dl>
+                    <dt>Bác sĩ</dt>
+                    <dd>Hoàng Văn E</dd>
+                    <dt>Chuyên khoa</dt>
+                    <dd>Ngoại khoa</dd>
+                    <dt>Thời gian</dt>
+                    <dd>21/11/2025 - Chiều</dd>
+                    <dt>Phòng khám</dt>
+                    <dd>Phòng Ngoại khoa 1</dd>
+                </dl>
+            </article>
+
+            <article class="health-summary">
+                <span>Trạng thái</span>
+                <strong>Chờ khám</strong>
+                <p>Vui lòng đến trước giờ hẹn 15 phút để xác nhận thông tin.</p>
+            </article>
+        </section>
+
+        <section class="action-row">
+            <a href="#">Đặt lịch khám mới</a>
+            <a href="#">Quản lý lịch hẹn</a>
+            <a href="#">Hồ sơ bệnh án</a>
+        </section>
+    </main>
+</body>
+</html>

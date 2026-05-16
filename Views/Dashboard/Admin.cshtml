@@ -1,0 +1,131 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Trang chủ quản trị";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="role-page admin-theme">
+    <aside class="role-sidebar">
+        <div class="role-logo">+</div>
+        <nav>
+            <a class="active" href="#">Trang chủ</a>
+            <a href="#">Tài khoản</a>
+            <a href="#">Bác sĩ</a>
+            <a href="#">Quản lý lịch</a>
+            <a href="#">Danh mục</a>
+            <a href="#">Báo cáo</a>
+        </nav>
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit">Đăng xuất</button>
+        </form>
+    </aside>
+
+    <main class="role-main">
+        <header class="role-header">
+            <div>
+                <span class="eyebrow">Quản trị</span>
+                <h1>Xin chào, Quản trị viên</h1>
+            </div>
+            <time>@ViewBag.Today</time>
+        </header>
+
+        <section class="admin-grid">
+            <article class="table-section compact">
+                <h2>Bệnh nhân khám hôm nay</h2>
+                <div class="data-table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tên bệnh nhân</th>
+                                <th>Tên bác sĩ</th>
+                                <th>Ca khám</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Lê Văn Thành</td>
+                                <td>Nguyễn Văn A</td>
+                                <td>Chiều</td>
+                            </tr>
+                            <tr>
+                                <td>Trần Hồng Nhung</td>
+                                <td>Nguyễn Văn A</td>
+                                <td>Chiều</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="table-section compact">
+                <h2>Bác sĩ làm việc hôm nay</h2>
+                <div class="data-table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tên bác sĩ</th>
+                                <th>Chuyên khoa</th>
+                                <th>Ca khám</th>
+                                <th>Phòng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Hoàng Văn E</td>
+                                <td>Ngoại khoa</td>
+                                <td>Chiều</td>
+                                <td>Phòng 1</td>
+                            </tr>
+                            <tr>
+                                <td>Lê Văn C</td>
+                                <td>Tiêu hóa</td>
+                                <td>Chiều</td>
+                                <td>Phòng 2</td>
+                            </tr>
+                            <tr>
+                                <td>Nguyễn Văn A</td>
+                                <td>Nội khoa</td>
+                                <td>Sáng</td>
+                                <td>Phòng 3</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+
+        <section class="revenue-panel">
+            <h2>Doanh thu trong tuần</h2>
+            <div class="chart-area">
+                <div class="chart-grid">
+                    <span style="height: 28%"></span>
+                    <span style="height: 42%"></span>
+                    <span style="height: 35%"></span>
+                    <span style="height: 58%"></span>
+                    <span style="height: 50%"></span>
+                    <span style="height: 64%"></span>
+                    <span style="height: 46%"></span>
+                </div>
+                <div class="chart-labels">
+                    <span>Thứ 2</span>
+                    <span>Thứ 3</span>
+                    <span>Thứ 4</span>
+                    <span>Thứ 5</span>
+                    <span>Thứ 6</span>
+                    <span>Thứ 7</span>
+                    <span>CN</span>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
