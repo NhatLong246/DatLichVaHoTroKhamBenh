@@ -12,18 +12,24 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body class="role-page patient-theme">
+<body class="role-page web-dashboard patient-theme">
     <aside class="role-sidebar">
-        <div class="role-logo">+</div>
+        <div class="role-brand">
+            <div class="role-logo">+</div>
+            <div>
+                <strong>HealthCare</strong>
+                <span>Bệnh nhân</span>
+            </div>
+        </div>
         <nav>
-            <a class="active" href="#">Trang chủ</a>
+            <a class="active" href="#">Tổng quan</a>
             <a href="#">Đặt lịch khám</a>
-            <a href="#">Quản lý lịch hẹn</a>
+            <a href="#">Lịch hẹn</a>
             <a href="#">Hồ sơ bệnh án</a>
             <a href="#">Hóa đơn</a>
             <a href="#">Đổi mật khẩu</a>
         </nav>
-        <form asp-controller="Account" asp-action="Logout" method="post">
+        <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form" data-confirm-message="Bạn có chắc chắn muốn đăng xuất không?">
             @Html.AntiForgeryToken()
             <button type="submit">Đăng xuất</button>
         </form>
@@ -32,11 +38,30 @@
     <main class="role-main">
         <header class="role-header">
             <div>
-                <span class="eyebrow">Bệnh nhân</span>
+                <span class="eyebrow">Hồ sơ cá nhân</span>
                 <h1>Xin chào, @ViewBag.HoTen</h1>
+                <p>Theo dõi lịch hẹn, hồ sơ bệnh án và hóa đơn khám bệnh của bạn.</p>
             </div>
             <div class="quick-status">Lịch hẹn sắp tới</div>
         </header>
+
+        <section class="metric-grid patient-metrics" aria-label="Thông tin nhanh">
+            <article class="metric-card">
+                <span>Lịch hẹn</span>
+                <strong>01</strong>
+                <small>Đang chờ khám</small>
+            </article>
+            <article class="metric-card">
+                <span>Hồ sơ bệnh án</span>
+                <strong>04</strong>
+                <small>Lần khám đã lưu</small>
+            </article>
+            <article class="metric-card">
+                <span>Hóa đơn</span>
+                <strong>02</strong>
+                <small>Đã thanh toán</small>
+            </article>
+        </section>
 
         <section class="patient-grid">
             <article class="appointment-panel">
@@ -56,7 +81,7 @@
             <article class="health-summary">
                 <span>Trạng thái</span>
                 <strong>Chờ khám</strong>
-                <p>Vui lòng đến trước giờ hẹn 15 phút để xác nhận thông tin.</p>
+                <p>Vui lòng đến trước giờ hẹn 15 phút để xác nhận thông tin tại quầy tiếp nhận.</p>
             </article>
         </section>
 
@@ -66,5 +91,6 @@
             <a href="#">Hồ sơ bệnh án</a>
         </section>
     </main>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
 </body>
 </html>

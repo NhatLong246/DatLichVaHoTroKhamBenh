@@ -37,6 +37,10 @@ Cuối cùng chạy dotnet build và báo cáo file đã sửa.
 - Hiển thị lỗi rõ bằng tiếng Việt.
 - POST thành công thì redirect.
 - Không để nghiệp vụ phức tạp trong `.cshtml`.
+- Với dashboard theo vai trò, giữ cấu trúc web app hiện tại: sidebar, header, metric cards, panel/table.
+- Nếu thêm dashboard hoặc trang quản trị mới, dùng lại class/style từ `web-dashboard` thay vì tạo style giống WinForms.
+- Nếu cần xác nhận thao tác như đăng xuất/xóa/hủy, dùng modal custom, không dùng `confirm()` mặc định.
+- Kiểm tra chữ tiếng Việt trong file `.cshtml` hiển thị đúng UTF-8, không để lỗi mojibake như `BÃ¡c sÄ©`.
 
 ## Checklist sau khi code
 

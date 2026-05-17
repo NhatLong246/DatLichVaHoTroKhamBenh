@@ -12,18 +12,24 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body class="role-page admin-theme">
+<body class="role-page web-dashboard admin-theme">
     <aside class="role-sidebar">
-        <div class="role-logo">+</div>
+        <div class="role-brand">
+            <div class="role-logo">+</div>
+            <div>
+                <strong>HealthCare</strong>
+                <span>Quản trị</span>
+            </div>
+        </div>
         <nav>
-            <a class="active" href="#">Trang chủ</a>
+            <a class="active" href="#">Tổng quan</a>
             <a href="#">Tài khoản</a>
             <a href="#">Bác sĩ</a>
             <a href="#">Quản lý lịch</a>
             <a href="#">Danh mục</a>
             <a href="#">Báo cáo</a>
         </nav>
-        <form asp-controller="Account" asp-action="Logout" method="post">
+        <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form" data-confirm-message="Bạn có chắc chắn muốn đăng xuất không?">
             @Html.AntiForgeryToken()
             <button type="submit">Đăng xuất</button>
         </form>
@@ -32,11 +38,35 @@
     <main class="role-main">
         <header class="role-header">
             <div>
-                <span class="eyebrow">Quản trị</span>
+                <span class="eyebrow">Bảng điều khiển</span>
                 <h1>Xin chào, Quản trị viên</h1>
+                <p>Theo dõi hoạt động khám bệnh, bác sĩ và doanh thu trong ngày.</p>
             </div>
             <time>@ViewBag.Today</time>
         </header>
+
+        <section class="metric-grid" aria-label="Số liệu tổng quan">
+            <article class="metric-card">
+                <span>Bệnh nhân hôm nay</span>
+                <strong>24</strong>
+                <small>+6 so với hôm qua</small>
+            </article>
+            <article class="metric-card">
+                <span>Bác sĩ làm việc</span>
+                <strong>12</strong>
+                <small>3 chuyên khoa chính</small>
+            </article>
+            <article class="metric-card">
+                <span>Lịch đang chờ</span>
+                <strong>18</strong>
+                <small>Cần xác nhận trong ngày</small>
+            </article>
+            <article class="metric-card">
+                <span>Doanh thu tuần</span>
+                <strong>86M</strong>
+                <small>Đơn vị: VNĐ</small>
+            </article>
+        </section>
 
         <section class="admin-grid">
             <article class="table-section compact">
@@ -54,12 +84,12 @@
                             <tr>
                                 <td>Lê Văn Thành</td>
                                 <td>Nguyễn Văn A</td>
-                                <td>Chiều</td>
+                                <td><span class="status info">Chiều</span></td>
                             </tr>
                             <tr>
                                 <td>Trần Hồng Nhung</td>
                                 <td>Nguyễn Văn A</td>
-                                <td>Chiều</td>
+                                <td><span class="status info">Chiều</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -82,7 +112,7 @@
                             <tr>
                                 <td>Hoàng Văn E</td>
                                 <td>Ngoại khoa</td>
-                                <td>Chiều</td>
+                                <td>Sáng</td>
                                 <td>Phòng 1</td>
                             </tr>
                             <tr>
@@ -127,5 +157,6 @@
             </div>
         </section>
     </main>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
 </body>
 </html>

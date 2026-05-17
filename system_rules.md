@@ -58,6 +58,11 @@ Trước khi sửa code:
 - Form đặt lịch phải rõ các bước: chuyên khoa, bác sĩ, ngày, ca, xác nhận.
 - Trang bác sĩ cần ưu tiên tốc độ thao tác: danh sách bệnh nhân, trạng thái lịch, nút tiếp nhận/lập phiếu.
 - Trang quản trị cần bảng dữ liệu có tìm kiếm/lọc cơ bản nếu danh sách dài.
+- Dashboard cho 3 vai trò phải giữ phong cách web app, không mô phỏng WinForms.
+- Dashboard dùng class nền `web-dashboard`; các thành phần chính gồm `role-sidebar`, `role-brand`, `metric-grid`, `metric-card`, `table-section`, `data-table`.
+- Font dashboard dùng `"Segoe UI", Arial, Helvetica, sans-serif`; không dùng font lạ, font trang trí hoặc font làm dấu tiếng Việt lệch hàng.
+- Màu dashboard ưu tiên teal/trắng/xám nhẹ. Tránh gradient gắt, nút neon, bảng màu xanh tím kiểu desktop mockup cũ.
+- Không dùng `alert()`/`confirm()` mặc định của trình duyệt cho thao tác quan trọng. Dùng modal custom đồng bộ giao diện, hiện tại là `.app-confirm` trong `wwwroot/js/dashboard.js` và `wwwroot/css/site.css`.
 
 ## Quy tắc đặt tên
 

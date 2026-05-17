@@ -97,6 +97,17 @@ Các bảng hiện có:
 - Các entity hiện được scaffold từ database. Khi sửa schema, ưu tiên cập nhật SQL script và scaffold/migration nhất quán.
 - Mã khóa chính đang dùng `VARCHAR(10)`, ví dụ `ND001`, `BS001`, `BN001`, `DK001`. Khi thêm dữ liệu cần giữ format thống nhất.
 
+## Ghi nhớ giao diện hiện tại
+
+- Login nằm ở `Views/Account/Login.cshtml`, dùng ảnh minh họa `wwwroot/images/br.png`.
+- Trang chủ theo vai trò nằm trong `Views/Dashboard/`: `BenhNhan.cshtml`, `BacSi.cshtml`, `Admin.cshtml`.
+- Các dashboard đang dùng phong cách web app với class gốc `role-page web-dashboard`.
+- CSS chính cho dashboard nằm cuối `wwwroot/css/site.css`, phần `/* Web dashboard refresh */`.
+- JavaScript dùng chung cho dashboard nằm ở `wwwroot/js/dashboard.js`.
+- Đăng xuất không dùng `confirm()` mặc định của trình duyệt. Các form logout dùng class `logout-form` và hiển thị modal custom `.app-confirm`.
+- Font giao diện dashboard dùng hệ font bình thường: `"Segoe UI", Arial, Helvetica, sans-serif`.
+- Không thiết kế dashboard theo kiểu WinForms cũ. Ưu tiên sidebar gọn, card thống kê, bảng dữ liệu sạch, màu teal/trắng/xám nhẹ.
+
 ## Tài liệu liên quan
 
 - `system_rules.md`: quy tắc bắt buộc khi AI code trong dự án.

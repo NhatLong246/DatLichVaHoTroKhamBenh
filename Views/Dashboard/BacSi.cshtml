@@ -12,16 +12,22 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body class="role-page doctor-theme">
+<body class="role-page web-dashboard doctor-theme">
     <aside class="role-sidebar">
-        <div class="role-logo">+</div>
+        <div class="role-brand">
+            <div class="role-logo">+</div>
+            <div>
+                <strong>HealthCare</strong>
+                <span>Bác sĩ</span>
+            </div>
+        </div>
         <nav>
-            <a class="active" href="#">Trang chủ</a>
+            <a class="active" href="#">Tổng quan</a>
             <a href="#">Khám bệnh</a>
             <a href="#">Lịch làm việc</a>
             <a href="#">Đổi mật khẩu</a>
         </nav>
-        <form asp-controller="Account" asp-action="Logout" method="post">
+        <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form" data-confirm-message="Bạn có chắc chắn muốn đăng xuất không?">
             @Html.AntiForgeryToken()
             <button type="submit">Đăng xuất</button>
         </form>
@@ -30,11 +36,30 @@
     <main class="role-main">
         <header class="role-header">
             <div>
-                <span class="eyebrow">Bác sĩ</span>
+                <span class="eyebrow">Lịch khám hôm nay</span>
                 <h1>Xin chào, @ViewBag.HoTen</h1>
+                <p>Quản lý danh sách bệnh nhân, trạng thái tiếp nhận và lịch làm việc.</p>
             </div>
             <time>@ViewBag.Today</time>
         </header>
+
+        <section class="metric-grid doctor-metrics" aria-label="Số liệu khám bệnh">
+            <article class="metric-card">
+                <span>Đang chờ khám</span>
+                <strong>08</strong>
+                <small>2 bệnh nhân ưu tiên</small>
+            </article>
+            <article class="metric-card">
+                <span>Đã tiếp nhận</span>
+                <strong>05</strong>
+                <small>Cập nhật trong buổi sáng</small>
+            </article>
+            <article class="metric-card">
+                <span>Ca làm việc</span>
+                <strong>Chiều</strong>
+                <small>Phòng Nội khoa 1</small>
+            </article>
+        </section>
 
         <section class="search-panel">
             <label for="patientSearch">Tìm kiếm bệnh nhân</label>
@@ -74,5 +99,6 @@
             </div>
         </section>
     </main>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
 </body>
 </html>

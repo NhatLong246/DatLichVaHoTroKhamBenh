@@ -17,6 +17,9 @@ Hướng dẫn cho mọi AI/coding agent làm việc trong repository này.
 - Không hard-code connection string, mật khẩu, token.
 - Không commit `appsettings.Development.json`, `.env`, `.vs/`, `bin/`, `obj/`.
 - Giữ giao diện và thông báo bằng tiếng Việt.
+- Dashboard dùng phong cách web app với class `web-dashboard`; không quay lại kiểu WinForms/mockup desktop cũ.
+- Dùng font hệ thống bình thường, ưu tiên `"Segoe UI", Arial, Helvetica, sans-serif`, để chữ tiếng Việt đều và dễ đọc.
+- Thao tác đăng xuất/xác nhận dùng modal custom trong `wwwroot/js/dashboard.js`, không dùng hộp thoại mặc định của trình duyệt.
 - Sau khi sửa code, chạy `dotnet build` nếu có thể.
 
 ## Tài liệu nhanh
