@@ -1,0 +1,518 @@
+@model HeThongDatLichVaKhamBenh.Models.ViewModels.DatLichKhamViewModel
+@using System.Text.Json
+@{
+    Layout = null;
+    ViewData["Title"] = "Đặt lịch khám";
+    var doctorJson = JsonSerializer.Serialize(Model.BacSis);
+    var scheduleJson = JsonSerializer.Serialize(Model.LichLamViecs);
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="role-page web-dashboard patient-theme">
+    <aside class="role-sidebar">
+        <div class="role-brand">
+            <div class="role-logo">+</div>
+            <div>
+                <strong>HealthCare</strong>
+                <span>Bệnh nhân</span>
+            </div>
+        </div>
+        <nav>
+            <a asp-controller="Dashboard" asp-action="BenhNhan">Tổng quan</a>
+            <a class="active" asp-controller="LichKham" asp-action="DatLich">Đặt lịch khám</a>
+            <a href="#">Lịch hẹn</a>
+            <a href="#">Hồ sơ bệnh án</a>
+            <a href="#">Hóa đơn</a>
+            <a href="#">Đổi mật khẩu</a>
+        </nav>
+        <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form" data-confirm-message="Bạn có chắc chắn muốn đăng xuất không?">
+            @Html.AntiForgeryToken()
+            <button type="submit">Đăng xuất</button>
+        </form>
+    </aside>
+
+    <main class="role-main">
+        <header class="role-header">
+            <div>
+                <span class="eyebrow">Đăng ký khám trực tuyến</span>
+                <h1>Đặt lịch khám</h1>
+                <p>Chọn chuyên khoa, bác sĩ, lịch làm việc và ca khám phù hợp. Bạn có thể xem lại lựa chọn ở phần xác nhận trước khi gửi đăng ký.</p>
+            </div>
+            <div class="quick-status">@Model.HoTenBenhNhan</div>
+        </header>
+
+        @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+        {
+            <div class="booking-alert booking-alert--success">@Model.SuccessMessage</div>
+        }
+
+        <form asp-controller="LichKham" asp-action="DatLich" method="post" class="booking-shell" id="bookingForm">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="booking-alert booking-alert--danger"></div>
+
+            <section class="booking-layout" aria-label="Biểu mẫu đặt lịch khám">
+                <div class="booking-panel">
+                    <div class="panel-heading">Hỗ trợ chọn chuyên khoa</div>
+                    <div class="booking-panel__body">
+                        <div class="booking-field">
+                            <label asp-for="TrieuChung">Triệu chứng của bạn</label>
+                            <textarea asp-for="TrieuChung" id="symptomInput" rows="4" maxlength="1000" placeholder="Ví dụ: đau bụng, buồn nôn, đi ngoài nhiều lần..."></textarea>
+                            <span asp-validation-for="TrieuChung"></span>
+                        </div>
+                        <div class="suggestion-actions">
+                            <button type="button" class="booking-button booking-button--primary" id="suggestSpecialtyButton">Gợi ý chuyên khoa</button>
+                            <span id="suggestionStatus" class="suggestion-status" aria-live="polite"></span>
+                        </div>
+                        <div class="suggestion-result" id="suggestionResult" aria-live="polite"></div>
+                    </div>
+                </div>
+
+                <div class="booking-panel">
+                    <div class="panel-heading">1. Chọn bác sĩ theo chuyên khoa</div>
+                    <div class="booking-panel__body">
+                        <div class="booking-field">
+                            <label asp-for="MaChuyenKhoa">Chuyên khoa</label>
+                            <select asp-for="MaChuyenKhoa" id="specialtySelect">
+                                <option value="">Chọn chuyên khoa</option>
+                                @foreach (var item in Model.ChuyenKhoas)
+                                {
+                                    <option value="@item.MaChuyenKhoa">@item.TenChuyenKhoa</option>
+                                }
+                            </select>
+                            <span asp-validation-for="MaChuyenKhoa"></span>
+                        </div>
+
+                        <div class="booking-doctor-list" id="doctorList" aria-live="polite"></div>
+                        <input asp-for="MaBacSi" type="hidden" id="doctorInput" />
+                        <span asp-validation-for="MaBacSi" class="field-validation-message"></span>
+                    </div>
+                </div>
+
+                <div class="booking-panel">
+                    <div class="panel-heading">2. Chọn lịch làm việc, ngày và giờ khám</div>
+                    <div class="booking-panel__body">
+                        <div class="booking-schedule" id="scheduleList" aria-live="polite"></div>
+
+                        <div class="booking-time-grid booking-time-grid--expanded">
+                        <div class="booking-field">
+                            <label asp-for="NgayKham">Ngày khám</label>
+                            <input asp-for="NgayKham" type="date" id="dateInput" min="@Model.MinNgayKham.ToString("yyyy-MM-dd")" value="@Model.NgayKham?.ToString("yyyy-MM-dd")" />
+                            <span asp-validation-for="NgayKham"></span>
+                        </div>
+
+                        <div class="booking-field">
+                            <label asp-for="CaKham">Ca khám</label>
+                            <div class="shift-options" id="shiftOptions">
+                                <label>
+                                    <input type="radio" asp-for="CaKham" value="Sáng" />
+                                    <span>Sáng</span>
+                                </label>
+                                <label>
+                                    <input type="radio" asp-for="CaKham" value="Chiều" />
+                                    <span>Chiều</span>
+                                </label>
+                                <label>
+                                    <input type="radio" asp-for="CaKham" value="Tối" />
+                                    <span>Tối</span>
+                                </label>
+                            </div>
+                            <span asp-validation-for="CaKham"></span>
+                        </div>
+
+                        <div class="booking-field">
+                            <label asp-for="GioKham">Khung giờ khám</label>
+                            <select asp-for="GioKham" id="timeSlotSelect">
+                                <option value="">Chọn ngày và ca trước</option>
+                            </select>
+                        </div>
+
+                        <div class="booking-field">
+                            <label asp-for="ThoiLuongKham">Thời lượng khám dự kiến</label>
+                            <select asp-for="ThoiLuongKham" id="durationSelect">
+                                <option value="30">30 phút</option>
+                                <option value="35">35 phút</option>
+                                <option value="40">40 phút</option>
+                                <option value="45">45 phút</option>
+                                <option value="60">60 phút</option>
+                                <option value="90">90 phút</option>
+                            </select>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="booking-confirm">
+                    <div class="panel-heading">4. Xác nhận thông tin</div>
+                    <dl>
+                        <dt>Bệnh nhân</dt>
+                        <dd>@Model.HoTenBenhNhan</dd>
+                        <dt>Chuyên khoa</dt>
+                        <dd id="confirmSpecialty">Chưa chọn</dd>
+                        <dt>Bác sĩ</dt>
+                        <dd id="confirmDoctor">Chưa chọn</dd>
+                        <dt>Ngày khám</dt>
+                        <dd id="confirmDate">Chưa chọn</dd>
+                        <dt>Ca khám</dt>
+                        <dd id="confirmShift">Chưa chọn</dd>
+                        <dt>Giờ khám</dt>
+                        <dd id="confirmTime">Chưa chọn</dd>
+                        <dt>Thời lượng</dt>
+                        <dd id="confirmDuration">30 phút</dd>
+                        <dt>Phòng khám</dt>
+                        <dd id="confirmRoom">Chưa chọn</dd>
+                    </dl>
+                    <div class="booking-actions">
+                        <button type="submit" class="booking-button booking-button--primary">Xác nhận</button>
+                        <button type="reset" class="booking-button booking-button--ghost" id="resetBooking">Đặt lại</button>
+                    </div>
+                </aside>
+            </section>
+        </form>
+    </main>
+
+    <script>
+        window.bookingData = {
+            doctors: @Html.Raw(doctorJson),
+            schedules: @Html.Raw(scheduleJson)
+        };
+    </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+    <script>
+        (() => {
+            const doctors = window.bookingData.doctors;
+            const schedules = window.bookingData.schedules;
+            const dayNames = ["Chủ nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"];
+
+            const specialtySelect = document.getElementById("specialtySelect");
+            const doctorInput = document.getElementById("doctorInput");
+            const doctorList = document.getElementById("doctorList");
+            const scheduleList = document.getElementById("scheduleList");
+            const dateInput = document.getElementById("dateInput");
+            const timeSlotSelect = document.getElementById("timeSlotSelect");
+            const durationSelect = document.getElementById("durationSelect");
+            const resetButton = document.getElementById("resetBooking");
+            const symptomInput = document.getElementById("symptomInput");
+            const suggestButton = document.getElementById("suggestSpecialtyButton");
+            const suggestionStatus = document.getElementById("suggestionStatus");
+            const suggestionResult = document.getElementById("suggestionResult");
+            const shiftInputs = Array.from(document.querySelectorAll("input[name='CaKham']"));
+            const antiForgeryToken = document.querySelector("input[name='__RequestVerificationToken']")?.value || "";
+            const suggestionUrl = "@Url.Action("GoiYChuyenKhoa", "LichKham")";
+
+            const confirmSpecialty = document.getElementById("confirmSpecialty");
+            const confirmDoctor = document.getElementById("confirmDoctor");
+            const confirmDate = document.getElementById("confirmDate");
+            const confirmShift = document.getElementById("confirmShift");
+            const confirmTime = document.getElementById("confirmTime");
+            const confirmDuration = document.getElementById("confirmDuration");
+            const confirmRoom = document.getElementById("confirmRoom");
+
+            const selectedDoctor = () => doctors.find(item => item.MaBacSi === doctorInput.value);
+            const selectedSchedules = () => schedules.filter(item => item.MaBacSi === doctorInput.value);
+            const selectedDateName = () => dateInput.value ? dayNames[new Date(`${dateInput.value}T00:00:00`).getDay()] : "";
+            const selectedShift = () => shiftInputs.find(item => item.checked)?.value || "";
+            const selectedDuration = () => Number(durationSelect.value || 30);
+            const formatDateInput = date => {
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const day = String(date.getDate()).padStart(2, "0");
+                return `${date.getFullYear()}-${month}-${day}`;
+            };
+            const valueOf = (item, camelName, pascalName) => item[camelName] ?? item[pascalName];
+            const shiftRanges = {
+                "Sáng": { start: "07:30", end: "11:30" },
+                "Chiều": { start: "13:30", end: "17:00" },
+                "Tối": { start: "18:00", end: "20:30" }
+            };
+
+            function toMinutes(value) {
+                const [hour, minute] = value.split(":").map(Number);
+                return hour * 60 + minute;
+            }
+
+            function toTimeLabel(minutes) {
+                const hour = String(Math.floor(minutes / 60)).padStart(2, "0");
+                const minute = String(minutes % 60).padStart(2, "0");
+                return `${hour}:${minute}`;
+            }
+
+            function renderDoctors() {
+                const specialtyId = specialtySelect.value;
+                const filteredDoctors = doctors.filter(item => item.MaChuyenKhoa === specialtyId);
+
+                if (!filteredDoctors.length) {
+                    doctorList.innerHTML = "<p class=\"booking-empty\">Chọn chuyên khoa để xem danh sách bác sĩ.</p>";
+                    doctorInput.value = "";
+                    renderSchedules();
+                    updateConfirmation();
+                    return;
+                }
+
+                doctorList.innerHTML = filteredDoctors.map(doctor => `
+                    <button type="button" class="doctor-choice${doctor.MaBacSi === doctorInput.value ? " is-selected" : ""}" data-doctor-id="${doctor.MaBacSi}">
+                        <strong>${doctor.HoTen}</strong>
+                        <span>${doctor.TrinhDo || "Bác sĩ"} - ${doctor.TenChuyenKhoa}</span>
+                    </button>
+                `).join("");
+
+                if (!filteredDoctors.some(item => item.MaBacSi === doctorInput.value)) {
+                    doctorInput.value = "";
+                }
+
+                renderSchedules();
+                updateConfirmation();
+            }
+
+            function renderSchedules() {
+                const items = selectedSchedules();
+                if (!doctorInput.value) {
+                    scheduleList.innerHTML = "<p class=\"booking-empty\">Chọn bác sĩ để xem lịch làm việc.</p>";
+                    updateAvailableShifts();
+                    return;
+                }
+
+                if (!items.length) {
+                    scheduleList.innerHTML = "<p class=\"booking-empty\">Bác sĩ chưa có lịch làm việc đang hoạt động.</p>";
+                    updateAvailableShifts();
+                    return;
+                }
+
+                scheduleList.innerHTML = items.map(item => `
+                    <button type="button" class="schedule-chip" data-day="${item.NgayTrongTuan}" data-shift="${item.CaLamViec}">
+                        <strong>${item.NgayTrongTuan} - ${item.CaLamViec}</strong>
+                        <span>${item.TenPhongKham}${item.ViTri ? `, ${item.ViTri}` : ""}</span>
+                    </button>
+                `).join("");
+                updateAvailableShifts();
+            }
+
+            function updateAvailableShifts() {
+                const dateName = selectedDateName();
+                const available = selectedSchedules()
+                    .filter(item => item.NgayTrongTuan === dateName)
+                    .map(item => item.CaLamViec);
+
+                shiftInputs.forEach(input => {
+                    const enabled = available.includes(input.value);
+                    input.disabled = Boolean(doctorInput.value && dateInput.value && !enabled);
+                    input.closest("label").classList.toggle("is-disabled", input.disabled);
+                    if (input.disabled && input.checked) {
+                        input.checked = false;
+                    }
+                });
+
+                document.querySelectorAll(".schedule-chip").forEach(chip => {
+                    chip.classList.toggle("is-matching", chip.dataset.day === dateName);
+                    chip.classList.toggle("is-selected", chip.dataset.day === dateName && chip.dataset.shift === selectedShift());
+                });
+
+                renderTimeSlots();
+                updateConfirmation();
+            }
+
+            function renderTimeSlots() {
+                const shift = selectedShift();
+                const duration = selectedDuration();
+                const range = shiftRanges[shift];
+                const previousValue = timeSlotSelect.value;
+
+                timeSlotSelect.innerHTML = "";
+                if (!range) {
+                    timeSlotSelect.innerHTML = "<option value=\"\">Chọn ngày và ca trước</option>";
+                    updateConfirmation();
+                    return;
+                }
+
+                const start = toMinutes(range.start);
+                const end = toMinutes(range.end);
+                const options = [];
+
+                for (let current = start; current + duration <= end; current += duration) {
+                    const from = toTimeLabel(current);
+                    const to = toTimeLabel(current + duration);
+                    options.push({ value: from, label: `${from} - ${to}` });
+                }
+
+                if (!options.length) {
+                    timeSlotSelect.innerHTML = "<option value=\"\">Thời lượng vượt quá ca khám</option>";
+                    updateConfirmation();
+                    return;
+                }
+
+                timeSlotSelect.innerHTML = options.map(option => `<option value="${option.value}">${option.label}</option>`).join("");
+                if (options.some(option => option.value === previousValue)) {
+                    timeSlotSelect.value = previousValue;
+                }
+
+                updateConfirmation();
+            }
+
+            function updateConfirmation() {
+                const doctor = selectedDoctor();
+                const dateName = selectedDateName();
+                const shift = selectedShift();
+                const room = selectedSchedules().find(item => item.NgayTrongTuan === dateName && item.CaLamViec === shift);
+
+                confirmSpecialty.textContent = specialtySelect.selectedOptions[0]?.textContent || "Chưa chọn";
+                confirmDoctor.textContent = doctor ? `${doctor.TrinhDo || "Bác sĩ"} ${doctor.HoTen}` : "Chưa chọn";
+                confirmDate.textContent = dateInput.value ? `${new Date(`${dateInput.value}T00:00:00`).toLocaleDateString("vi-VN")} (${dateName})` : "Chưa chọn";
+                confirmShift.textContent = shift || "Chưa chọn";
+                confirmTime.textContent = timeSlotSelect.value ? timeSlotSelect.selectedOptions[0].textContent : "Chưa chọn";
+                confirmDuration.textContent = `${selectedDuration()} phút`;
+                confirmRoom.textContent = room ? `${room.TenPhongKham}${room.ViTri ? `, ${room.ViTri}` : ""}` : "Chưa chọn";
+            }
+
+            function applySpecialtySuggestion(specialtyId, estimatedMinutes) {
+                specialtySelect.value = specialtyId;
+                doctorInput.value = "";
+                shiftInputs.forEach(input => input.checked = false);
+                if (estimatedMinutes) {
+                    const matchedOption = Array.from(durationSelect.options).find(option => Number(option.value) === Number(estimatedMinutes));
+                    if (matchedOption) {
+                        durationSelect.value = matchedOption.value;
+                    }
+                }
+                renderDoctors();
+                document.querySelector(".booking-panel:nth-of-type(2)")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+
+            function renderSuggestions(result) {
+                suggestionResult.innerHTML = "";
+                const message = valueOf(result, "message", "Message");
+                const hasUrgentWarning = valueOf(result, "hasUrgentWarning", "HasUrgentWarning");
+                const suggestions = valueOf(result, "suggestions", "Suggestions") || [];
+
+                if (message) {
+                    const warning = document.createElement("div");
+                    warning.className = hasUrgentWarning ? "suggestion-warning" : "booking-empty";
+                    warning.textContent = message;
+                    suggestionResult.appendChild(warning);
+                }
+
+                suggestions.forEach(item => {
+                    const specialtyId = valueOf(item, "specialtyId", "SpecialtyId");
+                    const specialtyName = valueOf(item, "specialtyName", "SpecialtyName");
+                    const estimatedMinutes = valueOf(item, "estimatedMinutes", "EstimatedMinutes");
+                    const reason = valueOf(item, "reason", "Reason");
+
+                    const card = document.createElement("article");
+                    card.className = "suggestion-card";
+                    card.innerHTML = `
+                        <div>
+                            <strong>${specialtyName}</strong>
+                            <span>Thời gian khám dự kiến: khoảng ${estimatedMinutes} phút</span>
+                            <small>${reason}</small>
+                        </div>
+                    `;
+
+                    const button = document.createElement("button");
+                    button.type = "button";
+                    button.textContent = "Dùng gợi ý";
+                    button.addEventListener("click", () => applySpecialtySuggestion(specialtyId, estimatedMinutes));
+                    card.appendChild(button);
+                    suggestionResult.appendChild(card);
+                });
+            }
+
+            async function suggestSpecialty() {
+                const trieuChung = symptomInput.value.trim();
+                suggestionStatus.textContent = "";
+                suggestionResult.innerHTML = "";
+
+                if (!trieuChung) {
+                    suggestionStatus.textContent = "Vui lòng nhập triệu chứng trước khi gợi ý.";
+                    return;
+                }
+
+                suggestButton.disabled = true;
+                suggestionStatus.textContent = "Đang phân tích triệu chứng...";
+
+                try {
+                    const response = await fetch(suggestionUrl, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "RequestVerificationToken": antiForgeryToken
+                        },
+                        body: JSON.stringify({ trieuChung })
+                    });
+
+                    const result = await response.json();
+                    if (!response.ok) {
+                        suggestionStatus.textContent = result.message || "Không thể gợi ý chuyên khoa lúc này.";
+                        return;
+                    }
+
+                    suggestionStatus.textContent = "Đã có gợi ý phù hợp.";
+                    renderSuggestions(result);
+                } catch {
+                    suggestionStatus.textContent = "Không thể kết nối chức năng gợi ý. Vui lòng thử lại.";
+                } finally {
+                    suggestButton.disabled = false;
+                }
+            }
+
+            doctorList.addEventListener("click", event => {
+                const button = event.target.closest("[data-doctor-id]");
+                if (!button) {
+                    return;
+                }
+
+                doctorInput.value = button.dataset.doctorId;
+                document.querySelectorAll(".doctor-choice").forEach(item => item.classList.remove("is-selected"));
+                button.classList.add("is-selected");
+                renderSchedules();
+            });
+
+            scheduleList.addEventListener("click", event => {
+                const button = event.target.closest("[data-day][data-shift]");
+                if (!button) {
+                    return;
+                }
+
+                const today = new Date();
+                const selected = new Date(dateInput.value ? `${dateInput.value}T00:00:00` : today);
+                const targetDay = dayNames.indexOf(button.dataset.day);
+                const offset = (targetDay - selected.getDay() + 7) % 7;
+                selected.setDate(selected.getDate() + offset);
+                dateInput.value = formatDateInput(selected);
+
+                const shift = shiftInputs.find(item => item.value === button.dataset.shift);
+                if (shift) {
+                    shift.checked = true;
+                }
+
+                updateAvailableShifts();
+            });
+
+            specialtySelect.addEventListener("change", renderDoctors);
+            dateInput.addEventListener("change", updateAvailableShifts);
+            shiftInputs.forEach(input => input.addEventListener("change", updateAvailableShifts));
+            timeSlotSelect.addEventListener("change", updateConfirmation);
+            durationSelect.addEventListener("change", renderTimeSlots);
+            suggestButton.addEventListener("click", suggestSpecialty);
+            resetButton.addEventListener("click", () => {
+                window.setTimeout(() => {
+                    doctorInput.value = "";
+                    suggestionStatus.textContent = "";
+                    suggestionResult.innerHTML = "";
+                    renderTimeSlots();
+                    renderDoctors();
+                });
+            });
+
+            renderDoctors();
+        })();
+    </script>
+</body>
+</html>

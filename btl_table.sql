@@ -114,15 +114,31 @@ CREATE TABLE DangKyLichKham (
     MaDangKy VARCHAR(10) PRIMARY KEY,
     MaBacSi VARCHAR(10) NOT NULL,
     MaBenhNhan VARCHAR(10) NOT NULL,
-	MaPhongKham VARCHAR(10) NOT NULL,
+    MaPhongKham VARCHAR(10) NOT NULL,
     NgayKham DATE NOT NULL,
     CaKham NVARCHAR(10) NOT NULL,
+    GioKham TIME(0),
+    ThoiLuongKham INT,
     TrangThai NVARCHAR(20) DEFAULT N'Chờ khám',
     FOREIGN KEY (MaBacSi) REFERENCES BacSi(MaBacSi),
     FOREIGN KEY (MaBenhNhan) REFERENCES BenhNhan(MaBenhNhan),
 	FOREIGN KEY (MaPhongKham) REFERENCES PhongKham(MaPhongKham),
     -- Thêm ràng buộc ca khám
     CONSTRAINT CHK_DangKyLichKham_CaKham CHECK (CaKham IN (N'Sáng', N'Chiều', N'Tối')),
+    -- Thêm ràng buộc khung giờ và thời lượng khám dự kiến
+    CONSTRAINT CHK_DangKyLichKham_GioKham_ThoiLuong CHECK (
+        (GioKham IS NULL AND ThoiLuongKham IS NULL)
+        OR (GioKham IS NOT NULL AND ThoiLuongKham IS NOT NULL)
+    ),
+    CONSTRAINT CHK_DangKyLichKham_ThoiLuongKham CHECK (ThoiLuongKham IS NULL OR ThoiLuongKham BETWEEN 15 AND 180),
+    CONSTRAINT CHK_DangKyLichKham_GioKham_TrongCa CHECK (
+        GioKham IS NULL OR ThoiLuongKham IS NULL OR
+        (
+            (CaKham = N'Sáng' AND DATEDIFF(MINUTE, CAST('00:00:00' AS TIME), GioKham) >= 450 AND DATEDIFF(MINUTE, CAST('00:00:00' AS TIME), GioKham) + ThoiLuongKham <= 690)
+            OR (CaKham = N'Chiều' AND DATEDIFF(MINUTE, CAST('00:00:00' AS TIME), GioKham) >= 810 AND DATEDIFF(MINUTE, CAST('00:00:00' AS TIME), GioKham) + ThoiLuongKham <= 1020)
+            OR (CaKham = N'Tối' AND DATEDIFF(MINUTE, CAST('00:00:00' AS TIME), GioKham) >= 1080 AND DATEDIFF(MINUTE, CAST('00:00:00' AS TIME), GioKham) + ThoiLuongKham <= 1230)
+        )
+    ),
     -- Thêm ràng buộc ngày khám phải ở tương lai
     CONSTRAINT CHK_DangKyLichKham_NgayKham CHECK (NgayKham >= CAST(GETDATE() AS DATE)),
     -- Thêm ràng buộc trạng thái

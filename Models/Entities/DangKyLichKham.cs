@@ -31,6 +31,11 @@ public partial class DangKyLichKham
     [StringLength(10)]
     public string CaKham { get; set; } = null!;
 
+    [Column(TypeName = "time(0)")]
+    public TimeOnly? GioKham { get; set; }
+
+    public int? ThoiLuongKham { get; set; }
+
     [StringLength(20)]
     public string? TrangThai { get; set; }
 

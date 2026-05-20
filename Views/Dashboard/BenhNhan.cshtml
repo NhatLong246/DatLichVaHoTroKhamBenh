@@ -22,8 +22,8 @@
             </div>
         </div>
         <nav>
-            <a class="active" href="#">Tổng quan</a>
-            <a href="#">Đặt lịch khám</a>
+            <a class="active" asp-controller="Dashboard" asp-action="BenhNhan">Tổng quan</a>
+            <a asp-controller="LichKham" asp-action="DatLich">Đặt lịch khám</a>
             <a href="#">Lịch hẹn</a>
             <a href="#">Hồ sơ bệnh án</a>
             <a href="#">Hóa đơn</a>
@@ -86,7 +86,7 @@
         </section>
 
         <section class="action-row">
-            <a href="#">Đặt lịch khám mới</a>
+            <a asp-controller="LichKham" asp-action="DatLich">Đặt lịch khám mới</a>
             <a href="#">Quản lý lịch hẹn</a>
             <a href="#">Hồ sơ bệnh án</a>
         </section>
