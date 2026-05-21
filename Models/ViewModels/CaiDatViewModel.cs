@@ -31,6 +31,39 @@ public class CaiDatViewModel
     public string? ErrorMessage { get; set; }
 }
 
+public class CaiDatBacSiViewModel
+{
+    public string MaBacSi { get; set; } = string.Empty;
+
+    public string HoTen { get; set; } = string.Empty;
+
+    public string GioiTinh { get; set; } = string.Empty;
+
+    public DateOnly? NgaySinh { get; set; }
+
+    public string TrinhDo { get; set; } = string.Empty;
+
+    public string ChuyenKhoa { get; set; } = string.Empty;
+
+    [RegularExpression(@"^\d{10}$", ErrorMessage = "Số điện thoại phải gồm 10 chữ số.")]
+    public string? DienThoai { get; set; }
+
+    [StringLength(200, ErrorMessage = "Địa chỉ chỉ được nhập tối đa 200 ký tự.")]
+    public string? DiaChi { get; set; }
+
+    public string MaNguoiDung { get; set; } = string.Empty;
+
+    public string TenDangNhap { get; set; } = string.Empty;
+
+    public string VaiTro { get; set; } = string.Empty;
+
+    public string TrangThaiTaiKhoan { get; set; } = string.Empty;
+
+    public string? SuccessMessage { get; set; }
+
+    public string? ErrorMessage { get; set; }
+}
+
 public class DoiMatKhauViewModel
 {
     [Required(ErrorMessage = "Vui lòng nhập mật khẩu hiện tại.")]

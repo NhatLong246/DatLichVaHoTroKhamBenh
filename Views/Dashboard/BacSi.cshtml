@@ -1,3 +1,4 @@
+@model HeThongDatLichVaKhamBenh.Models.ViewModels.BacSiDashboardViewModel
 @{
     Layout = null;
     ViewData["Title"] = "Trang chủ bác sĩ";
@@ -22,10 +23,10 @@
             </div>
         </div>
         <nav>
-            <a class="active" href="#">Tổng quan</a>
-            <a href="#">Khám bệnh</a>
-            <a href="#">Lịch làm việc</a>
-            <a href="#">Đổi mật khẩu</a>
+            <a class="active" asp-controller="Dashboard" asp-action="BacSi">Tổng quan</a>
+            <a asp-controller="KhamBenh" asp-action="Index">Khám bệnh</a>
+            <a asp-controller="LichLamViec" asp-action="Index">Lịch làm việc</a>
+            <a asp-controller="CaiDat" asp-action="BacSi">Cài đặt</a>
         </nav>
         <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form" data-confirm-message="Bạn có chắc chắn muốn đăng xuất không?">
             @Html.AntiForgeryToken()
@@ -37,27 +38,27 @@
         <header class="role-header">
             <div>
                 <span class="eyebrow">Lịch khám hôm nay</span>
-                <h1>Xin chào, @ViewBag.HoTen</h1>
+                <h1>Xin chào, @Model.HoTenBacSi</h1>
                 <p>Quản lý danh sách bệnh nhân, trạng thái tiếp nhận và lịch làm việc.</p>
             </div>
-            <time>@ViewBag.Today</time>
+            <time>@Model.NgayHienTai.ToString("dd/MM/yyyy")</time>
         </header>
 
         <section class="metric-grid doctor-metrics" aria-label="Số liệu khám bệnh">
             <article class="metric-card">
                 <span>Đang chờ khám</span>
-                <strong>08</strong>
-                <small>2 bệnh nhân ưu tiên</small>
+                <strong>@Model.DangChoKham.ToString("00")</strong>
+                <small>@Model.GhiChuHangCho</small>
             </article>
             <article class="metric-card">
                 <span>Đã tiếp nhận</span>
-                <strong>05</strong>
-                <small>Cập nhật trong buổi sáng</small>
+                <strong>@Model.DaTiepNhan.ToString("00")</strong>
+                <small>Gồm bệnh nhân đang khám và đã khám</small>
             </article>
             <article class="metric-card">
                 <span>Ca làm việc</span>
-                <strong>Chiều</strong>
-                <small>Phòng Nội khoa 1</small>
+                <strong>@Model.CaLamViec</strong>
+                <small>@Model.PhongKham</small>
             </article>
         </section>
 
@@ -74,31 +75,58 @@
                         <tr>
                             <th>Tên bệnh nhân</th>
                             <th>Điện thoại</th>
+                            <th>Giờ khám</th>
                             <th>Ca khám</th>
                             <th>Phòng khám</th>
                             <th>Trạng thái</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>Lê Văn Thành</td>
-                            <td>0965432109</td>
-                            <td>Chiều</td>
-                            <td>Phòng Nội khoa 1</td>
-                            <td><span class="status waiting">Chờ khám</span></td>
-                        </tr>
-                        <tr>
-                            <td>Trần Hồng Nhung</td>
-                            <td>0976543210</td>
-                            <td>Chiều</td>
-                            <td>Phòng Nội khoa 1</td>
-                            <td><span class="status waiting">Chờ khám</span></td>
-                        </tr>
+                    <tbody id="doctorDashboardPatients">
+                        @if (Model.BenhNhanHomNay.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="6" class="muted-note">Hôm nay chưa có bệnh nhân trong lịch khám.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in Model.BenhNhanHomNay)
+                            {
+                                var statusClass = item.TrangThai == "Đang khám"
+                                    ? "info"
+                                    : item.TrangThai == "Đã khám"
+                                        ? "success"
+                                        : "waiting";
+
+                                <tr data-patient="@($"{item.TenBenhNhan} {item.DienThoai}".ToLowerInvariant())">
+                                    <td>
+                                        <a asp-controller="KhamBenh" asp-action="Index" asp-route-maDangKy="@item.MaDangKy" class="table-link">@item.TenBenhNhan</a>
+                                    </td>
+                                    <td>@item.DienThoai</td>
+                                    <td>@item.GioKhamText</td>
+                                    <td>@item.CaKham</td>
+                                    <td>@item.TenPhongKham</td>
+                                    <td><span class="status @statusClass">@item.TrangThai</span></td>
+                                </tr>
+                            }
+                        }
                     </tbody>
                 </table>
             </div>
         </section>
     </main>
     <script src="~/js/dashboard.js" asp-append-version="true"></script>
+    <script>
+        (function () {
+            const search = document.getElementById("patientSearch");
+            const rows = document.querySelectorAll("#doctorDashboardPatients tr[data-patient]");
+            search?.addEventListener("input", function () {
+                const keyword = search.value.trim().toLowerCase();
+                rows.forEach((row) => {
+                    row.hidden = keyword.length > 0 && !row.dataset.patient.includes(keyword);
+                });
+            });
+        })();
+    </script>
 </body>
 </html>

@@ -1,0 +1,309 @@
+@model HeThongDatLichVaKhamBenh.Models.ViewModels.KhamBenhViewModel
+@using System.Globalization
+@{
+    Layout = null;
+    ViewData["Title"] = "Khám bệnh";
+    var moneyCulture = CultureInfo.GetCultureInfo("vi-VN");
+    var canEdit = Model.BenhNhanDangChon != null && Model.BenhNhanDangChon.TrangThai != "Đã khám";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="role-page web-dashboard doctor-theme">
+    <aside class="role-sidebar">
+        <div class="role-brand">
+            <div class="role-logo">+</div>
+            <div>
+                <strong>HealthCare</strong>
+                <span>Bác sĩ</span>
+            </div>
+        </div>
+        <nav>
+            <a asp-controller="Dashboard" asp-action="BacSi">Tổng quan</a>
+            <a class="active" asp-controller="KhamBenh" asp-action="Index">Khám bệnh</a>
+            <a asp-controller="LichLamViec" asp-action="Index">Lịch làm việc</a>
+            <a asp-controller="CaiDat" asp-action="BacSi">Cài đặt</a>
+        </nav>
+        <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form" data-confirm-message="Bạn có chắc chắn muốn đăng xuất không?">
+            @Html.AntiForgeryToken()
+            <button type="submit">Đăng xuất</button>
+        </form>
+    </aside>
+
+    <main class="role-main">
+        <header class="role-header">
+            <div>
+                <span class="eyebrow">Màn hình khám bệnh</span>
+                <h1>Khám bệnh hôm nay</h1>
+                <p>Tiếp nhận bệnh nhân, lập phiếu khám, kê đơn thuốc và chỉ định dịch vụ cận lâm sàng.</p>
+            </div>
+            <time>@Model.NgayKham.ToString("dd/MM/yyyy")</time>
+        </header>
+
+        @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+        {
+            <div class="booking-alert booking-alert--success">@Model.SuccessMessage</div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="booking-alert booking-alert--danger">@Model.ErrorMessage</div>
+        }
+
+        <section class="metric-grid doctor-metrics" aria-label="Số liệu khám bệnh">
+            <article class="metric-card">
+                <span>Đang chờ khám</span>
+                <strong>@Model.DangChoKham</strong>
+                <small>Bệnh nhân trong hàng chờ</small>
+            </article>
+            <article class="metric-card">
+                <span>Đang khám</span>
+                <strong>@Model.DangKham</strong>
+                <small>Ca đang xử lý</small>
+            </article>
+            <article class="metric-card">
+                <span>Đã hoàn thành</span>
+                <strong>@Model.DaHoanThanh</strong>
+                <small>Hồ sơ đã lưu hôm nay</small>
+            </article>
+        </section>
+
+        <section class="exam-layout">
+            <aside class="exam-queue">
+                <div class="panel-heading">
+                    <div>
+                        <h2>Hàng chờ bệnh nhân</h2>
+                        <p>@Model.HoTenBacSi - @Model.TenChuyenKhoa</p>
+                    </div>
+                </div>
+                <div class="exam-search">
+                    <label for="examPatientSearch">Tìm kiếm</label>
+                    <input id="examPatientSearch" type="search" placeholder="Tên hoặc số điện thoại" />
+                </div>
+                <div class="exam-queue-list" id="examQueueList">
+                    @if (Model.HangCho.Count == 0)
+                    {
+                        <div class="record-empty">Hôm nay chưa có bệnh nhân trong hàng chờ.</div>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model.HangCho)
+                        {
+                            <article class="exam-queue-card @(item.IsSelected ? "is-selected" : "")" data-patient="@($"{item.TenBenhNhan} {item.DienThoai}".ToLowerInvariant())">
+                                <a asp-controller="KhamBenh" asp-action="Index" asp-route-maDangKy="@item.MaDangKy">
+                                    <span>@item.MaDangKy - @item.GioKhamText</span>
+                                    <strong>@item.TenBenhNhan</strong>
+                                    <small>@item.DienThoai · @item.CaKham · @item.TenPhongKham</small>
+                                    <em class="status @(item.TrangThai == "Đang khám" ? "info" : item.TrangThai == "Đã khám" ? "success" : "waiting")">@item.TrangThai</em>
+                                </a>
+                            </article>
+                        }
+                    }
+                </div>
+            </aside>
+
+            <section class="exam-workspace">
+                @if (Model.BenhNhanDangChon == null)
+                {
+                    <div class="empty-state">
+                        <h2>Chưa chọn bệnh nhân</h2>
+                        <p>Chọn một bệnh nhân từ hàng chờ để bắt đầu ca khám và lập hồ sơ.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="exam-patient-card">
+                        <div>
+                            <span class="appointment-code">@Model.BenhNhanDangChon.MaDangKy</span>
+                            <h2>@Model.BenhNhanDangChon.HoTen</h2>
+                            <p>@Model.BenhNhanDangChon.DienThoai · @Model.BenhNhanDangChon.GioiTinh · @Model.BenhNhanDangChon.NgaySinhText</p>
+                        </div>
+                        <div class="exam-patient-actions">
+                            <span class="status @(Model.BenhNhanDangChon.TrangThai == "Đang khám" ? "info" : Model.BenhNhanDangChon.TrangThai == "Đã khám" ? "success" : "waiting")">@Model.BenhNhanDangChon.TrangThai</span>
+                            @if (Model.BenhNhanDangChon.TrangThai == "Chờ khám")
+                            {
+                                <form asp-controller="KhamBenh" asp-action="TiepNhan" method="post" class="inline-form">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="maDangKy" value="@Model.BenhNhanDangChon.MaDangKy" />
+                                    <button type="submit" class="exam-button exam-button--primary">Tiếp nhận</button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+
+                    <dl class="appointment-detail-grid exam-patient-detail">
+                        <div>
+                            <dt>Phòng khám</dt>
+                            <dd>@Model.BenhNhanDangChon.TenPhongKham</dd>
+                        </div>
+                        <div>
+                            <dt>Ca khám</dt>
+                            <dd>@Model.BenhNhanDangChon.CaKham - @Model.BenhNhanDangChon.GioKhamText</dd>
+                        </div>
+                        <div>
+                            <dt>Địa chỉ</dt>
+                            <dd>@Model.BenhNhanDangChon.DiaChi</dd>
+                        </div>
+                    </dl>
+
+                    <form asp-controller="KhamBenh" asp-action="HoanThanh" method="post" class="exam-form confirm-form" data-confirm-title="Hoàn thành ca khám" data-confirm-message="Lưu hồ sơ khám, đơn thuốc, dịch vụ chỉ định và tạo hóa đơn thanh toán?" data-confirm-ok="Hoàn thành">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="SelectedMaDangKy" />
+                        <div asp-validation-summary="ModelOnly" class="booking-alert booking-alert--danger"></div>
+
+                        <section class="exam-panel">
+                            <div class="panel-heading">
+                                <h2>Thông tin khám bệnh</h2>
+                            </div>
+                            <div class="exam-form-grid">
+                                <label class="exam-field">
+                                    <span>Triệu chứng</span>
+                                    <textarea asp-for="TrieuChung" disabled="@(!canEdit)" placeholder="Nhập triệu chứng bệnh nhân mô tả và ghi nhận lâm sàng"></textarea>
+                                    <span asp-validation-for="TrieuChung"></span>
+                                </label>
+                                <label class="exam-field">
+                                    <span>Chẩn đoán</span>
+                                    <textarea asp-for="ChanDoan" disabled="@(!canEdit)" placeholder="Nhập chẩn đoán của bác sĩ"></textarea>
+                                    <span asp-validation-for="ChanDoan"></span>
+                                </label>
+                                <label class="exam-field exam-field--wide">
+                                    <span>Hướng điều trị</span>
+                                    <textarea asp-for="HuongDieuTri" disabled="@(!canEdit)" placeholder="Nhập hướng điều trị, theo dõi hoặc tái khám"></textarea>
+                                    <span asp-validation-for="HuongDieuTri"></span>
+                                </label>
+                            </div>
+                        </section>
+
+                        <section class="exam-panel">
+                            <div class="exam-toolbar" role="tablist" aria-label="Công cụ khám bệnh">
+                                <button type="button" class="exam-tool is-active" data-exam-tab="prescription">Kê đơn thuốc</button>
+                                <button type="button" class="exam-tool" data-exam-tab="services">Chọn dịch vụ</button>
+                            </div>
+
+                            <div class="exam-tab-panel is-active" data-exam-panel="prescription">
+                                <div class="panel-heading">
+                                    <div>
+                                        <h2>Đơn thuốc điện tử</h2>
+                                        <p>Đơn thuốc chỉ lưu trạng thái đã kê đơn, không cộng vào hóa đơn thanh toán.</p>
+                                    </div>
+                                </div>
+                                <div class="data-table-wrap">
+                                    <table class="data-table medical-table exam-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Chọn</th>
+                                                <th>Thuốc</th>
+                                                <th>Số lượng</th>
+                                                <th>Liều lượng</th>
+                                                <th>Số ngày</th>
+                                                <th>Cách dùng</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (var i = 0; i < Model.Thuocs.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <input type="hidden" asp-for="Thuocs[i].MaThuoc" />
+                                                        <input type="hidden" asp-for="Thuocs[i].TenThuoc" />
+                                                        <input type="hidden" asp-for="Thuocs[i].DonViTinh" />
+                                                        <input type="hidden" asp-for="Thuocs[i].DonGia" />
+                                                        <input class="exam-check" asp-for="Thuocs[i].IsSelected" disabled="@(!canEdit)" />
+                                                    </td>
+                                                    <td>
+                                                        <strong>@Model.Thuocs[i].TenThuoc</strong>
+                                                        <small>@Model.Thuocs[i].DonViTinh · Tồn @Model.Thuocs[i].SoLuongTon</small>
+                                                    </td>
+                                                    <td><input class="exam-number" asp-for="Thuocs[i].SoLuong" min="1" disabled="@(!canEdit)" /></td>
+                                                    <td>
+                                                        <input class="exam-input" asp-for="Thuocs[i].LieuLuong" placeholder="VD: 1 viên/lần" disabled="@(!canEdit)" />
+                                                        <span asp-validation-for="Thuocs[i].LieuLuong"></span>
+                                                    </td>
+                                                    <td><input class="exam-number" asp-for="Thuocs[i].SoNgayDung" min="1" disabled="@(!canEdit)" /></td>
+                                                    <td>
+                                                        <input class="exam-input" asp-for="Thuocs[i].CachDung" placeholder="VD: Sau ăn sáng" disabled="@(!canEdit)" />
+                                                        <span asp-validation-for="Thuocs[i].CachDung"></span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <label class="exam-field exam-note">
+                                    <span>Ghi chú đơn thuốc</span>
+                                    <textarea asp-for="GhiChuDonThuoc" disabled="@(!canEdit)" placeholder="Dặn dò thêm cho bệnh nhân"></textarea>
+                                </label>
+                            </div>
+
+                            <div class="exam-tab-panel" data-exam-panel="services">
+                                <div class="panel-heading">
+                                    <div>
+                                        <h2>Chỉ định dịch vụ khám</h2>
+                                        <p>Dịch vụ đã chọn được dùng để tính hóa đơn thanh toán.</p>
+                                    </div>
+                                    <strong>@Model.TongTienDichVuTamTinh.ToString("N0", moneyCulture) đ</strong>
+                                </div>
+                                <div class="service-choice-grid">
+                                    @for (var i = 0; i < Model.DichVus.Count; i++)
+                                    {
+                                        <label class="service-choice">
+                                            <input type="hidden" asp-for="DichVus[i].MaDichVu" />
+                                            <input type="hidden" asp-for="DichVus[i].TenDichVu" />
+                                            <input type="hidden" asp-for="DichVus[i].DonGia" />
+                                            <input asp-for="DichVus[i].IsSelected" disabled="@(!canEdit)" />
+                                            <span>
+                                                <strong>@Model.DichVus[i].TenDichVu</strong>
+                                                <small>@Model.DichVus[i].MoTa</small>
+                                                <em>@Model.DichVus[i].DonGia.ToString("N0", moneyCulture) đ</em>
+                                            </span>
+                                            <input class="exam-number" asp-for="DichVus[i].SoLuong" min="1" disabled="@(!canEdit)" />
+                                        </label>
+                                    }
+                                </div>
+                            </div>
+                        </section>
+
+                        <div class="exam-actions">
+                            <a asp-controller="KhamBenh" asp-action="Index" class="exam-button exam-button--ghost">Làm mới</a>
+                            <button type="submit" class="exam-button exam-button--primary" disabled="@(!canEdit)">Hoàn thành</button>
+                        </div>
+                    </form>
+                }
+            </section>
+        </section>
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+    <script>
+        (function () {
+            const search = document.getElementById("examPatientSearch");
+            const queueCards = document.querySelectorAll(".exam-queue-card");
+            search?.addEventListener("input", function () {
+                const keyword = search.value.trim().toLowerCase();
+                queueCards.forEach((card) => {
+                    card.hidden = keyword.length > 0 && !card.dataset.patient.includes(keyword);
+                });
+            });
+
+            const tools = document.querySelectorAll("[data-exam-tab]");
+            const panels = document.querySelectorAll("[data-exam-panel]");
+            tools.forEach((tool) => {
+                tool.addEventListener("click", function () {
+                    const tab = tool.dataset.examTab;
+                    tools.forEach((item) => item.classList.toggle("is-active", item === tool));
+                    panels.forEach((panel) => panel.classList.toggle("is-active", panel.dataset.examPanel === tab));
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

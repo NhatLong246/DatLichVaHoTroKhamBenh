@@ -1513,6 +1513,577 @@ body.web-dashboard {
   font-weight: 800;
 }
 
+.exam-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.3fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.exam-queue,
+.exam-workspace,
+.exam-panel,
+.exam-patient-card,
+.exam-patient-detail {
+  border: 1px solid #dfe9ee;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(15, 49, 59, 0.06);
+  overflow: hidden;
+}
+
+.exam-queue {
+  position: sticky;
+  top: 28px;
+}
+
+.exam-queue .panel-heading,
+.exam-panel .panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.exam-queue .panel-heading h2,
+.exam-panel .panel-heading h2 {
+  margin: 0;
+}
+
+.exam-queue .panel-heading p,
+.exam-panel .panel-heading p {
+  margin: 5px 0 0;
+  color: #647784;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.exam-search {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-bottom: 1px solid #edf3f5;
+}
+
+.exam-search label {
+  color: #50616b;
+  font-weight: 800;
+}
+
+.exam-search input,
+.exam-input,
+.exam-number,
+.exam-field textarea {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 11px;
+  border: 1px solid #d7e4e8;
+  border-radius: 10px;
+  color: #203a45;
+  background: #ffffff;
+  font: inherit;
+  font-weight: 600;
+}
+
+.exam-queue-list {
+  display: grid;
+  gap: 10px;
+  max-height: 690px;
+  padding: 14px;
+  overflow-y: auto;
+}
+
+.exam-queue-card a {
+  display: block;
+  min-height: 112px;
+  padding: 13px 14px;
+  border: 1px solid #dfe9ee;
+  border-radius: 12px;
+  color: #203a45;
+  background: #ffffff;
+  text-decoration: none;
+  transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+}
+
+.exam-queue-card a:hover,
+.exam-queue-card.is-selected a {
+  border-color: #0f766e;
+  background: #f0fdfa;
+  box-shadow: 0 10px 24px rgba(15, 118, 110, 0.1);
+}
+
+.exam-queue-card span,
+.exam-queue-card small {
+  display: block;
+}
+
+.exam-queue-card span {
+  color: #0f766e;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.exam-queue-card strong {
+  display: block;
+  margin-top: 6px;
+  color: #143541;
+  font-weight: 800;
+}
+
+.exam-queue-card small {
+  margin: 5px 0 10px;
+  color: #647784;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.exam-queue-card em {
+  font-style: normal;
+}
+
+.exam-workspace {
+  display: grid;
+  gap: 14px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.exam-patient-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+}
+
+.exam-patient-card h2 {
+  margin: 4px 0 6px;
+  color: #143541;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.exam-patient-card p {
+  margin: 0;
+  color: #647784;
+  font-weight: 600;
+}
+
+.exam-patient-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.exam-patient-detail {
+  margin: 0;
+}
+
+.exam-form {
+  display: grid;
+  gap: 14px;
+}
+
+.exam-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  padding: 20px;
+}
+
+.exam-field {
+  display: grid;
+  gap: 8px;
+}
+
+.exam-field--wide {
+  grid-column: span 2;
+}
+
+.exam-field > span:first-child {
+  color: #40535d;
+  font-weight: 800;
+}
+
+.exam-field textarea {
+  min-height: 122px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.exam-field span:not(:first-child),
+.exam-table span {
+  color: #b91c1c;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.exam-toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 14px 20px;
+  border-bottom: 1px solid #edf3f5;
+  overflow-x: auto;
+}
+
+.exam-tool {
+  min-height: 40px;
+  padding: 9px 14px;
+  border: 1px solid #d7e4e8;
+  border-radius: 10px;
+  color: #40535d;
+  background: #ffffff;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.exam-tool.is-active {
+  border-color: #0f766e;
+  color: #ffffff;
+  background: #0f766e;
+}
+
+.exam-tab-panel {
+  display: none;
+}
+
+.exam-tab-panel.is-active {
+  display: block;
+}
+
+.exam-table th:first-child,
+.exam-table td:first-child {
+  width: 72px;
+  text-align: center;
+}
+
+.exam-table td {
+  vertical-align: top;
+}
+
+.exam-table strong,
+.exam-table small {
+  display: block;
+}
+
+.exam-table small {
+  margin-top: 4px;
+  color: #7a8c96;
+  font-weight: 600;
+}
+
+.exam-check {
+  width: 18px;
+  height: 18px;
+  accent-color: #0f766e;
+}
+
+.exam-number {
+  max-width: 96px;
+}
+
+.exam-note {
+  padding: 0 20px 20px;
+}
+
+.exam-note textarea {
+  min-height: 86px;
+}
+
+.service-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  padding: 20px;
+}
+
+.service-choice {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 82px;
+  gap: 12px;
+  align-items: start;
+  min-height: 112px;
+  padding: 14px;
+  border: 1px solid #dfe9ee;
+  border-radius: 12px;
+  background: #fbfdfe;
+}
+
+.service-choice input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  accent-color: #0f766e;
+}
+
+.service-choice strong,
+.service-choice small,
+.service-choice em {
+  display: block;
+}
+
+.service-choice strong {
+  color: #143541;
+  font-weight: 800;
+}
+
+.service-choice small {
+  margin-top: 5px;
+  color: #647784;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.service-choice em {
+  margin-top: 8px;
+  color: #0f766e;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.exam-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.exam-button {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.exam-button--primary {
+  border: 1px solid #0f766e;
+  color: #ffffff;
+  background: #0f766e;
+}
+
+.exam-button--primary:disabled {
+  border-color: #b8c8cf;
+  background: #b8c8cf;
+  cursor: not-allowed;
+}
+
+.exam-button--ghost {
+  border: 1px solid #d7e4e8;
+  color: #40535d;
+  background: #ffffff;
+}
+
+.schedule-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.34fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.schedule-board,
+.schedule-detail {
+  border: 1px solid #dfe9ee;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(15, 49, 59, 0.06);
+  overflow: hidden;
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: minmax(92px, 0.7fr) repeat(7, minmax(132px, 1fr));
+  gap: 1px;
+  padding: 1px;
+  overflow-x: auto;
+  background: #dfe9ee;
+}
+
+.schedule-grid__corner,
+.schedule-grid__day,
+.schedule-grid__shift,
+.schedule-cell {
+  min-height: 82px;
+  border: 0;
+  background: #ffffff;
+}
+
+.schedule-grid__corner,
+.schedule-grid__shift {
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  color: #50616b;
+  font-weight: 800;
+}
+
+.schedule-grid__day {
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  padding: 12px;
+  text-align: center;
+}
+
+.schedule-grid__day strong {
+  color: #143541;
+  font-weight: 800;
+}
+
+.schedule-grid__day span {
+  color: #647784;
+  font-weight: 700;
+}
+
+.schedule-cell {
+  display: grid;
+  align-content: center;
+  gap: 7px;
+  min-width: 132px;
+  padding: 12px;
+  color: #647784;
+  text-align: left;
+  transition: background 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+
+.schedule-cell strong,
+.schedule-cell span {
+  display: block;
+}
+
+.schedule-cell strong {
+  color: inherit;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.schedule-cell span {
+  font-weight: 700;
+}
+
+.schedule-cell.is-assigned {
+  color: #ffffff;
+  background: #0f766e;
+}
+
+.schedule-cell.is-assigned span {
+  color: #ccfbf1;
+}
+
+.schedule-cell.is-empty {
+  background: #f8fbfc;
+}
+
+.schedule-cell:hover,
+.schedule-cell.is-selected {
+  box-shadow: inset 0 0 0 3px rgba(20, 184, 166, 0.32);
+  transform: translateY(-1px);
+}
+
+.schedule-cell.is-selected {
+  color: #ffffff;
+  background: #115e59;
+}
+
+.schedule-detail {
+  position: sticky;
+  top: 28px;
+}
+
+.schedule-detail__header {
+  padding: 18px 20px;
+  border-bottom: 1px solid #edf3f5;
+}
+
+.schedule-detail__header h2 {
+  margin: 5px 0 6px;
+  color: #143541;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.schedule-detail__header p {
+  margin: 0;
+  color: #647784;
+  font-weight: 700;
+}
+
+.schedule-detail__meta {
+  display: grid;
+  grid-template-columns: 1fr 0.72fr;
+  gap: 12px;
+  margin: 0;
+  padding: 16px 20px;
+  border-bottom: 1px solid #edf3f5;
+}
+
+.schedule-detail__meta dt {
+  margin-bottom: 5px;
+  color: #647784;
+  font-weight: 800;
+}
+
+.schedule-detail__meta dd {
+  margin: 0;
+  color: #143541;
+  font-weight: 800;
+}
+
+.schedule-patient-list {
+  display: grid;
+  gap: 10px;
+  max-height: 560px;
+  padding: 14px;
+  overflow-y: auto;
+}
+
+.schedule-patient-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 14px;
+  border: 1px solid #dfe9ee;
+  border-radius: 12px;
+  background: #fbfdfe;
+}
+
+.schedule-patient-card span,
+.schedule-patient-card small {
+  display: block;
+}
+
+.schedule-patient-card span {
+  color: #0f766e;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.schedule-patient-card strong {
+  display: block;
+  margin-top: 5px;
+  color: #143541;
+  font-weight: 800;
+}
+
+.schedule-patient-card small {
+  margin-top: 5px;
+  color: #647784;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.schedule-patient-card em {
+  flex: 0 0 auto;
+  font-style: normal;
+}
+
 .settings-layout {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2061,6 +2632,8 @@ body.web-dashboard {
   .web-dashboard .admin-grid,
   .medical-record-shell,
   .invoice-shell,
+  .exam-layout,
+  .schedule-layout,
   .settings-layout,
   .booking-layout,
   .booking-time-grid {
@@ -2077,6 +2650,22 @@ body.web-dashboard {
 
   .invoice-shell {
     grid-template-columns: 1fr;
+  }
+
+  .exam-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .exam-queue {
+    position: static;
+  }
+
+  .schedule-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule-detail {
+    position: static;
   }
 
   .settings-layout {
@@ -2138,6 +2727,11 @@ body.web-dashboard {
   .invoice-shell,
   .invoice-summary-grid,
   .payment-controls,
+  .exam-layout,
+  .exam-form-grid,
+  .service-choice,
+  .schedule-layout,
+  .schedule-detail__meta,
   .settings-layout,
   .settings-panel__body,
   .booking-time-grid,
@@ -2158,6 +2752,13 @@ body.web-dashboard {
     grid-template-columns: 1fr;
   }
 
+  .exam-patient-card,
+  .exam-patient-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-content: stretch;
+  }
+
   .appointment-card__actions {
     justify-content: flex-start;
   }
@@ -2167,5 +2768,18 @@ body.web-dashboard {
   .medical-detail-grid div:nth-child(7),
   .settings-field--wide {
     grid-column: auto;
+  }
+
+  .exam-field--wide {
+    grid-column: auto;
+  }
+
+  .schedule-grid {
+    grid-template-columns: minmax(82px, 0.7fr) repeat(7, minmax(126px, 1fr));
+  }
+
+  .schedule-patient-card {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 }

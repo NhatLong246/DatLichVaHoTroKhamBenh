@@ -1,0 +1,212 @@
+@model HeThongDatLichVaKhamBenh.Models.ViewModels.LichLamViecBacSiViewModel
+@using System.Text.Json
+@{
+    Layout = null;
+    ViewData["Title"] = "Lịch làm việc";
+    var selectedCell = Model.OTrongLich.FirstOrDefault(x => x.DaPhanCong) ?? Model.OTrongLich.FirstOrDefault();
+    var scheduleJson = JsonSerializer.Serialize(Model.OTrongLich, new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    });
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="role-page web-dashboard doctor-theme">
+    <aside class="role-sidebar">
+        <div class="role-brand">
+            <div class="role-logo">+</div>
+            <div>
+                <strong>HealthCare</strong>
+                <span>Bác sĩ</span>
+            </div>
+        </div>
+        <nav>
+            <a asp-controller="Dashboard" asp-action="BacSi">Tổng quan</a>
+            <a asp-controller="KhamBenh" asp-action="Index">Khám bệnh</a>
+            <a class="active" asp-controller="LichLamViec" asp-action="Index">Lịch làm việc</a>
+            <a asp-controller="CaiDat" asp-action="BacSi">Cài đặt</a>
+        </nav>
+        <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form" data-confirm-message="Bạn có chắc chắn muốn đăng xuất không?">
+            @Html.AntiForgeryToken()
+            <button type="submit">Đăng xuất</button>
+        </form>
+    </aside>
+
+    <main class="role-main">
+        <header class="role-header">
+            <div>
+                <span class="eyebrow">Lịch làm việc cá nhân</span>
+                <h1>Lịch làm việc trong tuần</h1>
+                <p>Theo dõi ca trực đã được phân công và danh sách bệnh nhân đặt lịch theo từng ca.</p>
+            </div>
+            <time>@Model.TuanBatDau.ToString("dd/MM") - @Model.TuanKetThuc.ToString("dd/MM/yyyy")</time>
+        </header>
+
+        <section class="metric-grid doctor-metrics" aria-label="Tổng quan lịch làm việc">
+            <article class="metric-card">
+                <span>Bác sĩ</span>
+                <strong>@Model.HoTenBacSi</strong>
+                <small>@Model.TenChuyenKhoa</small>
+            </article>
+            <article class="metric-card">
+                <span>Ca đã phân công</span>
+                <strong>@Model.TongCaLamViec.ToString("00")</strong>
+                <small>Trong lịch làm việc cố định</small>
+            </article>
+            <article class="metric-card">
+                <span>Bệnh nhân trong tuần</span>
+                <strong>@Model.TongBenhNhanTrongTuan.ToString("00")</strong>
+                <small>Ca nhiều nhất: @Model.CaNhieuBenhNhanNhat</small>
+            </article>
+        </section>
+
+        <section class="schedule-layout">
+            <section class="schedule-board" aria-label="Lưới lịch làm việc trong tuần">
+                <div class="panel-heading">
+                    <div>
+                        <h2>Lịch làm việc</h2>
+                        <p>Ô màu xanh là ca đã được phân công. Bấm vào ô để xem bệnh nhân trong ca.</p>
+                    </div>
+                </div>
+
+                <div class="schedule-grid" role="grid">
+                    <div class="schedule-grid__corner">Ca</div>
+                    @foreach (var day in Model.NgayTrongTuan)
+                    {
+                        <div class="schedule-grid__day">
+                            <strong>@day.TenThu</strong>
+                            <span>@day.Ngay.ToString("dd/MM")</span>
+                        </div>
+                    }
+
+                    @foreach (var shift in Model.CaLamViecs)
+                    {
+                        <div class="schedule-grid__shift">@shift</div>
+                        @foreach (var day in Model.NgayTrongTuan)
+                        {
+                            var cell = Model.OTrongLich.First(x => x.TenThu == day.TenThu && x.CaLamViec == shift);
+                            <button type="button"
+                                    class="schedule-cell @(cell.DaPhanCong ? "is-assigned" : "is-empty") @(cell.Key == selectedCell?.Key ? "is-selected" : "")"
+                                    data-schedule-key="@cell.Key"
+                                    aria-label="@($"{cell.TenThu} {cell.CaLamViec}")">
+                                @if (cell.DaPhanCong)
+                                {
+                                    <strong>@cell.TenPhongKham</strong>
+                                    <span>@cell.SoBenhNhan bệnh nhân</span>
+                                }
+                                else
+                                {
+                                    <span>Không làm việc</span>
+                                }
+                            </button>
+                        }
+                    }
+                </div>
+            </section>
+
+            <aside class="schedule-detail" aria-live="polite">
+                <div class="schedule-detail__header">
+                    <span class="appointment-code" id="scheduleDetailDate">@selectedCell?.NgayText</span>
+                    <h2 id="scheduleDetailTitle">@selectedCell?.TenThu - @selectedCell?.CaLamViec</h2>
+                    <p id="scheduleDetailRoom">@selectedCell?.TenPhongKham</p>
+                </div>
+                <dl class="schedule-detail__meta">
+                    <div>
+                        <dt>Vị trí</dt>
+                        <dd id="scheduleDetailLocation">@selectedCell?.ViTriPhongKham</dd>
+                    </div>
+                    <div>
+                        <dt>Số bệnh nhân</dt>
+                        <dd id="scheduleDetailCount">@(selectedCell?.SoBenhNhan ?? 0)</dd>
+                    </div>
+                </dl>
+                <div class="schedule-patient-list" id="schedulePatientList"></div>
+            </aside>
+        </section>
+    </main>
+
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+    <script>
+        (function () {
+            const scheduleData = @Html.Raw(scheduleJson);
+            const cells = document.querySelectorAll("[data-schedule-key]");
+            const title = document.getElementById("scheduleDetailTitle");
+            const date = document.getElementById("scheduleDetailDate");
+            const room = document.getElementById("scheduleDetailRoom");
+            const location = document.getElementById("scheduleDetailLocation");
+            const count = document.getElementById("scheduleDetailCount");
+            const patientList = document.getElementById("schedulePatientList");
+
+            function escapeHtml(value) {
+                return String(value ?? "")
+                    .replaceAll("&", "&amp;")
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll('"', "&quot;")
+                    .replaceAll("'", "&#039;");
+            }
+
+            function statusClass(status) {
+                if (status === "Đang khám") return "info";
+                if (status === "Đã khám") return "success";
+                return "waiting";
+            }
+
+            function renderPatients(cell) {
+                if (!cell.daPhanCong) {
+                    patientList.innerHTML = '<div class="record-empty">Ca này chưa được phân công lịch làm việc.</div>';
+                    return;
+                }
+
+                if (!cell.benhNhanDatLich || cell.benhNhanDatLich.length === 0) {
+                    patientList.innerHTML = '<div class="record-empty">Chưa có bệnh nhân đặt lịch trong ca này.</div>';
+                    return;
+                }
+
+                patientList.innerHTML = cell.benhNhanDatLich.map((patient) => `
+                    <article class="schedule-patient-card">
+                        <div>
+                            <span>${escapeHtml(patient.maDangKy)} · ${escapeHtml(patient.gioKhamText)}</span>
+                            <strong>${escapeHtml(patient.tenBenhNhan)}</strong>
+                            <small>${escapeHtml(patient.dienThoai)} · ${patient.thoiLuongKham ? `${patient.thoiLuongKham} phút` : "Chưa có thời lượng"}</small>
+                        </div>
+                        <em class="status ${statusClass(patient.trangThai)}">${escapeHtml(patient.trangThai)}</em>
+                    </article>
+                `).join("");
+            }
+
+            function selectCell(key) {
+                const cell = scheduleData.find((item) => item.key === key);
+                if (!cell) return;
+
+                cells.forEach((button) => button.classList.toggle("is-selected", button.dataset.scheduleKey === key));
+                date.textContent = cell.ngayText;
+                title.textContent = `${cell.tenThu} - ${cell.caLamViec}`;
+                room.textContent = cell.tenPhongKham;
+                location.textContent = cell.viTriPhongKham;
+                count.textContent = cell.soBenhNhan;
+                renderPatients(cell);
+            }
+
+            cells.forEach((button) => {
+                button.addEventListener("click", function () {
+                    selectCell(button.dataset.scheduleKey);
+                });
+            });
+
+            const initial = document.querySelector(".schedule-cell.is-selected") || cells[0];
+            if (initial) {
+                selectCell(initial.dataset.scheduleKey);
+            }
+        })();
+    </script>
+</body>
+</html>

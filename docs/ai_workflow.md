@@ -1,5 +1,30 @@
 # AI Workflow
 
+## Ghi chú hiện trạng màn hình bác sĩ
+
+Khi sửa tiếp các màn hình bác sĩ, kiểm tra các file hiện có trước:
+
+- `Controllers/DashboardController.cs`: tổng quan bác sĩ lấy dữ liệu thật trong ngày.
+- `Controllers/KhamBenhController.cs`: tiếp nhận bệnh nhân, lập phiếu khám, kê đơn, chỉ định dịch vụ, tạo hóa đơn.
+- `Controllers/LichLamViecController.cs`: lưới lịch làm việc tuần và danh sách bệnh nhân theo ca.
+- `Controllers/CaiDatController.cs`: cài đặt bệnh nhân và bác sĩ.
+- `Models/ViewModels/BacSiDashboardViewModel.cs`
+- `Models/ViewModels/KhamBenhViewModel.cs`
+- `Models/ViewModels/LichLamViecBacSiViewModel.cs`
+- `Models/ViewModels/CaiDatViewModel.cs`
+- `Views/Dashboard/BacSi.cshtml`
+- `Views/KhamBenh/Index.cshtml`
+- `Views/LichLamViec/Index.cshtml`
+- `Views/CaiDat/BacSi.cshtml`
+
+Quy tắc cần giữ:
+
+- Mọi màn bác sĩ phải lọc theo bác sĩ đang đăng nhập qua `MaNguoiDung` trong session và `BacSi.MaNguoiDung`.
+- Không dùng dữ liệu bệnh nhân/số liệu gán cứng trong view.
+- Hóa đơn tạo từ khám bệnh hiện chỉ tính tiền dịch vụ/khám; thuốc được lưu trong đơn thuốc riêng và không cộng vào hóa đơn.
+- Sidebar bác sĩ dùng các mục `Tổng quan`, `Khám bệnh`, `Lịch làm việc`, `Cài đặt`.
+- Các thao tác quan trọng như đăng xuất, đổi mật khẩu, hoàn thành ca khám tiếp tục dùng modal custom, không dùng `confirm()`.
+
 Checklist này dùng mỗi khi nhờ AI code để tiết kiệm token và giảm lỗi.
 
 ## Cách bắt đầu một phiên làm việc

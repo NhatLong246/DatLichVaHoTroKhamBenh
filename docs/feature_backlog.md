@@ -1,5 +1,24 @@
 # Feature Backlog
 
+## Cập nhật tiến độ màn hình bác sĩ
+
+Đã hoàn thành:
+
+- Dashboard bác sĩ (`Dashboard/BacSi`) đã lấy dữ liệu thật từ database, không còn dùng số liệu/bệnh nhân gán cứng.
+- Trang `KhamBenh/Index`: hàng chờ bệnh nhân trong ngày, tiếp nhận bệnh nhân, lập phiếu khám, kê đơn thuốc, chọn dịch vụ, hoàn thành ca khám.
+- Luồng hoàn thành ca khám tạo `PhieuKham`, `ChiTietDichVuKham`, `DonThuoc` nếu có thuốc, `HoaDon` và `ChiTietHoaDon`.
+- Hóa đơn từ màn khám bệnh chỉ tính tiền khám/dịch vụ, không tính tiền thuốc.
+- Trang `LichLamViec/Index`: lưới lịch làm việc tuần hiện tại theo `LichLamViec`, ô xanh cho ca đã phân công, panel bệnh nhân đã đặt lịch theo ngày/ca.
+- Trang `CaiDat/BacSi`: xem thông tin bác sĩ/tài khoản, cập nhật điện thoại/địa chỉ, đổi mật khẩu.
+- Sidebar bác sĩ đã nối các mục: `Tổng quan`, `Khám bệnh`, `Lịch làm việc`, `Cài đặt`.
+
+Việc cần làm tiếp:
+
+- Bổ sung test hoặc kiểm tra thủ công đầy đủ với database seed thật cho luồng bác sĩ hoàn thành ca khám.
+- Xem xét chính sách sửa hoặc hủy phiếu khám/hóa đơn sau khi đã hoàn thành ca khám.
+- Nếu muốn trạng thái đơn thuốc là `Đã kê đơn`, cần cập nhật CHECK constraint trong `btl_table.sql` và entity/logic liên quan; hiện vẫn giữ trạng thái hợp lệ theo schema là `Chờ cấp thuốc`.
+- Hoàn thiện màn quản trị để CRUD bác sĩ, lịch làm việc, dịch vụ, thuốc và dữ liệu nền phục vụ demo.
+
 Danh sách này giúp chia nhỏ việc code với AI. Khi làm chức năng nào, chỉ lấy đúng phần đó để tránh lan man.
 
 ## Nền tảng kỹ thuật

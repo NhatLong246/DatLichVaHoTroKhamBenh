@@ -1,5 +1,54 @@
 # MEMORY - HeThongDatLichVaKhamBenh
 
+## Cập nhật mới nhất - màn hình bác sĩ
+
+Các màn hình bác sĩ đã được chuyển dần từ mockup tĩnh sang dữ liệu thật, dùng chung phong cách `role-page web-dashboard doctor-theme`, sidebar teal/trắng/xám nhẹ và modal xác nhận custom trong `wwwroot/js/dashboard.js`.
+
+### Tổng quan bác sĩ
+
+- Trang tổng quan bác sĩ nằm tại `Views/Dashboard/BacSi.cshtml`, action `DashboardController.BacSi`.
+- ViewModel: `Models/ViewModels/BacSiDashboardViewModel.cs`.
+- Không còn dùng số liệu gán cứng. Trang lấy dữ liệu từ database theo bác sĩ đang đăng nhập qua `BacSi.MaNguoiDung`, ngày hiện tại và `DangKyLichKham`.
+- Bộ lọc hiện dùng: `DangKyLichKham.MaBacSi`, `NgayKham == hôm nay`, loại trạng thái `Hủy`.
+- Số `Đang chờ khám` đếm trạng thái `Chờ khám`.
+- Số `Đã tiếp nhận` đếm trạng thái `Đang khám` và `Đã khám`.
+- Bảng bệnh nhân hôm nay hiển thị bệnh nhân/phòng khám/giờ/ca/trạng thái từ `DangKyLichKham`, có link sang `KhamBenh/Index?maDangKy=...`.
+
+### Khám bệnh bác sĩ
+
+- Trang khám bệnh chính nằm tại `Views/KhamBenh/Index.cshtml`.
+- Controller: `Controllers/KhamBenhController.cs`.
+- ViewModel: `Models/ViewModels/KhamBenhViewModel.cs`.
+- Chức năng hiện có: xem hàng chờ hôm nay, tiếp nhận bệnh nhân, tạo/cập nhật `PhieuKham`, nhập triệu chứng, chẩn đoán, hướng điều trị, kê đơn thuốc, chỉ định dịch vụ, hoàn thành ca khám.
+- Khi tiếp nhận, lịch chuyển từ `Chờ khám` sang `Đang khám` và tạo `PhieuKham` trạng thái `Đang xử lý` nếu chưa có.
+- Khi hoàn thành, cập nhật `PhieuKham.TrangThai = Hoàn thành`, `DangKyLichKham.TrangThai = Đã khám`, lưu `ChiTietDichVuKham`, tạo `DonThuoc` nếu có thuốc, tạo `HoaDon` và `ChiTietHoaDon`.
+- Theo yêu cầu nghiệp vụ mới, hóa đơn chỉ tính tiền khám/dịch vụ; thuốc không cộng vào hóa đơn. Do schema `DonThuoc.TrangThai` chưa có giá trị `Đã kê đơn`, đơn thuốc vẫn dùng trạng thái hợp lệ `Chờ cấp thuốc` và ghi chú thể hiện thuốc đã kê riêng.
+- Các mã mới sinh theo tiền tố hiện dùng trong controller: `PK`, `DT`, `HD`.
+
+### Lịch làm việc bác sĩ
+
+- Trang lịch làm việc nằm tại `Views/LichLamViec/Index.cshtml`.
+- Controller: `Controllers/LichLamViecController.cs`.
+- ViewModel: `Models/ViewModels/LichLamViecBacSiViewModel.cs`.
+- Màn hình hiển thị lưới tuần hiện tại gồm các ngày `Thứ 2` đến `Chủ nhật` và các ca `Sáng`, `Chiều`, `Tối`.
+- Ô màu xanh là ca đã được phân công từ bảng `LichLamViec`, kèm phòng khám/vị trí nếu có.
+- Bên cạnh lưới có panel chi tiết; khi chọn một ô, panel hiển thị bệnh nhân đã đặt lịch trong đúng ngày/ca đó từ `DangKyLichKham`.
+- Lịch bệnh nhân trong panel loại trạng thái `Hủy`, sắp theo ngày, giờ khám và mã đăng ký.
+
+### Cài đặt bác sĩ
+
+- Trang cài đặt bác sĩ nằm tại `Views/CaiDat/BacSi.cshtml`, route `CaiDat/BacSi`.
+- Controller dùng chung: `Controllers/CaiDatController.cs`.
+- ViewModel bác sĩ: `CaiDatBacSiViewModel` trong `Models/ViewModels/CaiDatViewModel.cs`.
+- Sidebar bác sĩ đã đổi mục `Đổi mật khẩu` thành `Cài đặt` ở các màn: tổng quan, khám bệnh, lịch làm việc.
+- Bác sĩ chỉ được sửa `DienThoai` và `DiaChi`; các thông tin định danh như mã bác sĩ, họ tên, ngày sinh, giới tính, trình độ, chuyên khoa, tài khoản hiển thị chỉ đọc.
+- Đổi mật khẩu bác sĩ dùng cùng logic hash SHA-256 và modal custom như bệnh nhân.
+
+### Ghi chú kỹ thuật mới
+
+- `Program.cs` đã cấu hình logging dùng Console/Debug để tránh lỗi quyền ghi Windows Event Log khi chạy local trong môi trường hạn chế.
+- Khi sửa tiếp các màn bác sĩ, không quay lại dữ liệu mẫu/gán cứng trong Razor view. Luôn lấy theo `MaNguoiDung` trong session và dữ liệu entity thật.
+
 File này là bộ nhớ ngắn hạn/dài hạn cho AI khi hỗ trợ code dự án. Trước khi sửa code, hãy đọc file này cùng `system_rules.md` và các tài liệu trong `docs/`.
 
 ## Tổng quan dự án
