@@ -74,3 +74,23 @@ Danh sách này giúp chia nhỏ việc code với AI. Khi làm chức năng nà
 5. Bác sĩ lập phiếu khám và kê đơn.
 6. Hóa đơn/thanh toán.
 7. Báo cáo và hoàn thiện giao diện.
+
+## Cập nhật tiến độ module đặt lịch
+
+Đã hoàn thành:
+
+- Danh sách chuyên khoa trong trang đặt lịch.
+- Danh sách bác sĩ theo chuyên khoa.
+- Xem lịch làm việc bác sĩ.
+- Gợi ý chuyên khoa theo triệu chứng bằng rule-based.
+- Chọn ngày, ca, khung giờ và thời lượng khám.
+- Đặt lịch khám và tạo `DangKyLichKham`.
+- Kiểm tra ca/giờ khám hợp lệ, phòng hoạt động, ngày không quá khứ, không trùng giờ cùng bác sĩ.
+
+Việc cần làm tiếp:
+
+- Hiển thị danh sách lịch hẹn của bệnh nhân, gồm `GioKham` và `ThoiLuongKham`.
+- Cho phép đổi lịch/hủy lịch với modal custom, không dùng `confirm()`.
+- Bác sĩ xem lịch khám theo ngày/ca/giờ.
+- Quản trị viên quản lý lịch làm việc bác sĩ và sức chứa phòng.
+- Có thể nâng cấp gợi ý chuyên khoa sang AI API sau này, nhưng vẫn phải đối chiếu với bảng `ChuyenKhoa`.

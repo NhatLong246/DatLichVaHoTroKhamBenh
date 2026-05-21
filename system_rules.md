@@ -88,3 +88,15 @@ Sau khi sửa code:
 - Thiết kế authentication/authorization rõ ràng.
 - Thêm ViewModel cho đăng nhập, đăng ký, đặt lịch, lập phiếu khám, hóa đơn.
 - Tạo seed data mẫu cho chuyên khoa, phòng khám, bác sĩ, lịch làm việc, dịch vụ, thuốc.
+
+## Quy tắc riêng cho module đặt lịch khám
+
+- Trang đặt lịch bệnh nhân hiện dùng `LichKhamController`, `DatLichKhamViewModel` và view `Views/LichKham/DatLich.cshtml`.
+- Không bỏ qua kiểm tra server-side khi tạo `DangKyLichKham`; không chỉ dựa vào JavaScript ở view.
+- Khi tạo lịch mới phải lưu `GioKham` và `ThoiLuongKham`.
+- Khung giờ phải nằm trong ca đã chọn: `Sáng` 07:30-11:30, `Chiều` 13:30-17:00, `Tối` 18:00-20:30.
+- `ThoiLuongKham` hợp lệ từ 15 đến 180 phút.
+- Phải kiểm tra trùng giờ của cùng bác sĩ trong cùng ngày/ca, tính theo khoảng thời gian bắt đầu `GioKham` và kết thúc `GioKham + ThoiLuongKham`.
+- Nếu database hiện có chưa có `DangKyLichKham.GioKham` và `DangKyLichKham.ThoiLuongKham`, phải chạy `sql_update_add_gio_kham_dang_ky.sql` trước khi test đặt lịch thật.
+- Gợi ý chuyên khoa bằng triệu chứng chỉ là gợi ý chọn khoa, không phải chẩn đoán. Nội dung UI và thông báo không được khẳng định bệnh.
+- Nếu nâng cấp sang AI API, không lưu API key trong source code và phải đối chiếu kết quả AI với dữ liệu `ChuyenKhoa` thật trong database.

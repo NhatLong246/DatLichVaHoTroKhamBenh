@@ -28,3 +28,10 @@ Hướng dẫn cho mọi AI/coding agent làm việc trong repository này.
 - Luồng nghiệp vụ: `docs/business_flows.md`
 - Backlog module: `docs/feature_backlog.md`
 - Checklist làm việc với AI: `docs/ai_workflow.md`
+
+## Ghi chú hiện trạng module đặt lịch
+
+- Trang đặt lịch bệnh nhân đã có tại `Views/LichKham/DatLich.cshtml`, controller `LichKhamController`, ViewModel `DatLichKhamViewModel`.
+- Chức năng hiện có: gợi ý chuyên khoa theo triệu chứng bằng rule-based, chọn bác sĩ theo chuyên khoa, xem lịch làm việc, chọn ngày/ca/giờ/thời lượng, xác nhận thông tin và tạo `DangKyLichKham`.
+- Schema `DangKyLichKham` đã mở rộng thêm `GioKham` và `ThoiLuongKham`; database cũ cần chạy `sql_update_add_gio_kham_dang_ky.sql`.
+- Khi sửa tiếp module này, giữ gợi ý triệu chứng ở mức hỗ trợ chọn chuyên khoa, không viết nội dung như chẩn đoán bệnh.

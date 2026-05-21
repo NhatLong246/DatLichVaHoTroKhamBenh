@@ -63,6 +63,8 @@ Hãy triển khai module đặt lịch khám cho bệnh nhân.
 Yêu cầu: chọn chuyên khoa, bác sĩ, ngày, ca; kiểm tra LichLamViec; tạo DangKyLichKham trạng thái Chờ khám.
 ```
 
+Ghi chú hiện trạng: trang đặt lịch đã có `LichKhamController`, `DatLichKhamViewModel`, `Views/LichKham/DatLich.cshtml`, gợi ý chuyên khoa rule-based, chọn khung giờ/thời lượng và lưu `GioKham`, `ThoiLuongKham` vào `DangKyLichKham`. Nếu làm tiếp module này, trước tiên kiểm tra `btl_table.sql`, `Models/Entities/DangKyLichKham.cs`, `sql_update_add_gio_kham_dang_ky.sql` và controller hiện có.
+
 ### Lập phiếu khám
 
 ```text

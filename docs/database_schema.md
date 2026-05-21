@@ -162,3 +162,21 @@ Chi tiết tiền khám và tiền thuốc.
 - Lịch làm việc bác sĩ: `LichLamViec` include `PhongKham`, `BacSi`, `ChuyenKhoa`.
 - Danh sách bệnh nhân theo bác sĩ/ngày: `DangKyLichKham` filter `MaBacSi`, `NgayKham`, `CaKham`, trạng thái khác `Hủy`.
 - Chi phí phiếu khám: tổng `ChiTietDichVuKham.ThanhTien` + tổng `ChiTietDonThuoc.ThanhTien`.
+
+## Cập nhật schema đặt lịch theo khung giờ
+
+`DangKyLichKham` đã được mở rộng để hỗ trợ đặt lịch theo khung giờ cụ thể:
+
+- `GioKham TIME(0)`: giờ bắt đầu dự kiến.
+- `ThoiLuongKham INT`: thời lượng khám dự kiến, hợp lệ từ 15 đến 180 phút.
+- Constraint `CHK_DangKyLichKham_GioKham_ThoiLuong`: `GioKham` và `ThoiLuongKham` cùng null hoặc cùng có giá trị.
+- Constraint `CHK_DangKyLichKham_ThoiLuongKham`: kiểm tra thời lượng.
+- Constraint `CHK_DangKyLichKham_GioKham_TrongCa`: kiểm tra giờ/thời lượng nằm trong ca `Sáng`, `Chiều`, `Tối`.
+- Index `IX_DangKyLichKham_BacSi_Ngay_Ca_Gio` hỗ trợ tra cứu lịch theo bác sĩ, ngày, ca, giờ.
+- Với database đã tạo từ schema cũ, chạy `sql_update_add_gio_kham_dang_ky.sql` để thêm cột/constraint/index.
+
+Khung giờ ca hiện dùng trong ứng dụng:
+
+- `Sáng`: 07:30-11:30.
+- `Chiều`: 13:30-17:00.
+- `Tối`: 18:00-20:30.

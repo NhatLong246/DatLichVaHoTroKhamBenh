@@ -126,3 +126,18 @@ Tài liệu này tóm tắt các sơ đồ chức năng, ngữ cảnh, luồng d
 - Không cho tạo phiếu khám cho lịch đã hủy.
 - Không cho thanh toán hóa đơn đã hủy hoặc đã thanh toán.
 - Khi hủy lịch đã có phiếu khám/hóa đơn cần xác định chính sách nghiệp vụ trước khi code.
+
+## Cập nhật luồng đặt lịch khám trực tuyến
+
+Trang đặt lịch hiện tại có thêm bước hỗ trợ bệnh nhân chưa biết nên khám chuyên khoa nào:
+
+1. Bệnh nhân nhập triệu chứng.
+2. Hệ thống rule-based gợi ý 1-3 chuyên khoa phù hợp và thời lượng khám dự kiến.
+3. Bệnh nhân có thể dùng gợi ý để tự chọn chuyên khoa, sau đó chọn bác sĩ.
+4. Bệnh nhân xem lịch làm việc của bác sĩ và chọn ngày/ca/khung giờ.
+5. Hệ thống tạo các khung giờ theo thời lượng khám dự kiến để giảm thời gian chờ.
+6. Trước khi xác nhận, bệnh nhân xem lại chuyên khoa, bác sĩ, ngày, ca, giờ, thời lượng và phòng khám.
+7. Khi POST đặt lịch, server kiểm tra lịch làm việc, phòng khám, sức chứa, ngày không quá khứ, giờ nằm trong ca và không trùng giờ với lịch khác của cùng bác sĩ.
+8. Nếu hợp lệ, tạo `DangKyLichKham` trạng thái `Chờ khám`, có lưu `GioKham` và `ThoiLuongKham`.
+
+Gợi ý chuyên khoa chỉ hỗ trợ điều hướng bệnh nhân đến khoa phù hợp, không phải chẩn đoán y khoa.

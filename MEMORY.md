@@ -115,3 +115,19 @@ Các bảng hiện có:
 - `docs/business_flows.md`: luồng nghiệp vụ từ các sơ đồ.
 - `docs/feature_backlog.md`: danh sách module/chức năng nên triển khai.
 - `docs/ai_workflow.md`: checklist cho mỗi lần nhờ AI sửa code.
+
+## Cập nhật module đặt lịch khám
+
+- Trang đặt lịch khám cho bệnh nhân đã được triển khai tại `Views/LichKham/DatLich.cshtml`.
+- Controller chính: `Controllers/LichKhamController.cs`.
+- ViewModel chính: `Models/ViewModels/DatLichKhamViewModel.cs`.
+- Entity lịch hẹn: `Models/Entities/DangKyLichKham.cs`.
+- Link từ dashboard bệnh nhân sang trang đặt lịch đã được nối trong `Views/Dashboard/BenhNhan.cshtml`.
+- CSS cho giao diện đặt lịch nằm trong `wwwroot/css/site.css`, dùng chung phong cách `web-dashboard`.
+- Trang đặt lịch hiện có: nhập triệu chứng để gợi ý chuyên khoa, chọn bác sĩ theo chuyên khoa, chọn lịch làm việc/ngày/ca/giờ/thời lượng và xác nhận thông tin.
+- Gợi ý chuyên khoa đang dùng rule-based trong `LichKhamController.GoiYChuyenKhoa`, chưa gọi AI/API ngoài.
+- Rule-based hỗ trợ các nhóm khoa: `Nội khoa`, `Tim mạch`, `Tiêu hóa`, `Tai Mũi Họng`, `Mắt`, `Da liễu`, `Thần kinh`, `Sản phụ khoa`, `Nhi khoa`, `Ngoại khoa`.
+- Gợi ý chỉ hỗ trợ chọn chuyên khoa, không được trình bày như chẩn đoán bệnh. Nếu tích hợp AI API sau này, vẫn phải đối chiếu kết quả với bảng `ChuyenKhoa`.
+- `DangKyLichKham` đã mở rộng thêm `GioKham TIME(0)` và `ThoiLuongKham INT`.
+- Script nâng cấp database hiện có: `sql_update_add_gio_kham_dang_ky.sql`. Cần chạy script này nếu database đã được tạo từ schema cũ.
+- Khi đặt lịch phải kiểm tra: đúng vai trò bệnh nhân, bác sĩ thuộc chuyên khoa, có `LichLamViec` đúng thứ/ca, phòng khám hoạt động, ngày không quá khứ, ca hợp lệ, giờ nằm trong ca, thời lượng 15-180 phút, không trùng giờ với lịch khác của cùng bác sĩ.
