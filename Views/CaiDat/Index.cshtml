@@ -1,0 +1,145 @@
+@model HeThongDatLichVaKhamBenh.Models.ViewModels.CaiDatViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Cài đặt";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="role-page web-dashboard patient-theme">
+    <aside class="role-sidebar">
+        <div class="role-brand">
+            <div class="role-logo">+</div>
+            <div>
+                <strong>HealthCare</strong>
+                <span>Bệnh nhân</span>
+            </div>
+        </div>
+        <nav>
+            <a asp-controller="Dashboard" asp-action="BenhNhan">Tổng quan</a>
+            <a asp-controller="LichKham" asp-action="DatLich">Đặt lịch khám</a>
+            <a asp-controller="LichKham" asp-action="QuanLy">Lịch hẹn</a>
+            <a asp-controller="HoSoBenhAn" asp-action="Index">Hồ sơ bệnh án</a>
+            <a asp-controller="HoaDon" asp-action="Index">Hóa đơn</a>
+            <a class="active" asp-controller="CaiDat" asp-action="Index">Cài đặt</a>
+        </nav>
+        <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form" data-confirm-message="Bạn có chắc chắn muốn đăng xuất không?">
+            @Html.AntiForgeryToken()
+            <button type="submit">Đăng xuất</button>
+        </form>
+    </aside>
+
+    <main class="role-main">
+        <header class="role-header">
+            <div>
+                <span class="eyebrow">Thông tin cá nhân và tài khoản</span>
+                <h1>Cài đặt</h1>
+                <p>Quản lý thông tin liên hệ, xem thông tin tài khoản và thay đổi mật khẩu đăng nhập.</p>
+            </div>
+            <div class="quick-status">@Model.HoTen</div>
+        </header>
+
+        @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+        {
+            <div class="booking-alert booking-alert--success">@Model.SuccessMessage</div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="booking-alert booking-alert--danger">@Model.ErrorMessage</div>
+        }
+
+        <section class="settings-layout" aria-label="Cài đặt bệnh nhân">
+            <form asp-controller="CaiDat" asp-action="CapNhatThongTin" method="post" class="settings-panel">
+                @Html.AntiForgeryToken()
+                <div class="panel-heading">Thông tin cá nhân</div>
+                <div class="settings-panel__body">
+                    <div class="settings-field">
+                        <label>Mã bệnh nhân</label>
+                        <input value="@Model.MaBenhNhan" readonly />
+                    </div>
+                    <div class="settings-field">
+                        <label>Họ tên</label>
+                        <input value="@Model.HoTen" readonly />
+                    </div>
+                    <div class="settings-field">
+                        <label>Ngày sinh</label>
+                        <input value="@(Model.NgaySinh?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")" readonly />
+                    </div>
+                    <div class="settings-field">
+                        <label>Giới tính</label>
+                        <input value="@Model.GioiTinh" readonly />
+                    </div>
+                    <div class="settings-field">
+                        <label asp-for="DienThoai">Số điện thoại</label>
+                        <input asp-for="DienThoai" inputmode="numeric" maxlength="10" placeholder="Nhập số điện thoại 10 chữ số" />
+                        <span asp-validation-for="DienThoai"></span>
+                    </div>
+                    <div class="settings-field settings-field--wide">
+                        <label asp-for="DiaChi">Địa chỉ</label>
+                        <textarea asp-for="DiaChi" rows="3" maxlength="200" placeholder="Nhập địa chỉ liên hệ"></textarea>
+                        <span asp-validation-for="DiaChi"></span>
+                    </div>
+                </div>
+                <div class="settings-actions">
+                    <button type="submit">Lưu thông tin</button>
+                </div>
+            </form>
+
+            <section class="settings-panel">
+                <div class="panel-heading">Thông tin tài khoản</div>
+                <div class="settings-panel__body">
+                    <div class="settings-field">
+                        <label>Mã người dùng</label>
+                        <input value="@Model.MaNguoiDung" readonly />
+                    </div>
+                    <div class="settings-field">
+                        <label>Tên đăng nhập</label>
+                        <input value="@Model.TenDangNhap" readonly />
+                    </div>
+                    <div class="settings-field">
+                        <label>Vai trò</label>
+                        <input value="@Model.VaiTro" readonly />
+                    </div>
+                    <div class="settings-field">
+                        <label>Trạng thái</label>
+                        <input value="@Model.TrangThaiTaiKhoan" readonly />
+                    </div>
+                </div>
+            </section>
+
+            <form asp-controller="CaiDat" asp-action="DoiMatKhau" method="post" class="settings-panel confirm-form" data-confirm-title="Xác nhận đổi mật khẩu" data-confirm-ok="Đổi mật khẩu" data-confirm-message="Bạn có chắc chắn muốn đổi mật khẩu đăng nhập không?">
+                @Html.AntiForgeryToken()
+                <div class="panel-heading">Đổi mật khẩu</div>
+                <div class="settings-panel__body">
+                    <div class="settings-field">
+                        <label for="MatKhauHienTai">Mật khẩu hiện tại</label>
+                        <input id="MatKhauHienTai" name="MatKhauHienTai" type="password" autocomplete="current-password" />
+                    </div>
+                    <div class="settings-field">
+                        <label for="MatKhauMoi">Mật khẩu mới</label>
+                        <input id="MatKhauMoi" name="MatKhauMoi" type="password" autocomplete="new-password" />
+                    </div>
+                    <div class="settings-field">
+                        <label for="XacNhanMatKhauMoi">Xác nhận mật khẩu mới</label>
+                        <input id="XacNhanMatKhauMoi" name="XacNhanMatKhauMoi" type="password" autocomplete="new-password" />
+                    </div>
+                </div>
+                <div class="settings-actions">
+                    <button type="submit">Đổi mật khẩu</button>
+                </div>
+            </form>
+        </section>
+    </main>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+</body>
+</html>

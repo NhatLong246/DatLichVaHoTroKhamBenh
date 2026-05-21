@@ -131,3 +131,47 @@ Các bảng hiện có:
 - `DangKyLichKham` đã mở rộng thêm `GioKham TIME(0)` và `ThoiLuongKham INT`.
 - Script nâng cấp database hiện có: `sql_update_add_gio_kham_dang_ky.sql`. Cần chạy script này nếu database đã được tạo từ schema cũ.
 - Khi đặt lịch phải kiểm tra: đúng vai trò bệnh nhân, bác sĩ thuộc chuyên khoa, có `LichLamViec` đúng thứ/ca, phòng khám hoạt động, ngày không quá khứ, ca hợp lệ, giờ nằm trong ca, thời lượng 15-180 phút, không trùng giờ với lịch khác của cùng bác sĩ.
+
+## Cập nhật các màn hình bệnh nhân
+
+Các màn hình bệnh nhân đã được nối từ sidebar theo phong cách `web-dashboard`, dùng chung CSS trong `wwwroot/css/site.css` và modal xác nhận custom trong `wwwroot/js/dashboard.js`.
+
+### Quản lý lịch hẹn
+
+- Trang quản lý lịch hẹn nằm tại `Views/LichKham/QuanLy.cshtml`.
+- Controller/action chính: `LichKhamController.QuanLy` và `LichKhamController.HuyLich`.
+- ViewModel: `Models/ViewModels/QuanLyLichHenViewModel.cs`.
+- Chức năng hiện có: hiển thị toàn bộ lịch hẹn của bệnh nhân đang đăng nhập, thông tin bác sĩ/chuyên khoa/phòng khám/ngày/ca/giờ/thời lượng/trạng thái, phiếu khám nếu có.
+- Bệnh nhân chỉ được hủy lịch của chính mình khi lịch ở trạng thái `Chờ khám`, chưa tới thời gian khám và chưa có `PhieuKham`.
+- Hủy lịch cập nhật `DangKyLichKham.TrangThai = Hủy`, dùng modal custom, không dùng `confirm()`.
+
+### Hồ sơ bệnh án
+
+- Trang hồ sơ bệnh án nằm tại `Views/HoSoBenhAn/Index.cshtml`.
+- Controller: `Controllers/HoSoBenhAnController.cs`.
+- ViewModel: `Models/ViewModels/HoSoBenhAnViewModel.cs`.
+- Chức năng hiện có: bệnh nhân xem các lần khám đã có `PhieuKham`, chọn một lần khám để xem chi tiết triệu chứng, chẩn đoán, hướng điều trị, bác sĩ, chuyên khoa, phòng khám.
+- Tab `Đơn thuốc` hiển thị `DonThuoc` và bảng `ChiTietDonThuoc` gồm thuốc, số lượng, liều lượng, số ngày dùng, cách dùng, thành tiền.
+- Tab `Dịch vụ đã dùng` hiển thị `ChiTietDichVuKham`, tên dịch vụ, mô tả, số lượng, đơn giá, thành tiền và tổng chi phí dịch vụ.
+- Dữ liệu render bằng JavaScript từ JSON đã có escape HTML ở phía client để tránh chèn markup không mong muốn.
+
+### Hóa đơn
+
+- Trang hóa đơn nằm tại `Views/HoaDon/Index.cshtml`.
+- Controller: `Controllers/HoaDonController.cs`.
+- ViewModel: `Models/ViewModels/HoaDonViewModel.cs`.
+- Chức năng hiện có: bệnh nhân xem danh sách hóa đơn của chính mình, chọn hóa đơn để xem chi tiết `ChiTietHoaDon` gồm phiếu khám, đơn thuốc nếu có, tiền khám, tiền thuốc, thành tiền và tổng cộng.
+- Với hóa đơn `Chưa thanh toán`, bệnh nhân có thể chọn hình thức `Chuyển khoản`, `Thẻ`, `Tiền mặt`, `Bảo hiểm` rồi xác nhận thanh toán.
+- Thanh toán cập nhật `HoaDon.TrangThai = Đã thanh toán` và lưu `HoaDon.HinhThucThanhToan`.
+- Không cho thanh toán hóa đơn không thuộc bệnh nhân hiện tại hoặc hóa đơn đã thanh toán/đã hủy.
+
+### Cài đặt bệnh nhân
+
+- Trang cài đặt nằm tại `Views/CaiDat/Index.cshtml`.
+- Controller: `Controllers/CaiDatController.cs`.
+- ViewModel: `Models/ViewModels/CaiDatViewModel.cs`.
+- Sidebar bệnh nhân đã đổi mục `Đổi mật khẩu` thành `Cài đặt`.
+- Trang cài đặt gồm thông tin cá nhân, thông tin tài khoản và đổi mật khẩu.
+- Các trường định danh như mã bệnh nhân, họ tên, ngày sinh, giới tính, mã người dùng, tên đăng nhập, vai trò, trạng thái tài khoản hiển thị `readonly`.
+- Bệnh nhân hiện chỉ cập nhật số điện thoại và địa chỉ.
+- Đổi mật khẩu yêu cầu mật khẩu hiện tại, mật khẩu mới và xác nhận mật khẩu mới; mật khẩu được hash SHA-256 giống `AccountController`.

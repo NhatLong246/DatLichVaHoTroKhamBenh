@@ -28,10 +28,10 @@
         <nav>
             <a asp-controller="Dashboard" asp-action="BenhNhan">Tổng quan</a>
             <a class="active" asp-controller="LichKham" asp-action="DatLich">Đặt lịch khám</a>
-            <a href="#">Lịch hẹn</a>
-            <a href="#">Hồ sơ bệnh án</a>
-            <a href="#">Hóa đơn</a>
-            <a href="#">Đổi mật khẩu</a>
+            <a asp-controller="LichKham" asp-action="QuanLy">Lịch hẹn</a>
+            <a asp-controller="HoSoBenhAn" asp-action="Index">Hồ sơ bệnh án</a>
+            <a asp-controller="HoaDon" asp-action="Index">Hóa đơn</a>
+            <a asp-controller="CaiDat" asp-action="Index">Cài đặt</a>
         </nav>
         <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form" data-confirm-message="Bạn có chắc chắn muốn đăng xuất không?">
             @Html.AntiForgeryToken()

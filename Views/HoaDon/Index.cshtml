@@ -1,0 +1,280 @@
+@model HeThongDatLichVaKhamBenh.Models.ViewModels.HoaDonViewModel
+@using System.Text.Json
+@{
+    Layout = null;
+    ViewData["Title"] = "Hóa đơn";
+    var invoiceJson = JsonSerializer.Serialize(Model.HoaDons);
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="role-page web-dashboard patient-theme">
+    <aside class="role-sidebar">
+        <div class="role-brand">
+            <div class="role-logo">+</div>
+            <div>
+                <strong>HealthCare</strong>
+                <span>Bệnh nhân</span>
+            </div>
+        </div>
+        <nav>
+            <a asp-controller="Dashboard" asp-action="BenhNhan">Tổng quan</a>
+            <a asp-controller="LichKham" asp-action="DatLich">Đặt lịch khám</a>
+            <a asp-controller="LichKham" asp-action="QuanLy">Lịch hẹn</a>
+            <a asp-controller="HoSoBenhAn" asp-action="Index">Hồ sơ bệnh án</a>
+            <a class="active" asp-controller="HoaDon" asp-action="Index">Hóa đơn</a>
+            <a asp-controller="CaiDat" asp-action="Index">Cài đặt</a>
+        </nav>
+        <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form" data-confirm-message="Bạn có chắc chắn muốn đăng xuất không?">
+            @Html.AntiForgeryToken()
+            <button type="submit">Đăng xuất</button>
+        </form>
+    </aside>
+
+    <main class="role-main">
+        <header class="role-header">
+            <div>
+                <span class="eyebrow">Quản lý tài chính khám chữa bệnh</span>
+                <h1>Hóa đơn thanh toán</h1>
+                <p>Theo dõi các khoản chi phí khám bệnh, thuốc, trạng thái hóa đơn và xác nhận thanh toán khi cần.</p>
+            </div>
+            <div class="quick-status">@Model.HoTenBenhNhan</div>
+        </header>
+
+        @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+        {
+            <div class="booking-alert booking-alert--success">@Model.SuccessMessage</div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="booking-alert booking-alert--danger">@Model.ErrorMessage</div>
+        }
+
+        <section class="metric-grid invoice-metrics" aria-label="Tổng quan hóa đơn">
+            <article class="metric-card">
+                <span>Tổng hóa đơn</span>
+                <strong>@Model.TongHoaDon.ToString("00")</strong>
+                <small>Toàn bộ lịch sử</small>
+            </article>
+            <article class="metric-card">
+                <span>Chưa thanh toán</span>
+                <strong>@Model.ChuaThanhToan.ToString("00")</strong>
+                <small>Cần xử lý</small>
+            </article>
+            <article class="metric-card">
+                <span>Đã thanh toán</span>
+                <strong>@Model.DaThanhToan.ToString("00")</strong>
+                <small>Đã hoàn tất</small>
+            </article>
+            <article class="metric-card">
+                <span>Tổng chi phí</span>
+                <strong>@Model.TongChiPhi.ToString("N0")</strong>
+                <small>VNĐ</small>
+            </article>
+        </section>
+
+        @if (Model.HoaDons.Count == 0)
+        {
+            <article class="empty-state">
+                <h2>Chưa có hóa đơn</h2>
+                <p>Hóa đơn sẽ xuất hiện sau khi phòng khám lập chi phí cho lần khám của bạn.</p>
+                <a asp-controller="HoSoBenhAn" asp-action="Index">Xem hồ sơ bệnh án</a>
+            </article>
+        }
+        else
+        {
+            <section class="invoice-shell" aria-label="Danh sách và chi tiết hóa đơn">
+                <div class="invoice-list-panel">
+                    <div class="panel-heading">Danh sách hóa đơn</div>
+                    <div class="invoice-list" id="invoiceList"></div>
+                </div>
+
+                <div class="invoice-detail-panel">
+                    <div class="invoice-detail__header">
+                        <div>
+                            <span id="invoiceCode" class="appointment-code"></span>
+                            <h2 id="invoiceTitle">Chi tiết hóa đơn</h2>
+                            <p id="invoiceMeta"></p>
+                        </div>
+                        <span id="invoiceStatus" class="status waiting"></span>
+                    </div>
+
+                    <dl class="invoice-summary-grid">
+                        <div>
+                            <dt>Tổng tiền</dt>
+                            <dd id="invoiceTotal"></dd>
+                        </div>
+                        <div>
+                            <dt>Hình thức thanh toán</dt>
+                            <dd id="invoiceMethod"></dd>
+                        </div>
+                        <div>
+                            <dt>Ngày lập</dt>
+                            <dd id="invoiceDate"></dd>
+                        </div>
+                    </dl>
+
+                    <div class="data-table-wrap">
+                        <table class="data-table medical-table">
+                            <thead>
+                                <tr>
+                                    <th>Phiếu khám</th>
+                                    <th>Thông tin khám</th>
+                                    <th>Tiền khám</th>
+                                    <th>Tiền thuốc</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoiceDetailBody"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4">Tổng cộng</td>
+                                    <td id="invoiceDetailTotal"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <form asp-controller="HoaDon" asp-action="ThanhToan" method="post" class="invoice-payment-form confirm-form" id="paymentForm" data-confirm-title="Xác nhận thanh toán" data-confirm-ok="Thanh toán" data-confirm-message="Bạn có chắc chắn muốn xác nhận thanh toán hóa đơn này không?">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="maHoaDon" id="paymentInvoiceId" />
+                        <label for="paymentMethod">Hình thức thanh toán</label>
+                        <div class="payment-controls">
+                            <select name="hinhThucThanhToan" id="paymentMethod">
+                                <option value="Chuyển khoản">Chuyển khoản</option>
+                                <option value="Thẻ">Thẻ</option>
+                                <option value="Tiền mặt">Tiền mặt</option>
+                                <option value="Bảo hiểm">Bảo hiểm</option>
+                            </select>
+                            <button type="submit">Thanh toán</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        }
+    </main>
+
+    <script>
+        window.invoiceData = @Html.Raw(invoiceJson);
+    </script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+    <script>
+        (() => {
+            const invoices = window.invoiceData || [];
+            if (!invoices.length) {
+                return;
+            }
+
+            const invoiceList = document.getElementById("invoiceList");
+            const invoiceCode = document.getElementById("invoiceCode");
+            const invoiceTitle = document.getElementById("invoiceTitle");
+            const invoiceMeta = document.getElementById("invoiceMeta");
+            const invoiceStatus = document.getElementById("invoiceStatus");
+            const invoiceTotal = document.getElementById("invoiceTotal");
+            const invoiceMethod = document.getElementById("invoiceMethod");
+            const invoiceDate = document.getElementById("invoiceDate");
+            const invoiceDetailBody = document.getElementById("invoiceDetailBody");
+            const invoiceDetailTotal = document.getElementById("invoiceDetailTotal");
+            const paymentForm = document.getElementById("paymentForm");
+            const paymentInvoiceId = document.getElementById("paymentInvoiceId");
+            const paymentMethod = document.getElementById("paymentMethod");
+            const currency = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
+            let selectedIndex = 0;
+
+            const valueOf = (item, name) => item[name] ?? "";
+            const escapeHtml = (value) => String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll("\"", "&quot;")
+                .replaceAll("'", "&#039;");
+            const formatDate = (value) => value ? new Date(`${value}T00:00:00`).toLocaleDateString("vi-VN") : "Chưa cập nhật";
+            const formatMoney = (value) => currency.format(Number(value || 0));
+            const statusClass = (status) => {
+                if (status === "Đã thanh toán") return "success";
+                if (status === "Đã hủy") return "danger";
+                return "waiting";
+            };
+
+            function renderInvoiceList() {
+                invoiceList.innerHTML = invoices.map((invoice, index) => `
+                    <button type="button" class="invoice-choice${index === selectedIndex ? " is-selected" : ""}" data-invoice-index="${index}">
+                        <span>${escapeHtml(valueOf(invoice, "MaHoaDon"))}</span>
+                        <strong>${formatMoney(valueOf(invoice, "TongTien"))}</strong>
+                        <small>${escapeHtml(formatDate(valueOf(invoice, "NgayLap")))} · ${escapeHtml(valueOf(invoice, "TrangThai"))}</small>
+                    </button>
+                `).join("");
+            }
+
+            function renderInvoiceDetail(invoice) {
+                const details = valueOf(invoice, "ChiTietHoaDons") || [];
+                const total = Number(valueOf(invoice, "TongTien") || details.reduce((sum, item) => sum + Number(valueOf(item, "ThanhTien") || 0), 0));
+                const status = valueOf(invoice, "TrangThai") || "Chưa thanh toán";
+
+                invoiceCode.textContent = valueOf(invoice, "MaHoaDon");
+                invoiceTitle.textContent = `Hóa đơn ${valueOf(invoice, "MaHoaDon")}`;
+                invoiceMeta.textContent = `Ngày lập: ${formatDate(valueOf(invoice, "NgayLap"))}`;
+                invoiceStatus.textContent = status;
+                invoiceStatus.className = `status ${statusClass(status)}`;
+                invoiceTotal.textContent = formatMoney(total);
+                invoiceMethod.textContent = valueOf(invoice, "HinhThucThanhToan") || "Chưa chọn";
+                invoiceDate.textContent = formatDate(valueOf(invoice, "NgayLap"));
+                invoiceDetailTotal.textContent = formatMoney(total);
+
+                if (!details.length) {
+                    invoiceDetailBody.innerHTML = "<tr><td colspan=\"5\">Hóa đơn này chưa có chi tiết.</td></tr>";
+                } else {
+                    invoiceDetailBody.innerHTML = details.map((detail) => `
+                        <tr>
+                            <td>${escapeHtml(valueOf(detail, "MaPhieuKham"))}<small>Đơn thuốc: ${escapeHtml(valueOf(detail, "MaDonThuoc"))}</small></td>
+                            <td>
+                                ${escapeHtml(formatDate(valueOf(detail, "NgayKham")))} - ${escapeHtml(valueOf(detail, "CaKham"))}
+                                <small>${escapeHtml(valueOf(detail, "TenBacSi"))} · ${escapeHtml(valueOf(detail, "TenChuyenKhoa"))} · ${escapeHtml(valueOf(detail, "TenPhongKham"))}</small>
+                                <small>${escapeHtml(valueOf(detail, "GhiChu"))}</small>
+                            </td>
+                            <td>${formatMoney(valueOf(detail, "TienKham"))}</td>
+                            <td>${formatMoney(valueOf(detail, "TienThuoc"))}</td>
+                            <td>${formatMoney(valueOf(detail, "ThanhTien"))}</td>
+                        </tr>
+                    `).join("");
+                }
+
+                paymentInvoiceId.value = valueOf(invoice, "MaHoaDon");
+                paymentForm.classList.toggle("is-hidden", status !== "Chưa thanh toán");
+                paymentForm.dataset.confirmMessage = `Bạn có chắc chắn muốn xác nhận thanh toán hóa đơn ${valueOf(invoice, "MaHoaDon")} với số tiền ${formatMoney(total)} không?`;
+
+                const method = valueOf(invoice, "HinhThucThanhToan");
+                if (["Chuyển khoản", "Thẻ", "Tiền mặt", "Bảo hiểm"].includes(method)) {
+                    paymentMethod.value = method;
+                } else {
+                    paymentMethod.value = "Chuyển khoản";
+                }
+            }
+
+            function selectInvoice(index) {
+                selectedIndex = index;
+                renderInvoiceList();
+                renderInvoiceDetail(invoices[selectedIndex]);
+            }
+
+            invoiceList.addEventListener("click", (event) => {
+                const button = event.target.closest("[data-invoice-index]");
+                if (!button) {
+                    return;
+                }
+
+                selectInvoice(Number(button.dataset.invoiceIndex));
+            });
+
+            selectInvoice(0);
+        })();
+    </script>
+</body>
+</html>

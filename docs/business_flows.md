@@ -141,3 +141,41 @@ Trang đặt lịch hiện tại có thêm bước hỗ trợ bệnh nhân chưa
 8. Nếu hợp lệ, tạo `DangKyLichKham` trạng thái `Chờ khám`, có lưu `GioKham` và `ThoiLuongKham`.
 
 Gợi ý chuyên khoa chỉ hỗ trợ điều hướng bệnh nhân đến khoa phù hợp, không phải chẩn đoán y khoa.
+
+## Cập nhật luồng màn hình bệnh nhân
+
+### Quản lý lịch hẹn
+
+1. Bệnh nhân đăng nhập và chọn `Lịch hẹn`.
+2. Hệ thống lấy `BenhNhan` theo `MaNguoiDung` trong session.
+3. Hệ thống truy vấn `DangKyLichKham` của đúng bệnh nhân, kèm `BacSi`, `ChuyenKhoa`, `PhongKham`, `PhieuKham`.
+4. Giao diện hiển thị toàn bộ lịch hẹn và thống kê nhanh theo trạng thái.
+5. Nếu lịch ở trạng thái `Chờ khám`, chưa tới thời gian khám và chưa có phiếu khám, hệ thống hiển thị nút `Hủy`.
+6. Khi bệnh nhân xác nhận hủy bằng modal custom, hệ thống cập nhật `DangKyLichKham.TrangThai = Hủy`.
+
+### Hồ sơ bệnh án
+
+1. Bệnh nhân chọn `Hồ sơ bệnh án`.
+2. Hệ thống chỉ lấy các lịch khám của bệnh nhân hiện tại đã có `PhieuKham`.
+3. Giao diện hiển thị danh sách lần khám.
+4. Khi chọn một lần khám, phần chi tiết hiển thị bác sĩ, chuyên khoa, phòng khám, triệu chứng, chẩn đoán và hướng điều trị.
+5. Tab `Đơn thuốc` hiển thị các `DonThuoc` và chi tiết thuốc từ `ChiTietDonThuoc`.
+6. Tab `Dịch vụ đã dùng` hiển thị `ChiTietDichVuKham` và tổng chi phí dịch vụ của lần khám.
+
+### Hóa đơn bệnh nhân
+
+1. Bệnh nhân chọn `Hóa đơn`.
+2. Hệ thống lấy `HoaDon` của đúng bệnh nhân hiện tại, kèm `ChiTietHoaDon`, `PhieuKham`, `DangKyLichKham`, bác sĩ, chuyên khoa và phòng khám.
+3. Giao diện hiển thị danh sách hóa đơn và trạng thái.
+4. Khi chọn một hóa đơn, phần chi tiết hiển thị các dòng tiền khám, tiền thuốc và tổng cộng.
+5. Nếu hóa đơn ở trạng thái `Chưa thanh toán`, bệnh nhân chọn hình thức thanh toán hợp lệ và xác nhận.
+6. Hệ thống cập nhật `HoaDon.TrangThai = Đã thanh toán` và lưu `HoaDon.HinhThucThanhToan`.
+
+### Cài đặt bệnh nhân
+
+1. Bệnh nhân chọn `Cài đặt`.
+2. Hệ thống lấy `BenhNhan` và `NguoiDung` theo session.
+3. Giao diện hiển thị thông tin cá nhân và thông tin tài khoản.
+4. Các trường định danh như họ tên, ngày sinh, giới tính, mã bệnh nhân, tên đăng nhập, vai trò và trạng thái tài khoản hiển thị chỉ đọc.
+5. Bệnh nhân có thể cập nhật số điện thoại và địa chỉ.
+6. Bệnh nhân có thể đổi mật khẩu sau khi nhập đúng mật khẩu hiện tại; mật khẩu mới được hash trước khi lưu.

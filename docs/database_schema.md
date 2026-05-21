@@ -162,6 +162,10 @@ Chi tiết tiền khám và tiền thuốc.
 - Lịch làm việc bác sĩ: `LichLamViec` include `PhongKham`, `BacSi`, `ChuyenKhoa`.
 - Danh sách bệnh nhân theo bác sĩ/ngày: `DangKyLichKham` filter `MaBacSi`, `NgayKham`, `CaKham`, trạng thái khác `Hủy`.
 - Chi phí phiếu khám: tổng `ChiTietDichVuKham.ThanhTien` + tổng `ChiTietDonThuoc.ThanhTien`.
+- Hồ sơ bệnh án bệnh nhân: `DangKyLichKham` filter `MaBenhNhan`, include `PhieuKham`, `DonThuoc`, `ChiTietDonThuoc`, `Thuoc`, `ChiTietDichVuKham`, `DichVuKham`.
+- Hóa đơn bệnh nhân: `HoaDon` filter `MaBenhNhan`, include `ChiTietHoaDon`, `PhieuKham`, `DangKyLichKham`, `BacSi`, `ChuyenKhoa`, `PhongKham`.
+- Cài đặt bệnh nhân: `BenhNhan` include `NguoiDung`, filter theo `BenhNhan.MaNguoiDung` lấy từ session.
+- Khi cập nhật mật khẩu, chỉ cập nhật `NguoiDung.MatKhau` sau khi hash; không lưu plain text.
 
 ## Cập nhật schema đặt lịch theo khung giờ
 

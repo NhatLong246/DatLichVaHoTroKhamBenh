@@ -35,3 +35,14 @@ Hướng dẫn cho mọi AI/coding agent làm việc trong repository này.
 - Chức năng hiện có: gợi ý chuyên khoa theo triệu chứng bằng rule-based, chọn bác sĩ theo chuyên khoa, xem lịch làm việc, chọn ngày/ca/giờ/thời lượng, xác nhận thông tin và tạo `DangKyLichKham`.
 - Schema `DangKyLichKham` đã mở rộng thêm `GioKham` và `ThoiLuongKham`; database cũ cần chạy `sql_update_add_gio_kham_dang_ky.sql`.
 - Khi sửa tiếp module này, giữ gợi ý triệu chứng ở mức hỗ trợ chọn chuyên khoa, không viết nội dung như chẩn đoán bệnh.
+
+## Ghi chú hiện trạng các màn hình bệnh nhân
+
+- Quản lý lịch hẹn: `Views/LichKham/QuanLy.cshtml`, `LichKhamController.QuanLy`, `LichKhamController.HuyLich`, ViewModel `QuanLyLichHenViewModel`.
+- Hồ sơ bệnh án: `Views/HoSoBenhAn/Index.cshtml`, `HoSoBenhAnController`, ViewModel `HoSoBenhAnViewModel`.
+- Hóa đơn: `Views/HoaDon/Index.cshtml`, `HoaDonController`, ViewModel `HoaDonViewModel`.
+- Cài đặt: `Views/CaiDat/Index.cshtml`, `CaiDatController`, ViewModel `CaiDatViewModel`.
+- Sidebar bệnh nhân dùng các mục: `Tổng quan`, `Đặt lịch khám`, `Lịch hẹn`, `Hồ sơ bệnh án`, `Hóa đơn`, `Cài đặt`.
+- Các màn hình bệnh nhân phải lọc dữ liệu theo bệnh nhân đang đăng nhập qua `MaNguoiDung` trong session; không cho xem/sửa dữ liệu của bệnh nhân khác.
+- Các thao tác quan trọng như hủy lịch, thanh toán, đổi mật khẩu, đăng xuất dùng modal custom trong `wwwroot/js/dashboard.js`.
+- Trang cài đặt chỉ cho sửa điện thoại/địa chỉ; họ tên, ngày sinh, giới tính và thông tin tài khoản hiển thị chỉ đọc.

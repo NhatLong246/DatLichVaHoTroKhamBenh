@@ -219,6 +219,65 @@ public class LichKhamController : Controller
         return RedirectToAction(nameof(DatLich));
     }
 
+    [HttpGet]
+    public async Task<IActionResult> QuanLy()
+    {
+        var redirect = RequirePatientRole();
+        if (redirect != null)
+        {
+            return redirect;
+        }
+
+        var model = await BuildQuanLyLichHenModelAsync();
+        if (model == null)
+        {
+            TempData["LichHenError"] = "Không tìm thấy hồ sơ bệnh nhân cho tài khoản hiện tại.";
+            return RedirectToAction("BenhNhan", "Dashboard");
+        }
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> HuyLich(string maDangKy)
+    {
+        var redirect = RequirePatientRole();
+        if (redirect != null)
+        {
+            return redirect;
+        }
+
+        var benhNhan = await GetCurrentPatientAsync();
+        if (benhNhan == null)
+        {
+            TempData["LichHenError"] = "Không tìm thấy hồ sơ bệnh nhân cho tài khoản hiện tại.";
+            return RedirectToAction("BenhNhan", "Dashboard");
+        }
+
+        var lichHen = await _context.DangKyLichKhams
+            .FirstOrDefaultAsync(x => x.MaDangKy == maDangKy && x.MaBenhNhan == benhNhan.MaBenhNhan);
+
+        if (lichHen == null)
+        {
+            TempData["LichHenError"] = "Không tìm thấy lịch hẹn cần hủy.";
+            return RedirectToAction(nameof(QuanLy));
+        }
+
+        var daCoPhieuKham = await _context.PhieuKhams.AnyAsync(x => x.MaDangKy == lichHen.MaDangKy);
+        if (daCoPhieuKham || !CanCancelAppointment(lichHen))
+        {
+            TempData["LichHenError"] = "Chỉ có thể hủy lịch hẹn đang chờ khám và chưa đến thời gian khám.";
+            return RedirectToAction(nameof(QuanLy));
+        }
+
+        lichHen.TrangThai = "Hủy";
+        await _context.SaveChangesAsync();
+
+        TempData["LichHenSuccess"] = "Đã hủy lịch hẹn thành công.";
+        return RedirectToAction(nameof(QuanLy));
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> GoiYChuyenKhoa([FromBody] SymptomSuggestionRequest request)
@@ -360,6 +419,62 @@ public class LichKhamController : Controller
         return model;
     }
 
+    private async Task<QuanLyLichHenViewModel?> BuildQuanLyLichHenModelAsync()
+    {
+        var benhNhan = await GetCurrentPatientAsync();
+        if (benhNhan == null)
+        {
+            return null;
+        }
+
+        var lichHen = await _context.DangKyLichKhams
+            .AsNoTracking()
+            .Include(x => x.MaBacSiNavigation)
+                .ThenInclude(x => x.MaChuyenKhoaNavigation)
+            .Include(x => x.MaPhongKhamNavigation)
+            .Include(x => x.PhieuKhams)
+            .Where(x => x.MaBenhNhan == benhNhan.MaBenhNhan)
+            .OrderByDescending(x => x.NgayKham)
+            .ThenByDescending(x => x.GioKham)
+            .ToListAsync();
+
+        var items = lichHen.Select(x =>
+        {
+            var phieuKhamGanNhat = x.PhieuKhams.FirstOrDefault();
+
+            return new LichHenItemViewModel
+            {
+                MaDangKy = x.MaDangKy,
+                TenBacSi = x.MaBacSiNavigation.HoTen,
+                TrinhDoBacSi = x.MaBacSiNavigation.TrinhDo ?? "Bác sĩ",
+                TenChuyenKhoa = x.MaBacSiNavigation.MaChuyenKhoaNavigation?.TenChuyenKhoa ?? "Chưa cập nhật",
+                TenPhongKham = x.MaPhongKhamNavigation.TenPhongKham,
+                ViTriPhongKham = x.MaPhongKhamNavigation.ViTri ?? string.Empty,
+                NgayKham = x.NgayKham,
+                CaKham = x.CaKham,
+                GioKham = x.GioKham,
+                ThoiLuongKham = x.ThoiLuongKham,
+                TrangThai = x.TrangThai ?? "Chờ khám",
+                TrieuChung = phieuKhamGanNhat?.TrieuChung,
+                ChanDoan = phieuKhamGanNhat?.ChanDoan,
+                CoPhieuKham = x.PhieuKhams.Count > 0,
+                CoTheHuy = x.PhieuKhams.Count == 0 && CanCancelAppointment(x)
+            };
+        }).ToList();
+
+        return new QuanLyLichHenViewModel
+        {
+            HoTenBenhNhan = benhNhan.HoTen,
+            TongLichHen = items.Count,
+            LichChoKham = items.Count(x => x.TrangThai == "Chờ khám"),
+            LichDaKham = items.Count(x => x.TrangThai == "Đã khám"),
+            LichDaHuy = items.Count(x => x.TrangThai == "Hủy"),
+            SuccessMessage = TempData["LichHenSuccess"] as string,
+            ErrorMessage = TempData["LichHenError"] as string,
+            LichHen = items
+        };
+    }
+
     private async Task<BenhNhan?> GetCurrentPatientAsync()
     {
         var maNguoiDung = HttpContext.Session.GetString("MaNguoiDung");
@@ -395,6 +510,24 @@ public class LichKhamController : Controller
         }
 
         return currentRole == "Bệnh nhân" ? null : RedirectToAction("BenhNhan", "Dashboard");
+    }
+
+    private static bool CanCancelAppointment(DangKyLichKham lichHen)
+    {
+        if (lichHen.TrangThai != "Chờ khám")
+        {
+            return false;
+        }
+
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        if (lichHen.NgayKham > today)
+        {
+            return true;
+        }
+
+        return lichHen.NgayKham == today &&
+            lichHen.GioKham.HasValue &&
+            lichHen.GioKham.Value > TimeOnly.FromDateTime(DateTime.Now);
     }
 
     private static string GetVietnameseDayOfWeek(DayOfWeek dayOfWeek)

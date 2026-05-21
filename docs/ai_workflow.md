@@ -80,3 +80,31 @@ Hãy triển khai chức năng tạo hóa đơn.
 Đọc docs/business_flows.md phần "Luồng thanh toán".
 Yêu cầu: tính tiền từ ChiTietDichVuKham và ChiTietDonThuoc, tạo HoaDon và ChiTietHoaDon.
 ```
+
+## Ghi chú hiện trạng các màn hình bệnh nhân
+
+Khi sửa tiếp các màn hình bệnh nhân, kiểm tra các file hiện có trước:
+
+- `Controllers/LichKhamController.cs`: đặt lịch, quản lý lịch hẹn, hủy lịch hẹn.
+- `Controllers/HoSoBenhAnController.cs`: xem hồ sơ bệnh án của bệnh nhân.
+- `Controllers/HoaDonController.cs`: xem hóa đơn và xác nhận thanh toán.
+- `Controllers/CaiDatController.cs`: thông tin cá nhân, thông tin tài khoản, đổi mật khẩu.
+- `Models/ViewModels/DatLichKhamViewModel.cs`
+- `Models/ViewModels/QuanLyLichHenViewModel.cs`
+- `Models/ViewModels/HoSoBenhAnViewModel.cs`
+- `Models/ViewModels/HoaDonViewModel.cs`
+- `Models/ViewModels/CaiDatViewModel.cs`
+- `Views/LichKham/DatLich.cshtml`
+- `Views/LichKham/QuanLy.cshtml`
+- `Views/HoSoBenhAn/Index.cshtml`
+- `Views/HoaDon/Index.cshtml`
+- `Views/CaiDat/Index.cshtml`
+
+Quy tắc cần giữ:
+
+- Bệnh nhân chỉ được xem/cập nhật dữ liệu thuộc chính mình, đối chiếu qua `MaNguoiDung` trong session và `BenhNhan.MaNguoiDung`.
+- Các thao tác quan trọng như đăng xuất, hủy lịch, thanh toán, đổi mật khẩu dùng modal custom trong `wwwroot/js/dashboard.js`.
+- Không dùng `confirm()` mặc định của trình duyệt.
+- Trạng thái phải giữ đúng schema: `Chờ khám`, `Hủy`, `Chưa thanh toán`, `Đã thanh toán`, ...
+- Trang bệnh nhân dùng cùng sidebar và class `role-page web-dashboard patient-theme`.
+- Với dữ liệu render bằng JavaScript từ JSON, cần escape HTML trước khi đưa vào `innerHTML`.

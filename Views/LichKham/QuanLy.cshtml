@@ -1,0 +1,172 @@
+@model HeThongDatLichVaKhamBenh.Models.ViewModels.QuanLyLichHenViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Quản lý lịch hẹn";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="role-page web-dashboard patient-theme">
+    <aside class="role-sidebar">
+        <div class="role-brand">
+            <div class="role-logo">+</div>
+            <div>
+                <strong>HealthCare</strong>
+                <span>Bệnh nhân</span>
+            </div>
+        </div>
+        <nav>
+            <a asp-controller="Dashboard" asp-action="BenhNhan">Tổng quan</a>
+            <a asp-controller="LichKham" asp-action="DatLich">Đặt lịch khám</a>
+            <a class="active" asp-controller="LichKham" asp-action="QuanLy">Lịch hẹn</a>
+            <a asp-controller="HoSoBenhAn" asp-action="Index">Hồ sơ bệnh án</a>
+            <a asp-controller="HoaDon" asp-action="Index">Hóa đơn</a>
+            <a asp-controller="CaiDat" asp-action="Index">Cài đặt</a>
+        </nav>
+        <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form confirm-form" data-confirm-title="Xác nhận đăng xuất" data-confirm-ok="Đăng xuất" data-confirm-message="Bạn có chắc chắn muốn đăng xuất không?">
+            @Html.AntiForgeryToken()
+            <button type="submit">Đăng xuất</button>
+        </form>
+    </aside>
+
+    <main class="role-main">
+        <header class="role-header">
+            <div>
+                <span class="eyebrow">Theo dõi lịch sử đặt khám</span>
+                <h1>Quản lý lịch hẹn</h1>
+                <p>Xem toàn bộ lịch hẹn đã đặt, kiểm tra thông tin bác sĩ, phòng khám, thời gian và trạng thái xử lý.</p>
+            </div>
+            <a class="quick-link" asp-controller="LichKham" asp-action="DatLich">Đặt lịch mới</a>
+        </header>
+
+        @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+        {
+            <div class="booking-alert booking-alert--success">@Model.SuccessMessage</div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="booking-alert booking-alert--danger">@Model.ErrorMessage</div>
+        }
+
+        <section class="metric-grid appointment-metrics" aria-label="Tổng quan lịch hẹn">
+            <article class="metric-card">
+                <span>Tổng lịch hẹn</span>
+                <strong>@Model.TongLichHen.ToString("00")</strong>
+                <small>Toàn bộ lịch sử</small>
+            </article>
+            <article class="metric-card">
+                <span>Chờ khám</span>
+                <strong>@Model.LichChoKham.ToString("00")</strong>
+                <small>Có thể theo dõi hoặc hủy</small>
+            </article>
+            <article class="metric-card">
+                <span>Đã khám</span>
+                <strong>@Model.LichDaKham.ToString("00")</strong>
+                <small>Lịch đã hoàn tất</small>
+            </article>
+            <article class="metric-card">
+                <span>Đã hủy</span>
+                <strong>@Model.LichDaHuy.ToString("00")</strong>
+                <small>Lịch không còn hiệu lực</small>
+            </article>
+        </section>
+
+        <section class="appointment-history" aria-label="Danh sách lịch hẹn">
+            @if (Model.LichHen.Count == 0)
+            {
+                <article class="empty-state">
+                    <h2>Chưa có lịch hẹn</h2>
+                    <p>Bạn chưa tạo lịch khám nào. Hãy đặt lịch mới để hệ thống ghi nhận thông tin khám.</p>
+                    <a asp-controller="LichKham" asp-action="DatLich">Đặt lịch khám</a>
+                </article>
+            }
+            else
+            {
+                @foreach (var item in Model.LichHen)
+                {
+                    var gioKham = item.GioKham?.ToString("HH:mm") ?? "Chưa chọn giờ";
+                    var thoiLuong = item.ThoiLuongKham.HasValue ? $"{item.ThoiLuongKham} phút" : "Chưa cập nhật";
+                    var phongKham = string.IsNullOrWhiteSpace(item.ViTriPhongKham)
+                        ? item.TenPhongKham
+                        : $"{item.TenPhongKham}, {item.ViTriPhongKham}";
+
+                    <article class="appointment-card">
+                        <div class="appointment-card__header">
+                            <div>
+                                <span class="appointment-code">@item.MaDangKy</span>
+                                <h2>@item.NgayKham.ToString("dd/MM/yyyy") - @item.CaKham</h2>
+                                <p>@gioKham · @thoiLuong</p>
+                            </div>
+                            <span class="status @GetStatusClass(item.TrangThai)">@item.TrangThai</span>
+                        </div>
+
+                        <dl class="appointment-detail-grid">
+                            <div>
+                                <dt>Bác sĩ</dt>
+                                <dd>@item.TrinhDoBacSi @item.TenBacSi</dd>
+                            </div>
+                            <div>
+                                <dt>Chuyên khoa</dt>
+                                <dd>@item.TenChuyenKhoa</dd>
+                            </div>
+                            <div>
+                                <dt>Phòng khám</dt>
+                                <dd>@phongKham</dd>
+                            </div>
+                            <div>
+                                <dt>Phiếu khám</dt>
+                                <dd>@(item.CoPhieuKham ? "Đã lập phiếu khám" : "Chưa lập phiếu khám")</dd>
+                            </div>
+                            <div>
+                                <dt>Triệu chứng</dt>
+                                <dd>@(string.IsNullOrWhiteSpace(item.TrieuChung) ? "Chưa cập nhật" : item.TrieuChung)</dd>
+                            </div>
+                            <div>
+                                <dt>Chẩn đoán</dt>
+                                <dd>@(string.IsNullOrWhiteSpace(item.ChanDoan) ? "Chưa cập nhật" : item.ChanDoan)</dd>
+                            </div>
+                        </dl>
+
+                        <div class="appointment-card__actions">
+                            @if (item.CoTheHuy)
+                            {
+                                <form asp-controller="LichKham" asp-action="HuyLich" method="post" class="inline-form confirm-form" data-confirm-title="Hủy lịch hẹn" data-confirm-ok="Hủy lịch" data-confirm-message="Bạn có chắc chắn muốn hủy lịch hẹn @item.MaDangKy không?">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="maDangKy" value="@item.MaDangKy" />
+                                    <button type="submit" class="danger-action">Hủy</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="muted-note">Lịch hẹn này không thể hủy.</span>
+                            }
+                        </div>
+                    </article>
+                }
+            }
+        </section>
+    </main>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+</body>
+</html>
+
+@functions {
+    private static string GetStatusClass(string status)
+    {
+        return status switch
+        {
+            "Chờ khám" => "waiting",
+            "Đang khám" => "info",
+            "Đã khám" => "success",
+            "Hủy" => "danger",
+            _ => "info"
+        };
+    }
+}

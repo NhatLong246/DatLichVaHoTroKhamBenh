@@ -86,11 +86,30 @@ Danh sách này giúp chia nhỏ việc code với AI. Khi làm chức năng nà
 - Chọn ngày, ca, khung giờ và thời lượng khám.
 - Đặt lịch khám và tạo `DangKyLichKham`.
 - Kiểm tra ca/giờ khám hợp lệ, phòng hoạt động, ngày không quá khứ, không trùng giờ cùng bác sĩ.
+- Hiển thị danh sách lịch hẹn của bệnh nhân, gồm ngày/ca/giờ/thời lượng, bác sĩ, chuyên khoa, phòng khám và trạng thái.
+- Hủy lịch hẹn bằng modal custom khi lịch còn `Chờ khám`, chưa tới giờ khám và chưa có phiếu khám.
 
 Việc cần làm tiếp:
 
-- Hiển thị danh sách lịch hẹn của bệnh nhân, gồm `GioKham` và `ThoiLuongKham`.
-- Cho phép đổi lịch/hủy lịch với modal custom, không dùng `confirm()`.
+- Cho phép đổi lịch hẹn nếu nghiệp vụ yêu cầu.
 - Bác sĩ xem lịch khám theo ngày/ca/giờ.
 - Quản trị viên quản lý lịch làm việc bác sĩ và sức chứa phòng.
 - Có thể nâng cấp gợi ý chuyên khoa sang AI API sau này, nhưng vẫn phải đối chiếu với bảng `ChuyenKhoa`.
+
+## Cập nhật tiến độ màn hình bệnh nhân
+
+Đã hoàn thành:
+
+- Dashboard bệnh nhân nối tới các màn hình chính: đặt lịch, lịch hẹn, hồ sơ bệnh án, hóa đơn, cài đặt.
+- Trang `LichKham/QuanLy`: theo dõi lịch sử đặt khám và hủy lịch hợp lệ.
+- Trang `HoSoBenhAn/Index`: xem lịch sử khám bệnh, chi tiết khám, đơn thuốc và dịch vụ đã dùng.
+- Trang `HoaDon/Index`: xem danh sách/chi tiết hóa đơn, xác nhận thanh toán hóa đơn `Chưa thanh toán`.
+- Trang `CaiDat/Index`: xem thông tin cá nhân/tài khoản, cập nhật điện thoại/địa chỉ, đổi mật khẩu.
+- `wwwroot/js/dashboard.js` đã mở rộng modal custom cho các form xác nhận như đăng xuất, hủy lịch, thanh toán và đổi mật khẩu.
+
+Việc cần làm tiếp:
+
+- Tạo dữ liệu thật hoặc seed data đầy đủ cho `PhieuKham`, `DonThuoc`, `ChiTietDonThuoc`, `ChiTietDichVuKham`, `HoaDon`, `ChiTietHoaDon` để demo đủ các tab.
+- Hoàn thiện luồng bác sĩ lập phiếu khám, kê đơn, chỉ định dịch vụ.
+- Hoàn thiện luồng tạo hóa đơn tự động từ chi phí dịch vụ và thuốc.
+- Cân nhắc chính sách cho sửa thông tin cá nhân nhạy cảm như họ tên, ngày sinh, giới tính nếu sau này cần quy trình xác minh.

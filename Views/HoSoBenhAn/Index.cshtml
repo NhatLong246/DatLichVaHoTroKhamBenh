@@ -1,0 +1,328 @@
+@model HeThongDatLichVaKhamBenh.Models.ViewModels.HoSoBenhAnViewModel
+@using System.Text.Json
+@{
+    Layout = null;
+    ViewData["Title"] = "Hồ sơ bệnh án";
+    var recordJson = JsonSerializer.Serialize(Model.LanKhams);
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="role-page web-dashboard patient-theme">
+    <aside class="role-sidebar">
+        <div class="role-brand">
+            <div class="role-logo">+</div>
+            <div>
+                <strong>HealthCare</strong>
+                <span>Bệnh nhân</span>
+            </div>
+        </div>
+        <nav>
+            <a asp-controller="Dashboard" asp-action="BenhNhan">Tổng quan</a>
+            <a asp-controller="LichKham" asp-action="DatLich">Đặt lịch khám</a>
+            <a asp-controller="LichKham" asp-action="QuanLy">Lịch hẹn</a>
+            <a class="active" asp-controller="HoSoBenhAn" asp-action="Index">Hồ sơ bệnh án</a>
+            <a asp-controller="HoaDon" asp-action="Index">Hóa đơn</a>
+            <a asp-controller="CaiDat" asp-action="Index">Cài đặt</a>
+        </nav>
+        <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form" data-confirm-message="Bạn có chắc chắn muốn đăng xuất không?">
+            @Html.AntiForgeryToken()
+            <button type="submit">Đăng xuất</button>
+        </form>
+    </aside>
+
+    <main class="role-main">
+        <header class="role-header">
+            <div>
+                <span class="eyebrow">Lưu trữ lịch sử khám bệnh</span>
+                <h1>Hồ sơ bệnh án</h1>
+                <p>Xem thông tin chi tiết từng lần khám, đơn thuốc đã kê và các dịch vụ kỹ thuật đã sử dụng.</p>
+            </div>
+            <div class="quick-status">@Model.HoTenBenhNhan</div>
+        </header>
+
+        <section class="metric-grid medical-metrics" aria-label="Tổng quan hồ sơ bệnh án">
+            <article class="metric-card">
+                <span>Lần khám</span>
+                <strong>@Model.TongLanKham.ToString("00")</strong>
+                <small>Đã có hồ sơ</small>
+            </article>
+            <article class="metric-card">
+                <span>Đơn thuốc</span>
+                <strong>@Model.TongDonThuoc.ToString("00")</strong>
+                <small>Đã được kê</small>
+            </article>
+            <article class="metric-card">
+                <span>Dịch vụ</span>
+                <strong>@Model.TongDichVu.ToString("00")</strong>
+                <small>Dịch vụ kỹ thuật</small>
+            </article>
+            <article class="metric-card">
+                <span>Chi phí dịch vụ</span>
+                <strong>@Model.TongChiPhiDichVu.ToString("N0")</strong>
+                <small>VNĐ</small>
+            </article>
+        </section>
+
+        @if (Model.LanKhams.Count == 0)
+        {
+            <article class="empty-state">
+                <h2>Chưa có hồ sơ bệnh án</h2>
+                <p>Hồ sơ sẽ xuất hiện sau khi bác sĩ lập phiếu khám cho lịch hẹn của bạn.</p>
+                <a asp-controller="LichKham" asp-action="QuanLy">Xem lịch hẹn</a>
+            </article>
+        }
+        else
+        {
+            <section class="medical-record-shell" aria-label="Hồ sơ khám bệnh">
+                <div class="record-picker">
+                    <div class="panel-heading">Danh sách lần khám</div>
+                    <div class="record-list" id="recordList"></div>
+                </div>
+
+                <div class="record-detail">
+                    <div class="record-detail__header">
+                        <div>
+                            <span id="selectedRecordCode" class="appointment-code"></span>
+                            <h2 id="selectedRecordTitle">Thông tin lần khám</h2>
+                            <p id="selectedRecordMeta"></p>
+                        </div>
+                        <span id="selectedRecordStatus" class="status success"></span>
+                    </div>
+
+                    <div class="record-tabs" role="tablist" aria-label="Nội dung hồ sơ bệnh án">
+                        <button type="button" class="is-active" data-record-tab="detail">Chi tiết khám</button>
+                        <button type="button" data-record-tab="prescription">Đơn thuốc</button>
+                        <button type="button" data-record-tab="services">Dịch vụ đã dùng</button>
+                    </div>
+
+                    <section class="record-tab-panel is-active" data-record-panel="detail">
+                        <dl class="appointment-detail-grid medical-detail-grid" id="recordDetailGrid"></dl>
+                    </section>
+
+                    <section class="record-tab-panel" data-record-panel="prescription">
+                        <div id="prescriptionPanel"></div>
+                    </section>
+
+                    <section class="record-tab-panel" data-record-panel="services">
+                        <div class="data-table-wrap">
+                            <table class="data-table medical-table">
+                                <thead>
+                                    <tr>
+                                        <th>Dịch vụ</th>
+                                        <th>Mô tả</th>
+                                        <th>Số lượng</th>
+                                        <th>Đơn giá</th>
+                                        <th>Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="serviceTableBody"></tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="4">Tổng chi phí dịch vụ</td>
+                                        <td id="serviceTotal">0 VNĐ</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </section>
+        }
+    </main>
+
+    <script>
+        window.medicalRecords = @Html.Raw(recordJson);
+    </script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+    <script>
+        (() => {
+            const records = window.medicalRecords || [];
+            if (!records.length) {
+                return;
+            }
+
+            const recordList = document.getElementById("recordList");
+            const selectedRecordCode = document.getElementById("selectedRecordCode");
+            const selectedRecordTitle = document.getElementById("selectedRecordTitle");
+            const selectedRecordMeta = document.getElementById("selectedRecordMeta");
+            const selectedRecordStatus = document.getElementById("selectedRecordStatus");
+            const recordDetailGrid = document.getElementById("recordDetailGrid");
+            const prescriptionPanel = document.getElementById("prescriptionPanel");
+            const serviceTableBody = document.getElementById("serviceTableBody");
+            const serviceTotal = document.getElementById("serviceTotal");
+            const tabButtons = Array.from(document.querySelectorAll("[data-record-tab]"));
+            const tabPanels = Array.from(document.querySelectorAll("[data-record-panel]"));
+            const currency = new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" });
+
+            let selectedIndex = 0;
+
+            const valueOf = (item, name) => item[name] ?? "";
+            const escapeHtml = (value) => String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll("\"", "&quot;")
+                .replaceAll("'", "&#039;");
+            const formatDate = (value) => value ? new Date(`${value}T00:00:00`).toLocaleDateString("vi-VN") : "Chưa cập nhật";
+            const formatTime = (value) => value ? value.slice(0, 5) : "Chưa chọn giờ";
+            const formatMoney = (value) => currency.format(Number(value || 0));
+            const statusClass = (status) => {
+                if (status === "Hoàn thành" || status === "Đã khám") return "success";
+                if (status === "Đang xử lý" || status === "Đang khám") return "info";
+                if (status === "Hủy") return "danger";
+                return "waiting";
+            };
+
+            function renderRecordList() {
+                recordList.innerHTML = records.map((record, index) => `
+                    <button type="button" class="record-choice${index === selectedIndex ? " is-selected" : ""}" data-record-index="${index}">
+                        <span>${escapeHtml(valueOf(record, "MaPhieuKham"))}</span>
+                        <strong>${escapeHtml(formatDate(valueOf(record, "NgayKham")))} - ${escapeHtml(valueOf(record, "CaKham"))}</strong>
+                        <small>${escapeHtml(valueOf(record, "TenChuyenKhoa"))} · ${escapeHtml(valueOf(record, "TrangThaiPhieu"))}</small>
+                    </button>
+                `).join("");
+            }
+
+            function renderDetail(record) {
+                const room = valueOf(record, "ViTriPhongKham")
+                    ? `${valueOf(record, "TenPhongKham")}, ${valueOf(record, "ViTriPhongKham")}`
+                    : valueOf(record, "TenPhongKham");
+
+                selectedRecordCode.textContent = valueOf(record, "MaPhieuKham");
+                selectedRecordTitle.textContent = `${formatDate(valueOf(record, "NgayKham"))} - ${valueOf(record, "CaKham")}`;
+                selectedRecordMeta.textContent = `${formatTime(valueOf(record, "GioKham"))} · ${valueOf(record, "TenChuyenKhoa")}`;
+                selectedRecordStatus.textContent = valueOf(record, "TrangThaiPhieu");
+                selectedRecordStatus.className = `status ${statusClass(valueOf(record, "TrangThaiPhieu"))}`;
+
+                const fields = [
+                    ["Bác sĩ", `${valueOf(record, "TrinhDoBacSi")} ${valueOf(record, "TenBacSi")}`],
+                    ["Chuyên khoa", valueOf(record, "TenChuyenKhoa")],
+                    ["Phòng khám", room],
+                    ["Mã lịch hẹn", valueOf(record, "MaDangKy")],
+                    ["Triệu chứng", valueOf(record, "TrieuChung")],
+                    ["Chẩn đoán", valueOf(record, "ChanDoan")],
+                    ["Hướng điều trị", valueOf(record, "HuongDieuTri")],
+                    ["Trạng thái lịch", valueOf(record, "TrangThaiLich")]
+                ];
+
+                recordDetailGrid.innerHTML = fields.map(([label, text]) => `
+                    <div>
+                        <dt>${escapeHtml(label)}</dt>
+                        <dd>${escapeHtml(text || "Chưa cập nhật")}</dd>
+                    </div>
+                `).join("");
+            }
+
+            function renderPrescriptions(record) {
+                const prescriptions = valueOf(record, "DonThuocs") || [];
+                if (!prescriptions.length) {
+                    prescriptionPanel.innerHTML = "<div class=\"record-empty\">Lần khám này chưa có đơn thuốc.</div>";
+                    return;
+                }
+
+                prescriptionPanel.innerHTML = prescriptions.map((prescription) => {
+                    const medicines = valueOf(prescription, "Thuocs") || [];
+                    const rows = medicines.length
+                        ? medicines.map((medicine) => `
+                            <tr>
+                                <td>${escapeHtml(valueOf(medicine, "TenThuoc"))}<small>${escapeHtml(valueOf(medicine, "MaThuoc"))} · ${escapeHtml(valueOf(medicine, "DonViTinh"))}</small></td>
+                                <td>${escapeHtml(valueOf(medicine, "SoLuong"))}</td>
+                                <td>${escapeHtml(valueOf(medicine, "LieuLuong"))}</td>
+                                <td>${escapeHtml(valueOf(medicine, "SoNgayDung"))} ngày</td>
+                                <td>${escapeHtml(valueOf(medicine, "CachDung"))}</td>
+                                <td>${formatMoney(valueOf(medicine, "ThanhTien"))}</td>
+                            </tr>
+                        `).join("")
+                        : "<tr><td colspan=\"6\">Đơn thuốc này chưa có thuốc.</td></tr>";
+
+                    return `
+                        <article class="prescription-card">
+                            <div class="prescription-card__header">
+                                <div>
+                                    <span class="appointment-code">${escapeHtml(valueOf(prescription, "MaDonThuoc"))}</span>
+                                    <h3>Ngày lập: ${escapeHtml(formatDate(valueOf(prescription, "NgayLap")))}</h3>
+                                    <p>${escapeHtml(valueOf(prescription, "GhiChu"))}</p>
+                                </div>
+                                <span class="status ${statusClass(valueOf(prescription, "TrangThai"))}">${escapeHtml(valueOf(prescription, "TrangThai"))}</span>
+                            </div>
+                            <div class="data-table-wrap">
+                                <table class="data-table medical-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Thuốc</th>
+                                            <th>Số lượng</th>
+                                            <th>Liều lượng</th>
+                                            <th>Số ngày</th>
+                                            <th>Cách dùng</th>
+                                            <th>Thành tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>${rows}</tbody>
+                                </table>
+                            </div>
+                        </article>
+                    `;
+                }).join("");
+            }
+
+            function renderServices(record) {
+                const services = valueOf(record, "DichVuDaDung") || [];
+                if (!services.length) {
+                    serviceTableBody.innerHTML = "<tr><td colspan=\"5\">Lần khám này chưa có dịch vụ kỹ thuật.</td></tr>";
+                    serviceTotal.textContent = formatMoney(0);
+                    return;
+                }
+
+                serviceTableBody.innerHTML = services.map((service) => `
+                    <tr>
+                        <td>${escapeHtml(valueOf(service, "TenDichVu"))}<small>${escapeHtml(valueOf(service, "MaDichVu"))}</small></td>
+                        <td>${escapeHtml(valueOf(service, "MoTa") || "Không có mô tả")}</td>
+                        <td>${escapeHtml(valueOf(service, "SoLuong"))}</td>
+                        <td>${formatMoney(valueOf(service, "DonGia"))}</td>
+                        <td>${formatMoney(valueOf(service, "ThanhTien"))}</td>
+                    </tr>
+                `).join("");
+
+                const total = services.reduce((sum, service) => sum + Number(valueOf(service, "ThanhTien") || 0), 0);
+                serviceTotal.textContent = formatMoney(total);
+            }
+
+            function selectRecord(index) {
+                selectedIndex = index;
+                const record = records[selectedIndex];
+                renderRecordList();
+                renderDetail(record);
+                renderPrescriptions(record);
+                renderServices(record);
+            }
+
+            recordList.addEventListener("click", (event) => {
+                const button = event.target.closest("[data-record-index]");
+                if (!button) {
+                    return;
+                }
+
+                selectRecord(Number(button.dataset.recordIndex));
+            });
+
+            tabButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    const tab = button.dataset.recordTab;
+                    tabButtons.forEach((item) => item.classList.toggle("is-active", item === button));
+                    tabPanels.forEach((panel) => panel.classList.toggle("is-active", panel.dataset.recordPanel === tab));
+                });
+            });
+
+            selectRecord(0);
+        })();
+    </script>
+</body>
+</html>

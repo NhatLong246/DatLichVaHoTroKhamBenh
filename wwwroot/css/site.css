@@ -1016,6 +1016,591 @@ body.web-dashboard {
   font-weight: 700;
 }
 
+.web-dashboard .quick-link {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border: 1px solid #0f766e;
+  border-radius: 10px;
+  color: #ffffff;
+  background: #0f766e;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.appointment-metrics {
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+}
+
+.appointment-history {
+  display: grid;
+  gap: 16px;
+}
+
+.appointment-card,
+.empty-state {
+  border: 1px solid #dfe9ee;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(15, 49, 59, 0.06);
+}
+
+.appointment-card {
+  overflow: hidden;
+}
+
+.appointment-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: 1px solid #edf3f5;
+}
+
+.appointment-card__header h2 {
+  margin: 4px 0 6px;
+  color: #143541;
+  font-size: 1.12rem;
+  font-weight: 700;
+}
+
+.appointment-card__header p {
+  margin: 0;
+  color: #647784;
+  font-weight: 600;
+}
+
+.appointment-code {
+  color: #0f766e;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.appointment-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 16px 22px;
+  margin: 0;
+  padding: 20px;
+}
+
+.appointment-detail-grid div {
+  min-width: 0;
+}
+
+.appointment-detail-grid dt {
+  margin-bottom: 5px;
+  color: #647784;
+  font-weight: 700;
+}
+
+.appointment-detail-grid dd {
+  margin: 0;
+  color: #203a45;
+  font-weight: 600;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.appointment-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 58px;
+  padding: 0 20px 18px;
+}
+
+.inline-form {
+  margin: 0;
+}
+
+.danger-action {
+  min-width: 92px;
+  min-height: 40px;
+  padding: 9px 14px;
+  border: 1px solid #b91c1c;
+  border-radius: 10px;
+  color: #ffffff;
+  background: #b91c1c;
+  font-weight: 700;
+}
+
+.muted-note {
+  color: #7a8c96;
+  font-weight: 600;
+}
+
+.web-dashboard .status.success {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.web-dashboard .status.danger {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.empty-state {
+  padding: 28px;
+}
+
+.empty-state h2 {
+  margin: 0;
+  color: #143541;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.empty-state p {
+  max-width: 620px;
+  margin: 10px 0 18px;
+  color: #647784;
+  line-height: 1.6;
+}
+
+.empty-state a {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 14px;
+  border-radius: 10px;
+  color: #ffffff;
+  background: #0f766e;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.medical-metrics {
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+}
+
+.medical-record-shell {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.34fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.record-picker,
+.record-detail,
+.prescription-card {
+  border: 1px solid #dfe9ee;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(15, 49, 59, 0.06);
+  overflow: hidden;
+}
+
+.record-list {
+  display: grid;
+  gap: 10px;
+  max-height: 620px;
+  padding: 14px;
+  overflow-y: auto;
+}
+
+.record-choice {
+  width: 100%;
+  min-height: 92px;
+  padding: 13px 14px;
+  border: 1px solid #dfe9ee;
+  border-radius: 10px;
+  color: #203a45;
+  background: #ffffff;
+  text-align: left;
+  transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+}
+
+.record-choice:hover,
+.record-choice.is-selected {
+  border-color: #0f766e;
+  background: #f0fdfa;
+  box-shadow: 0 10px 24px rgba(15, 118, 110, 0.1);
+}
+
+.record-choice span,
+.record-choice small {
+  display: block;
+}
+
+.record-choice span {
+  color: #0f766e;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.record-choice strong {
+  display: block;
+  margin-top: 5px;
+  color: #143541;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.record-choice small {
+  margin-top: 5px;
+  color: #647784;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.record-detail__header,
+.prescription-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: 1px solid #edf3f5;
+}
+
+.record-detail__header h2,
+.prescription-card__header h3 {
+  margin: 4px 0 6px;
+  color: #143541;
+  font-size: 1.16rem;
+  font-weight: 800;
+}
+
+.record-detail__header p,
+.prescription-card__header p {
+  margin: 0;
+  color: #647784;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.record-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 14px 20px;
+  border-bottom: 1px solid #edf3f5;
+  overflow-x: auto;
+}
+
+.record-tabs button {
+  min-height: 40px;
+  padding: 9px 14px;
+  border: 1px solid #d7e4e8;
+  border-radius: 10px;
+  color: #40535d;
+  background: #ffffff;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.record-tabs button.is-active {
+  border-color: #0f766e;
+  color: #ffffff;
+  background: #0f766e;
+}
+
+.record-tab-panel {
+  display: none;
+  padding: 20px;
+}
+
+.record-tab-panel.is-active {
+  display: block;
+}
+
+.medical-detail-grid {
+  padding: 0;
+}
+
+.medical-detail-grid div:nth-child(5),
+.medical-detail-grid div:nth-child(6),
+.medical-detail-grid div:nth-child(7) {
+  grid-column: span 3;
+}
+
+.record-empty {
+  padding: 18px;
+  border: 1px dashed #cfe0e6;
+  border-radius: 10px;
+  color: #647784;
+  background: #f8fbfc;
+  font-weight: 700;
+}
+
+.prescription-card + .prescription-card {
+  margin-top: 14px;
+}
+
+.medical-table {
+  min-width: 760px;
+}
+
+.medical-table td small {
+  display: block;
+  margin-top: 4px;
+  color: #7a8c96;
+  font-weight: 600;
+}
+
+.medical-table tfoot td {
+  padding: 15px 16px;
+  border-top: 1px solid #dfe9ee;
+  color: #143541;
+  background: #f8fbfc;
+  font-weight: 800;
+}
+
+.invoice-metrics {
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+}
+
+.invoice-shell {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.34fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.invoice-list-panel,
+.invoice-detail-panel {
+  border: 1px solid #dfe9ee;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(15, 49, 59, 0.06);
+  overflow: hidden;
+}
+
+.invoice-list {
+  display: grid;
+  gap: 10px;
+  max-height: 620px;
+  padding: 14px;
+  overflow-y: auto;
+}
+
+.invoice-choice {
+  width: 100%;
+  min-height: 98px;
+  padding: 13px 14px;
+  border: 1px solid #dfe9ee;
+  border-radius: 10px;
+  color: #203a45;
+  background: #ffffff;
+  text-align: left;
+  transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+}
+
+.invoice-choice:hover,
+.invoice-choice.is-selected {
+  border-color: #0f766e;
+  background: #f0fdfa;
+  box-shadow: 0 10px 24px rgba(15, 118, 110, 0.1);
+}
+
+.invoice-choice span,
+.invoice-choice small {
+  display: block;
+}
+
+.invoice-choice span {
+  color: #0f766e;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.invoice-choice strong {
+  display: block;
+  margin-top: 5px;
+  color: #143541;
+  font-size: 1.28rem;
+  font-weight: 800;
+}
+
+.invoice-choice small {
+  margin-top: 5px;
+  color: #647784;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.invoice-detail__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: 1px solid #edf3f5;
+}
+
+.invoice-detail__header h2 {
+  margin: 4px 0 6px;
+  color: #143541;
+  font-size: 1.16rem;
+  font-weight: 800;
+}
+
+.invoice-detail__header p {
+  margin: 0;
+  color: #647784;
+  font-weight: 600;
+}
+
+.invoice-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 18px 20px;
+  border-bottom: 1px solid #edf3f5;
+}
+
+.invoice-summary-grid dt {
+  margin-bottom: 5px;
+  color: #647784;
+  font-weight: 700;
+}
+
+.invoice-summary-grid dd {
+  margin: 0;
+  color: #143541;
+  font-size: 1.02rem;
+  font-weight: 800;
+}
+
+.invoice-payment-form {
+  padding: 18px 20px 20px;
+  border-top: 1px solid #edf3f5;
+  background: #fbfdfe;
+}
+
+.invoice-payment-form.is-hidden {
+  display: none;
+}
+
+.invoice-payment-form label {
+  display: block;
+  margin-bottom: 8px;
+  color: #40535d;
+  font-weight: 800;
+}
+
+.payment-controls {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.payment-controls select {
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid #d7e4e8;
+  border-radius: 10px;
+  color: #203a45;
+  background: #ffffff;
+  font-weight: 700;
+}
+
+.payment-controls button {
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid #0f766e;
+  border-radius: 10px;
+  color: #ffffff;
+  background: #0f766e;
+  font-weight: 800;
+}
+
+.settings-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.settings-panel {
+  border: 1px solid #dfe9ee;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(15, 49, 59, 0.06);
+  overflow: hidden;
+}
+
+.settings-panel:first-child {
+  grid-row: span 2;
+}
+
+.settings-panel__body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 16px;
+  padding: 20px;
+}
+
+.settings-field {
+  min-width: 0;
+}
+
+.settings-field--wide {
+  grid-column: span 2;
+}
+
+.settings-field label {
+  display: block;
+  margin-bottom: 7px;
+  color: #50616b;
+  font-weight: 800;
+}
+
+.settings-field input,
+.settings-field textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #d7e4e8;
+  border-radius: 10px;
+  color: #203a45;
+  background: #ffffff;
+  font-weight: 700;
+}
+
+.settings-field textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.settings-field input[readonly] {
+  color: #5f717b;
+  background: #f3f7f9;
+  cursor: not-allowed;
+}
+
+.settings-field span {
+  display: block;
+  margin-top: 6px;
+  color: #b91c1c;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 20px 20px;
+}
+
+.settings-actions button {
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid #0f766e;
+  border-radius: 10px;
+  color: #ffffff;
+  background: #0f766e;
+  font-weight: 800;
+}
+
 .booking-alert {
   margin-bottom: 18px;
   padding: 12px 14px;
@@ -1470,10 +2055,42 @@ body.web-dashboard {
   .metric-grid,
   .doctor-metrics,
   .patient-metrics,
+  .appointment-metrics,
+  .medical-metrics,
+  .invoice-metrics,
   .web-dashboard .admin-grid,
+  .medical-record-shell,
+  .invoice-shell,
+  .settings-layout,
   .booking-layout,
   .booking-time-grid {
     grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+
+  .appointment-detail-grid {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+
+  .medical-record-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .invoice-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-panel:first-child {
+    grid-row: auto;
+  }
+
+  .medical-detail-grid div:nth-child(5),
+  .medical-detail-grid div:nth-child(6),
+  .medical-detail-grid div:nth-child(7) {
+    grid-column: span 2;
   }
 
   .booking-layout {
@@ -1512,7 +2129,17 @@ body.web-dashboard {
   .metric-grid,
   .doctor-metrics,
   .patient-metrics,
+  .appointment-metrics,
+  .medical-metrics,
+  .invoice-metrics,
   .web-dashboard .patient-grid,
+  .appointment-detail-grid,
+  .medical-record-shell,
+  .invoice-shell,
+  .invoice-summary-grid,
+  .payment-controls,
+  .settings-layout,
+  .settings-panel__body,
   .booking-time-grid,
   .shift-options,
   .booking-actions,
@@ -1522,8 +2149,23 @@ body.web-dashboard {
   }
 
   .web-dashboard .role-header,
-  .web-dashboard .search-panel {
+  .web-dashboard .search-panel,
+  .appointment-card__header,
+  .record-detail__header,
+  .prescription-card__header,
+  .invoice-detail__header {
     display: grid;
     grid-template-columns: 1fr;
+  }
+
+  .appointment-card__actions {
+    justify-content: flex-start;
+  }
+
+  .medical-detail-grid div:nth-child(5),
+  .medical-detail-grid div:nth-child(6),
+  .medical-detail-grid div:nth-child(7),
+  .settings-field--wide {
+    grid-column: auto;
   }
 }
