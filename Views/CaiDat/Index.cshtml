@@ -56,9 +56,9 @@
         }
 
         <section class="settings-layout" aria-label="Cài đặt bệnh nhân">
-            <form asp-controller="CaiDat" asp-action="CapNhatThongTin" method="post" class="settings-panel">
+            <form asp-controller="CaiDat" asp-action="CapNhatThongTin" method="post" class="settings-panel shadow-sm border-0 bg-white" style="border-radius: 16px;">
                 @Html.AntiForgeryToken()
-                <div class="panel-heading">Thông tin cá nhân</div>
+                <div class="panel-heading d-flex align-items-center" style="border-radius: 16px 16px 0 0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 text-primary"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Thông tin cá nhân</div>
                 <div class="settings-panel__body">
                     <div class="settings-field">
                         <label>Mã bệnh nhân</label>
@@ -88,12 +88,14 @@
                     </div>
                 </div>
                 <div class="settings-actions">
-                    <button type="submit">Lưu thông tin</button>
+                    <button type="submit" class="booking-button booking-button--primary d-inline-flex align-items-center justify-content-center px-4 py-2 border-0">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Lưu thông tin
+                    </button>
                 </div>
             </form>
 
-            <section class="settings-panel">
-                <div class="panel-heading">Thông tin tài khoản</div>
+            <section class="settings-panel shadow-sm border-0 bg-white" style="border-radius: 16px;">
+                <div class="panel-heading d-flex align-items-center" style="border-radius: 16px 16px 0 0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 text-primary"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> Thông tin tài khoản</div>
                 <div class="settings-panel__body">
                     <div class="settings-field">
                         <label>Mã người dùng</label>
@@ -114,25 +116,42 @@
                 </div>
             </section>
 
-            <form asp-controller="CaiDat" asp-action="DoiMatKhau" method="post" class="settings-panel confirm-form" data-confirm-title="Xác nhận đổi mật khẩu" data-confirm-ok="Đổi mật khẩu" data-confirm-message="Bạn có chắc chắn muốn đổi mật khẩu đăng nhập không?">
+            <form asp-controller="CaiDat" asp-action="DoiMatKhau" method="post" class="settings-panel confirm-form shadow-sm border-0 bg-white" data-confirm-title="Xác nhận đổi mật khẩu" data-confirm-ok="Đổi mật khẩu" data-confirm-message="Bạn có chắc chắn muốn đổi mật khẩu đăng nhập không?" style="border-radius: 16px;">
                 @Html.AntiForgeryToken()
-                <div class="panel-heading">Đổi mật khẩu</div>
+                <div class="panel-heading d-flex align-items-center" style="border-radius: 16px 16px 0 0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 text-primary"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Đổi mật khẩu</div>
                 <div class="settings-panel__body">
                     <div class="settings-field">
                         <label for="MatKhauHienTai">Mật khẩu hiện tại</label>
-                        <input id="MatKhauHienTai" name="MatKhauHienTai" type="password" autocomplete="current-password" />
+                        <div class="position-relative">
+                            <input id="MatKhauHienTai" name="MatKhauHienTai" type="password" autocomplete="current-password" style="padding-right: 40px;" />
+                            <button type="button" class="btn position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent text-muted p-2 toggle-password" tabindex="-1">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </button>
+                        </div>
                     </div>
                     <div class="settings-field">
                         <label for="MatKhauMoi">Mật khẩu mới</label>
-                        <input id="MatKhauMoi" name="MatKhauMoi" type="password" autocomplete="new-password" />
+                        <div class="position-relative">
+                            <input id="MatKhauMoi" name="MatKhauMoi" type="password" autocomplete="new-password" style="padding-right: 40px;" />
+                            <button type="button" class="btn position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent text-muted p-2 toggle-password" tabindex="-1">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </button>
+                        </div>
                     </div>
                     <div class="settings-field">
                         <label for="XacNhanMatKhauMoi">Xác nhận mật khẩu mới</label>
-                        <input id="XacNhanMatKhauMoi" name="XacNhanMatKhauMoi" type="password" autocomplete="new-password" />
+                        <div class="position-relative">
+                            <input id="XacNhanMatKhauMoi" name="XacNhanMatKhauMoi" type="password" autocomplete="new-password" style="padding-right: 40px;" />
+                            <button type="button" class="btn position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent text-muted p-2 toggle-password" tabindex="-1">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="settings-actions">
-                    <button type="submit">Đổi mật khẩu</button>
+                    <button type="submit" class="booking-button booking-button--primary d-inline-flex align-items-center justify-content-center px-4 py-2 border-0">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg> Đổi mật khẩu
+                    </button>
                 </div>
             </form>
         </section>
@@ -141,5 +160,20 @@
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/js/dashboard.js" asp-append-version="true"></script>
+    <script>
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', function() {
+                const input = this.previousElementSibling;
+                const eyeIcon = this.querySelector('.eye-icon');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+                } else {
+                    input.type = 'password';
+                    eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

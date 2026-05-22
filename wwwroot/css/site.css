@@ -2783,3 +2783,443 @@ body.web-dashboard {
     grid-template-columns: 1fr;
   }
 }
+
+/* =========================================
+   MODERN AUTHENTICATION PAGE REDESIGN
+   ========================================= */
+
+.modern-auth-page {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+  overflow-x: hidden;
+}
+
+.modern-auth-page .auth-layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.modern-auth-page .auth-visual {
+  flex: 1 1 45%;
+  background: linear-gradient(135deg, #0f766e 0%, #064e3b 100%);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem;
+  color: white;
+  overflow: hidden;
+}
+
+.modern-auth-page .visual-content {
+  position: relative;
+  z-index: 10;
+  max-width: 480px;
+}
+
+.modern-auth-page .brand-logo {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.modern-auth-page .visual-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.modern-auth-page .visual-subtitle {
+  font-size: 1.125rem;
+  color: #ccfbf1;
+  line-height: 1.6;
+}
+
+.modern-auth-page .visual-decoration {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.modern-auth-page .deco-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(20, 184, 166, 0.4) 0%, rgba(20, 184, 166, 0) 70%);
+}
+
+.modern-auth-page .deco-1 {
+  width: 600px;
+  height: 600px;
+  top: -100px;
+  right: -200px;
+}
+
+.modern-auth-page .deco-2 {
+  width: 400px;
+  height: 400px;
+  bottom: -150px;
+  left: -100px;
+}
+
+.modern-auth-page .auth-doctor-img {
+  height: 140px;
+  object-fit: contain;
+  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.15));
+  margin-bottom: -15px; /* Adjust slight overlap if needed */
+}
+
+.modern-auth-page .glass-card {
+  position: absolute;
+  right: 15%;
+  bottom: 20%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  z-index: 10;
+}
+
+.modern-auth-page .glass-icon {
+  background: #14b8a6;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modern-auth-page .glass-text span {
+  display: block;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.modern-auth-page .glass-text small {
+  display: block;
+  color: #ccfbf1;
+  font-size: 0.875rem;
+}
+
+.modern-auth-page .auth-form-container {
+  flex: 1 1 55%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #ffffff;
+}
+
+.modern-auth-page .auth-form-wrapper {
+  width: 100%;
+  max-width: 440px;
+}
+
+.modern-auth-page .form-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.modern-auth-page .form-header h2 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.025em;
+}
+
+.modern-auth-page .form-header p {
+  color: #64748b;
+  font-size: 1.05rem;
+}
+
+.modern-auth-page .modern-login-form .form-floating > label {
+  color: #64748b;
+  padding-left: 1.25rem;
+}
+
+.modern-auth-page .modern-login-form .form-control {
+  border: 2px solid #e2e8f0;
+  border-radius: 1rem;
+  font-size: 1rem;
+  color: #0f172a;
+  box-shadow: none;
+  transition: all 0.2s ease;
+  background-color: #f8fafc;
+}
+
+.modern-auth-page .modern-login-form .form-control:focus {
+  border-color: #0f766e;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.1);
+}
+
+.modern-auth-page .modern-login-form .custom-checkbox .form-check-input {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  margin-top: 0;
+}
+
+.modern-auth-page .modern-login-form .custom-checkbox .form-check-input:checked {
+  background-color: #0f766e;
+  border-color: #0f766e;
+}
+
+.modern-auth-page .modern-login-form .forgot-password {
+  color: #0f766e;
+  font-weight: 600;
+}
+
+.modern-auth-page .modern-login-form .forgot-password:hover {
+  text-decoration: underline !important;
+}
+
+.modern-auth-page .btn-modern-login {
+  background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+  color: white;
+  border: none;
+  border-radius: 1rem;
+  height: 3.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 15px -3px rgba(20, 184, 166, 0.3);
+  transition: all 0.2s ease;
+  margin-top: 1rem;
+}
+
+.modern-auth-page .btn-modern-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 25px -5px rgba(20, 184, 166, 0.4);
+}
+
+.modern-auth-page .btn-modern-login:active {
+  transform: translateY(0);
+}
+
+.modern-auth-page .auth-register-text a {
+  color: #0f766e;
+  transition: color 0.2s ease;
+}
+
+.modern-auth-page .auth-register-text a:hover {
+  color: #064e3b;
+  text-decoration: underline !important;
+}
+
+@keyframes floatAnimation {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes fadeInUpAnimation {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modern-auth-page .animate-float {
+  animation: floatAnimation 4s ease-in-out infinite;
+}
+
+.modern-auth-page .animate-fade-in-up {
+  animation: fadeInUpAnimation 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .modern-auth-page .auth-layout {
+    flex-direction: column;
+  }
+  
+  .modern-auth-page .auth-visual {
+    flex: none;
+    padding: 3rem 2rem;
+    align-items: center;
+    text-align: center;
+  }
+
+  .modern-auth-page .brand-logo {
+    margin: 0 auto 1.5rem;
+  }
+
+  .modern-auth-page .glass-card {
+    display: none;
+  }
+
+  .modern-auth-page .visual-title {
+    font-size: 2rem;
+  }
+
+  .modern-auth-page .auth-form-container {
+    padding: 3rem 1.5rem;
+    align-items: flex-start;
+  }
+}
+
+/* =========================================
+   UI/UX Enhancements for Booking Page
+   ========================================= */
+
+.booking-shell {
+  letter-spacing: 0.2px;
+}
+
+.booking-shell .booking-panel,
+.booking-shell .booking-confirm {
+  border: none !important;
+  box-shadow: 0 8px 24px rgba(15, 49, 59, 0.08) !important;
+  border-radius: 20px !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.booking-shell .booking-panel:hover,
+.booking-shell .booking-confirm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(15, 49, 59, 0.12) !important;
+}
+
+.booking-shell .panel-heading {
+  background: #f8fafc !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  font-size: 1.15rem;
+  letter-spacing: -0.3px;
+  color: #0f313b;
+  padding: 20px 24px !important;
+}
+
+.booking-field label {
+  font-size: 0.95rem;
+  color: #334155;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.booking-field select,
+.booking-field input[type="date"],
+.booking-field textarea {
+  border-radius: 12px !important;
+  border: 1px solid #cbd5e1 !important;
+  background: #f8fafc !important;
+  transition: all 0.2s !important;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02) !important;
+}
+
+.booking-field select:focus,
+.booking-field input[type="date"]:focus,
+.booking-field textarea:focus {
+  background: #ffffff !important;
+  border-color: #0d9488 !important;
+  box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.15) !important;
+}
+
+.doctor-choice,
+.schedule-chip {
+  border: 2px solid transparent !important;
+  background: #f8fafc !important;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02) !important;
+  border-radius: 16px !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.doctor-choice:hover,
+.schedule-chip:hover {
+  background: #ffffff !important;
+  box-shadow: 0 10px 20px rgba(15, 118, 110, 0.08) !important;
+  transform: translateY(-3px) !important;
+}
+
+.doctor-choice.is-selected,
+.schedule-chip.is-selected {
+  background: #f0fdfa !important;
+  border-color: #0f766e !important;
+  box-shadow: 0 10px 25px rgba(15, 118, 110, 0.15) !important;
+  transform: translateY(-3px) !important;
+}
+
+.booking-button--primary {
+  background: linear-gradient(135deg, #0f766e 0%, #064e3b 100%) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 20px rgba(15, 118, 110, 0.25) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  transition: all 0.25s ease !important;
+}
+
+.booking-button--primary:hover {
+  box-shadow: 0 12px 28px rgba(15, 118, 110, 0.35) !important;
+  transform: translateY(-2px) !important;
+}
+
+.booking-confirm dl {
+  padding: 24px !important;
+}
+.booking-confirm dt {
+  color: #64748b !important;
+  font-size: 0.9rem;
+}
+.booking-confirm dd {
+  font-size: 1.05rem !important;
+  border-bottom: 1px dashed #e2e8f0 !important;
+  padding-bottom: 12px !important;
+  margin-bottom: 16px !important;
+  color: #0f313b !important;
+}
+.booking-confirm dd:last-child {
+  border-bottom: none !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Shift Options enhancements */
+.shift-options span {
+  border-radius: 12px !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
+}
+.shift-options input:checked + span {
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25) !important;
+  transform: translateY(-1px) !important;
+}
+.shift-options label:hover span {
+  border-color: #0f766e !important;
+  background: #f0fdfa !important;
+  color: #0f766e !important;
+}
+.shift-options input:checked + span:hover {
+  background: #0f766e !important;
+  color: #ffffff !important;
+}

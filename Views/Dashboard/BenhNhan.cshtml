@@ -42,53 +42,107 @@
                 <h1>Xin chào, @ViewBag.HoTen</h1>
                 <p>Theo dõi lịch hẹn, hồ sơ bệnh án và hóa đơn khám bệnh của bạn.</p>
             </div>
-            <div class="quick-status">Lịch hẹn sắp tới</div>
+            <div class="quick-status d-flex align-items-center" style="cursor: pointer; transition: transform 0.2s;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-danger me-2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                <span class="text-muted fw-semibold me-1">Hotline:</span>
+                <strong class="text-dark fw-bolder">1900 1515</strong>
+            </div>
         </header>
 
         <section class="metric-grid patient-metrics" aria-label="Thông tin nhanh">
-            <article class="metric-card">
-                <span>Lịch hẹn</span>
-                <strong>01</strong>
-                <small>Đang chờ khám</small>
+            <article class="metric-card animate-hover">
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <span class="text-uppercase fw-bold text-muted small">Lịch hẹn</span>
+                    <div class="metric-icon" style="background: #e0f2fe; color: #0284c7;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    </div>
+                </div>
+                <strong class="display-5 fw-bolder text-dark mb-1">01</strong>
+                <small class="text-primary fw-semibold d-flex align-items-center gap-1">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Đang chờ khám
+                </small>
             </article>
-            <article class="metric-card">
-                <span>Hồ sơ bệnh án</span>
-                <strong>04</strong>
-                <small>Lần khám đã lưu</small>
+            <article class="metric-card animate-hover">
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <span class="text-uppercase fw-bold text-muted small">Hồ sơ bệnh án</span>
+                    <div class="metric-icon" style="background: #ecfdf5; color: #059669;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                    </div>
+                </div>
+                <strong class="display-5 fw-bolder text-dark mb-1">04</strong>
+                <small class="text-success fw-semibold d-flex align-items-center gap-1">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    Lần khám đã lưu
+                </small>
             </article>
-            <article class="metric-card">
-                <span>Hóa đơn</span>
-                <strong>02</strong>
-                <small>Đã thanh toán</small>
+            <article class="metric-card animate-hover">
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <span class="text-uppercase fw-bold text-muted small">Hóa đơn</span>
+                    <div class="metric-icon" style="background: #fef3c7; color: #d97706;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                    </div>
+                </div>
+                <strong class="display-5 fw-bolder text-dark mb-1">02</strong>
+                <small class="text-warning fw-semibold d-flex align-items-center gap-1" style="color: #d97706 !important;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    Đã thanh toán
+                </small>
             </article>
         </section>
 
         <section class="patient-grid">
-            <article class="appointment-panel">
-                <div class="panel-heading">Lịch hẹn sắp tới</div>
-                <dl>
-                    <dt>Bác sĩ</dt>
-                    <dd>Hoàng Văn E</dd>
-                    <dt>Chuyên khoa</dt>
-                    <dd>Ngoại khoa</dd>
-                    <dt>Thời gian</dt>
-                    <dd>21/11/2025 - Chiều</dd>
-                    <dt>Phòng khám</dt>
-                    <dd>Phòng Ngoại khoa 1</dd>
-                </dl>
+            <article class="appointment-panel animate-hover p-0 d-flex flex-column">
+                <div class="panel-heading border-bottom">Lịch hẹn sắp tới</div>
+                <div class="ticket-card d-flex flex-grow-1" style="min-height: 140px;">
+                    <div class="ticket-left text-center py-4 px-2 d-flex flex-column justify-content-center align-items-center" style="background: #e0f2fe; width: 30%; border-right: 2px dashed #bae6fd;">
+                        <div class="display-4 fw-bolder text-primary" style="line-height: 1; letter-spacing: -1px;">21</div>
+                        <div class="fw-bold text-primary mt-2">Tháng 11</div>
+                        <div class="text-secondary small fw-semibold mt-1 bg-white rounded-pill px-2 py-1 shadow-sm">Buổi Chiều</div>
+                    </div>
+                    <div class="ticket-right py-3 px-4 d-flex flex-column justify-content-center" style="width: 70%; background: #ffffff;">
+                        <h4 class="fw-bolder text-dark mb-1">Bs. Hoàng Văn E</h4>
+                        <div class="text-muted fw-semibold mb-3">Ngoại khoa</div>
+                        <div class="d-flex align-items-center text-secondary fw-semibold">
+                            <div class="bg-light rounded p-1 me-2 text-danger">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            </div>
+                            Phòng Ngoại khoa 1
+                        </div>
+                    </div>
+                </div>
+                <div class="ticket-footer bg-light px-4 py-2 border-top text-muted small d-flex align-items-center" style="border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-2 text-warning"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    Vui lòng đến trước giờ hẹn 15 phút để xác nhận thông tin tại quầy tiếp nhận.
+                </div>
             </article>
 
-            <article class="health-summary">
-                <span>Trạng thái</span>
-                <strong>Chờ khám</strong>
-                <p>Vui lòng đến trước giờ hẹn 15 phút để xác nhận thông tin tại quầy tiếp nhận.</p>
+            <article class="health-summary animate-hover d-flex flex-column justify-content-center p-4" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #bbf7d0;">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center bg-white shadow-sm me-3" style="width: 48px; height: 48px; color: #16a34a;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    </div>
+                    <span class="fw-bolder text-success fs-6" style="color: #15803d !important;">Mẹo sức khỏe</span>
+                </div>
+                <p class="text-dark fw-semibold m-0" style="font-size: 0.95rem; line-height: 1.6;">
+                    "Đừng quên uống đủ 2 lít nước mỗi ngày để giúp cơ thể thanh lọc và luôn giữ được sự tỉnh táo nhé!"
+                </p>
             </article>
         </section>
 
-        <section class="action-row">
-            <a asp-controller="LichKham" asp-action="DatLich">Đặt lịch khám mới</a>
-            <a asp-controller="LichKham" asp-action="QuanLy">Quản lý lịch hẹn</a>
-            <a asp-controller="HoSoBenhAn" asp-action="Index">Hồ sơ bệnh án</a>
+        <section class="action-row mt-5">
+            <a asp-controller="LichKham" asp-action="DatLich" class="btn-premium primary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                Đặt lịch khám mới
+            </a>
+            <a asp-controller="LichKham" asp-action="QuanLy" class="btn-premium secondary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                Quản lý lịch hẹn
+            </a>
+            <a asp-controller="HoSoBenhAn" asp-action="Index" class="btn-premium outline">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                Hồ sơ bệnh án
+            </a>
         </section>
     </main>
     <script src="~/js/dashboard.js" asp-append-version="true"></script>

@@ -49,52 +49,78 @@
         </header>
 
         <section class="metric-grid medical-metrics" aria-label="Tổng quan hồ sơ bệnh án">
-            <article class="metric-card">
-                <span>Lần khám</span>
-                <strong>@Model.TongLanKham.ToString("00")</strong>
-                <small>Đã có hồ sơ</small>
+            <article class="metric-card animate-hover border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <span class="text-uppercase fw-bold text-muted small">Lần khám</span>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px; background: #e0f2fe; color: #0284c7;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    </div>
+                </div>
+                <strong class="display-5 fw-bolder text-dark mb-1">@Model.TongLanKham.ToString("00")</strong>
+                <small class="text-secondary fw-semibold">Đã có hồ sơ</small>
             </article>
-            <article class="metric-card">
-                <span>Đơn thuốc</span>
-                <strong>@Model.TongDonThuoc.ToString("00")</strong>
-                <small>Đã được kê</small>
+            <article class="metric-card animate-hover border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <span class="text-uppercase fw-bold text-muted small">Đơn thuốc</span>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px; background: #dcfce7; color: #16a34a;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5l-6-6a4.5 4.5 0 0 1 6.5-6.5l6 6a4.5 4.5 0 0 1-6.5 6.5z"></path><line x1="9.5" y1="10.5" x2="14.5" y2="15.5"></line></svg>
+                    </div>
+                </div>
+                <strong class="display-5 fw-bolder text-dark mb-1">@Model.TongDonThuoc.ToString("00")</strong>
+                <small class="text-success fw-semibold">Đã được kê</small>
             </article>
-            <article class="metric-card">
-                <span>Dịch vụ</span>
-                <strong>@Model.TongDichVu.ToString("00")</strong>
-                <small>Dịch vụ kỹ thuật</small>
+            <article class="metric-card animate-hover border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <span class="text-uppercase fw-bold text-muted small">Dịch vụ</span>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px; background: #fef08a; color: #a16207;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                    </div>
+                </div>
+                <strong class="display-5 fw-bolder text-dark mb-1">@Model.TongDichVu.ToString("00")</strong>
+                <small class="text-warning fw-semibold">Dịch vụ kỹ thuật</small>
             </article>
-            <article class="metric-card">
-                <span>Chi phí dịch vụ</span>
-                <strong>@Model.TongChiPhiDichVu.ToString("N0")</strong>
-                <small>VNĐ</small>
+            <article class="metric-card animate-hover border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <span class="text-uppercase fw-bold text-muted small">Chi phí dịch vụ</span>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px; background: #f3e8ff; color: #7e22ce;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    </div>
+                </div>
+                <strong class="display-5 fw-bolder text-dark mb-1">@Model.TongChiPhiDichVu.ToString("N0")</strong>
+                <small class="text-primary fw-semibold" style="color: #7e22ce !important;">VNĐ</small>
             </article>
         </section>
 
         @if (Model.LanKhams.Count == 0)
         {
-            <article class="empty-state">
+            <article class="empty-state border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="mb-3 text-muted">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </div>
                 <h2>Chưa có hồ sơ bệnh án</h2>
                 <p>Hồ sơ sẽ xuất hiện sau khi bác sĩ lập phiếu khám cho lịch hẹn của bạn.</p>
-                <a asp-controller="LichKham" asp-action="QuanLy">Xem lịch hẹn</a>
+                <a class="booking-button booking-button--primary text-decoration-none d-inline-flex align-items-center justify-content-center mt-3 px-4 py-2" asp-controller="LichKham" asp-action="QuanLy">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    Xem lịch hẹn
+                </a>
             </article>
         }
         else
         {
             <section class="medical-record-shell" aria-label="Hồ sơ khám bệnh">
-                <div class="record-picker">
-                    <div class="panel-heading">Danh sách lần khám</div>
+                <div class="record-picker shadow-sm border-0 bg-white" style="border-radius: 16px; overflow: hidden;">
+                    <div class="panel-heading d-flex align-items-center" style="border-radius: 16px 16px 0 0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 text-primary"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg> Danh sách lần khám</div>
                     <div class="record-list" id="recordList"></div>
                 </div>
 
-                <div class="record-detail">
-                    <div class="record-detail__header">
+                <div class="record-detail shadow-sm border-0 bg-white" style="border-radius: 16px; overflow: hidden;">
+                    <div class="record-detail__header p-4" style="border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
                         <div>
-                            <span id="selectedRecordCode" class="appointment-code"></span>
-                            <h2 id="selectedRecordTitle">Thông tin lần khám</h2>
-                            <p id="selectedRecordMeta"></p>
+                            <span id="selectedRecordCode" class="appointment-code badge bg-light text-secondary border mb-2 px-2 py-1"></span>
+                            <h2 id="selectedRecordTitle" class="h5 fw-bold text-dark mb-1">Thông tin lần khám</h2>
+                            <p id="selectedRecordMeta" class="text-muted mb-0 small fw-semibold"></p>
                         </div>
-                        <span id="selectedRecordStatus" class="status success"></span>
+                        <span id="selectedRecordStatus" class="status success px-3 py-1 rounded-pill fw-bold border"></span>
                     </div>
 
                     <div class="record-tabs" role="tablist" aria-label="Nội dung hồ sơ bệnh án">

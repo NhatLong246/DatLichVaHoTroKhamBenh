@@ -43,7 +43,9 @@
                 <h1>Quản lý lịch hẹn</h1>
                 <p>Xem toàn bộ lịch hẹn đã đặt, kiểm tra thông tin bác sĩ, phòng khám, thời gian và trạng thái xử lý.</p>
             </div>
-            <a class="quick-link" asp-controller="LichKham" asp-action="DatLich">Đặt lịch mới</a>
+            <a class="booking-button booking-button--primary text-decoration-none d-inline-flex align-items-center justify-content-center px-4" asp-controller="LichKham" asp-action="DatLich" style="min-height: 46px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Đặt lịch mới
+            </a>
         </header>
 
         @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
@@ -56,25 +58,45 @@
         }
 
         <section class="metric-grid appointment-metrics" aria-label="Tổng quan lịch hẹn">
-            <article class="metric-card">
-                <span>Tổng lịch hẹn</span>
-                <strong>@Model.TongLichHen.ToString("00")</strong>
-                <small>Toàn bộ lịch sử</small>
+            <article class="metric-card animate-hover border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <span class="text-uppercase fw-bold text-muted small">Tổng lịch hẹn</span>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px; background: #e0f2fe; color: #0284c7;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    </div>
+                </div>
+                <strong class="display-5 fw-bolder text-dark mb-1">@Model.TongLichHen.ToString("00")</strong>
+                <small class="text-secondary fw-semibold">Toàn bộ lịch sử</small>
             </article>
-            <article class="metric-card">
-                <span>Chờ khám</span>
-                <strong>@Model.LichChoKham.ToString("00")</strong>
-                <small>Có thể theo dõi hoặc hủy</small>
+            <article class="metric-card animate-hover border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <span class="text-uppercase fw-bold text-muted small">Chờ khám</span>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px; background: #fef08a; color: #a16207;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                </div>
+                <strong class="display-5 fw-bolder text-dark mb-1">@Model.LichChoKham.ToString("00")</strong>
+                <small class="text-warning fw-semibold">Có thể theo dõi hoặc hủy</small>
             </article>
-            <article class="metric-card">
-                <span>Đã khám</span>
-                <strong>@Model.LichDaKham.ToString("00")</strong>
-                <small>Lịch đã hoàn tất</small>
+            <article class="metric-card animate-hover border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <span class="text-uppercase fw-bold text-muted small">Đã khám</span>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px; background: #dcfce7; color: #16a34a;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                </div>
+                <strong class="display-5 fw-bolder text-dark mb-1">@Model.LichDaKham.ToString("00")</strong>
+                <small class="text-success fw-semibold">Lịch đã hoàn tất</small>
             </article>
-            <article class="metric-card">
-                <span>Đã hủy</span>
-                <strong>@Model.LichDaHuy.ToString("00")</strong>
-                <small>Lịch không còn hiệu lực</small>
+            <article class="metric-card animate-hover border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <span class="text-uppercase fw-bold text-muted small">Đã hủy</span>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px; background: #fee2e2; color: #b91c1c;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                    </div>
+                </div>
+                <strong class="display-5 fw-bolder text-dark mb-1">@Model.LichDaHuy.ToString("00")</strong>
+                <small class="text-danger fw-semibold">Lịch không còn hiệu lực</small>
             </article>
         </section>
 
@@ -97,55 +119,69 @@
                         ? item.TenPhongKham
                         : $"{item.TenPhongKham}, {item.ViTriPhongKham}";
 
-                    <article class="appointment-card">
-                        <div class="appointment-card__header">
+                    <article class="appointment-card animate-hover border-0 shadow-sm bg-white" style="border-radius: 16px; overflow: hidden; margin-bottom: 24px; transition: transform 0.25s ease, box-shadow 0.25s ease;">
+                        <div class="appointment-card__header d-flex justify-content-between align-items-start p-4" style="background: #f8fafc; border-bottom: 1px solid #f1f5f9;">
                             <div>
-                                <span class="appointment-code">@item.MaDangKy</span>
-                                <h2>@item.NgayKham.ToString("dd/MM/yyyy") - @item.CaKham</h2>
-                                <p>@gioKham · @thoiLuong</p>
+                                <span class="badge bg-light text-secondary border mb-2 px-2 py-1">@item.MaDangKy</span>
+                                <h2 class="h5 fw-bold text-dark mb-1 d-flex align-items-center">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 text-primary"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                    @item.NgayKham.ToString("dd/MM/yyyy") - @item.CaKham
+                                </h2>
+                                <p class="text-muted mb-0 d-flex align-items-center small fw-semibold">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                    @gioKham <span class="mx-2 text-light-emphasis">&bull;</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                                    @thoiLuong
+                                </p>
                             </div>
-                            <span class="status @GetStatusClass(item.TrangThai)">@item.TrangThai</span>
+                            <span class="status @GetStatusClass(item.TrangThai) px-3 py-1 rounded-pill fw-bold border">@item.TrangThai</span>
                         </div>
 
-                        <dl class="appointment-detail-grid">
+                        <dl class="appointment-detail-grid p-4 mb-0" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
                             <div>
-                                <dt>Bác sĩ</dt>
-                                <dd>@item.TrinhDoBacSi @item.TenBacSi</dd>
+                                <dt class="text-muted small fw-bold mb-1 d-flex align-items-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Bác sĩ</dt>
+                                <dd class="fw-semibold text-dark mb-0">@item.TrinhDoBacSi @item.TenBacSi</dd>
                             </div>
                             <div>
-                                <dt>Chuyên khoa</dt>
-                                <dd>@item.TenChuyenKhoa</dd>
+                                <dt class="text-muted small fw-bold mb-1 d-flex align-items-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg> Chuyên khoa</dt>
+                                <dd class="fw-semibold text-dark mb-0">@item.TenChuyenKhoa</dd>
                             </div>
                             <div>
-                                <dt>Phòng khám</dt>
-                                <dd>@phongKham</dd>
+                                <dt class="text-muted small fw-bold mb-1 d-flex align-items-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Phòng khám</dt>
+                                <dd class="fw-semibold text-dark mb-0">@phongKham</dd>
                             </div>
                             <div>
-                                <dt>Phiếu khám</dt>
-                                <dd>@(item.CoPhieuKham ? "Đã lập phiếu khám" : "Chưa lập phiếu khám")</dd>
+                                <dt class="text-muted small fw-bold mb-1 d-flex align-items-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg> Phiếu khám</dt>
+                                <dd class="fw-semibold text-dark mb-0">@(item.CoPhieuKham ? "Đã lập phiếu khám" : "Chưa lập phiếu khám")</dd>
                             </div>
-                            <div>
-                                <dt>Triệu chứng</dt>
-                                <dd>@(string.IsNullOrWhiteSpace(item.TrieuChung) ? "Chưa cập nhật" : item.TrieuChung)</dd>
+                            <div style="grid-column: 1 / -1;">
+                                <dt class="text-muted small fw-bold mb-1 d-flex align-items-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg> Triệu chứng</dt>
+                                <dd class="text-dark mb-0">@(string.IsNullOrWhiteSpace(item.TrieuChung) ? "Chưa cập nhật" : item.TrieuChung)</dd>
                             </div>
-                            <div>
-                                <dt>Chẩn đoán</dt>
-                                <dd>@(string.IsNullOrWhiteSpace(item.ChanDoan) ? "Chưa cập nhật" : item.ChanDoan)</dd>
+                            <div style="grid-column: 1 / -1;">
+                                <dt class="text-muted small fw-bold mb-1 d-flex align-items-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Chẩn đoán</dt>
+                                <dd class="text-dark mb-0">@(string.IsNullOrWhiteSpace(item.ChanDoan) ? "Chưa cập nhật" : item.ChanDoan)</dd>
                             </div>
                         </dl>
 
-                        <div class="appointment-card__actions">
+                        <div class="appointment-card__actions p-3 border-top text-end" style="background: #fbfdfe;">
                             @if (item.CoTheHuy)
                             {
-                                <form asp-controller="LichKham" asp-action="HuyLich" method="post" class="inline-form confirm-form" data-confirm-title="Hủy lịch hẹn" data-confirm-ok="Hủy lịch" data-confirm-message="Bạn có chắc chắn muốn hủy lịch hẹn @item.MaDangKy không?">
+                                <form asp-controller="LichKham" asp-action="HuyLich" method="post" class="inline-form confirm-form m-0" data-confirm-title="Hủy lịch hẹn" data-confirm-ok="Hủy lịch" data-confirm-message="Bạn có chắc chắn muốn hủy lịch hẹn @item.MaDangKy không?">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="maDangKy" value="@item.MaDangKy" />
-                                    <button type="submit" class="danger-action">Hủy</button>
+                                    <button type="submit" class="btn btn-outline-danger fw-bold d-inline-flex align-items-center px-4" style="border-radius: 10px; border-width: 2px;">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                                        Hủy lịch hẹn
+                                    </button>
                                 </form>
                             }
                             else
                             {
-                                <span class="muted-note">Lịch hẹn này không thể hủy.</span>
+                                <span class="muted-note text-secondary small fst-italic fw-medium d-inline-flex align-items-center">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                    Lịch hẹn này không thể hủy.
+                                </span>
                             }
                         </div>
                     </article>

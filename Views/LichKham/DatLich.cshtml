@@ -60,7 +60,7 @@
 
             <section class="booking-layout" aria-label="Biểu mẫu đặt lịch khám">
                 <div class="booking-panel">
-                    <div class="panel-heading">Hỗ trợ chọn chuyên khoa</div>
+                    <div class="panel-heading d-flex align-items-center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 text-primary"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path></svg> Hỗ trợ chọn chuyên khoa</div>
                     <div class="booking-panel__body">
                         <div class="booking-field">
                             <label asp-for="TrieuChung">Triệu chứng của bạn</label>
@@ -68,7 +68,9 @@
                             <span asp-validation-for="TrieuChung"></span>
                         </div>
                         <div class="suggestion-actions">
-                            <button type="button" class="booking-button booking-button--primary" id="suggestSpecialtyButton">Gợi ý chuyên khoa</button>
+                            <button type="button" class="booking-button booking-button--primary d-flex align-items-center justify-content-center" id="suggestSpecialtyButton">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg> Gợi ý chuyên khoa
+                            </button>
                             <span id="suggestionStatus" class="suggestion-status" aria-live="polite"></span>
                         </div>
                         <div class="suggestion-result" id="suggestionResult" aria-live="polite"></div>
@@ -76,7 +78,7 @@
                 </div>
 
                 <div class="booking-panel">
-                    <div class="panel-heading">1. Chọn bác sĩ theo chuyên khoa</div>
+                    <div class="panel-heading d-flex align-items-center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 text-success"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> 1. Chọn bác sĩ theo chuyên khoa</div>
                     <div class="booking-panel__body">
                         <div class="booking-field">
                             <label asp-for="MaChuyenKhoa">Chuyên khoa</label>
@@ -97,7 +99,7 @@
                 </div>
 
                 <div class="booking-panel">
-                    <div class="panel-heading">2. Chọn lịch làm việc, ngày và giờ khám</div>
+                    <div class="panel-heading d-flex align-items-center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 text-warning"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> 2. Chọn lịch làm việc, ngày và giờ khám</div>
                     <div class="booking-panel__body">
                         <div class="booking-schedule" id="scheduleList" aria-live="polite"></div>
 
@@ -150,28 +152,28 @@
                 </div>
 
                 <aside class="booking-confirm">
-                    <div class="panel-heading">4. Xác nhận thông tin</div>
+                    <div class="panel-heading d-flex align-items-center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 text-info"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg> 3. Xác nhận thông tin</div>
                     <dl>
-                        <dt>Bệnh nhân</dt>
+                        <dt class="d-flex align-items-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Bệnh nhân</dt>
                         <dd>@Model.HoTenBenhNhan</dd>
-                        <dt>Chuyên khoa</dt>
+                        <dt class="d-flex align-items-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg> Chuyên khoa</dt>
                         <dd id="confirmSpecialty">Chưa chọn</dd>
-                        <dt>Bác sĩ</dt>
+                        <dt class="d-flex align-items-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M16 21v-2a4 4 0 0 0-4-4H5c-1.1 0-2 .9-2 2v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg> Bác sĩ</dt>
                         <dd id="confirmDoctor">Chưa chọn</dd>
-                        <dt>Ngày khám</dt>
+                        <dt class="d-flex align-items-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> Ngày khám</dt>
                         <dd id="confirmDate">Chưa chọn</dd>
-                        <dt>Ca khám</dt>
+                        <dt class="d-flex align-items-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg> Ca khám</dt>
                         <dd id="confirmShift">Chưa chọn</dd>
-                        <dt>Giờ khám</dt>
+                        <dt class="d-flex align-items-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Giờ khám</dt>
                         <dd id="confirmTime">Chưa chọn</dd>
-                        <dt>Thời lượng</dt>
+                        <dt class="d-flex align-items-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg> Thời lượng</dt>
                         <dd id="confirmDuration">30 phút</dd>
-                        <dt>Phòng khám</dt>
+                        <dt class="d-flex align-items-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Phòng khám</dt>
                         <dd id="confirmRoom">Chưa chọn</dd>
                     </dl>
                     <div class="booking-actions">
-                        <button type="submit" class="booking-button booking-button--primary">Xác nhận</button>
-                        <button type="reset" class="booking-button booking-button--ghost" id="resetBooking">Đặt lại</button>
+                        <button type="submit" class="booking-button booking-button--primary d-flex align-items-center justify-content-center w-100 mb-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><polyline points="20 6 9 17 4 12"></polyline></svg> Xác nhận</button>
+                        <button type="reset" class="booking-button booking-button--ghost d-flex align-items-center justify-content-center w-100 border" style="background:#f8fafc;" id="resetBooking"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><polyline points="3 3 3 8 8 8"></polyline></svg> Đặt lại</button>
                     </div>
                 </aside>
             </section>

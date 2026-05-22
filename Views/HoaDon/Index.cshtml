@@ -58,52 +58,78 @@
         }
 
         <section class="metric-grid invoice-metrics" aria-label="Tổng quan hóa đơn">
-            <article class="metric-card">
-                <span>Tổng hóa đơn</span>
-                <strong>@Model.TongHoaDon.ToString("00")</strong>
-                <small>Toàn bộ lịch sử</small>
+            <article class="metric-card animate-hover border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <span class="text-uppercase fw-bold text-muted small">Tổng hóa đơn</span>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px; background: #e0f2fe; color: #0284c7;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    </div>
+                </div>
+                <strong class="display-5 fw-bolder text-dark mb-1">@Model.TongHoaDon.ToString("00")</strong>
+                <small class="text-secondary fw-semibold">Toàn bộ lịch sử</small>
             </article>
-            <article class="metric-card">
-                <span>Chưa thanh toán</span>
-                <strong>@Model.ChuaThanhToan.ToString("00")</strong>
-                <small>Cần xử lý</small>
+            <article class="metric-card animate-hover border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <span class="text-uppercase fw-bold text-muted small">Chưa thanh toán</span>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px; background: #fef08a; color: #a16207;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                </div>
+                <strong class="display-5 fw-bolder text-dark mb-1">@Model.ChuaThanhToan.ToString("00")</strong>
+                <small class="text-warning fw-semibold">Cần xử lý</small>
             </article>
-            <article class="metric-card">
-                <span>Đã thanh toán</span>
-                <strong>@Model.DaThanhToan.ToString("00")</strong>
-                <small>Đã hoàn tất</small>
+            <article class="metric-card animate-hover border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <span class="text-uppercase fw-bold text-muted small">Đã thanh toán</span>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px; background: #dcfce7; color: #16a34a;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                </div>
+                <strong class="display-5 fw-bolder text-dark mb-1">@Model.DaThanhToan.ToString("00")</strong>
+                <small class="text-success fw-semibold">Đã hoàn tất</small>
             </article>
-            <article class="metric-card">
-                <span>Tổng chi phí</span>
-                <strong>@Model.TongChiPhi.ToString("N0")</strong>
-                <small>VNĐ</small>
+            <article class="metric-card animate-hover border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                    <span class="text-uppercase fw-bold text-muted small">Tổng chi phí</span>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px; background: #f3e8ff; color: #7e22ce;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    </div>
+                </div>
+                <strong class="display-5 fw-bolder text-dark mb-1">@Model.TongChiPhi.ToString("N0")</strong>
+                <small class="text-primary fw-semibold" style="color: #7e22ce !important;">VNĐ</small>
             </article>
         </section>
 
         @if (Model.HoaDons.Count == 0)
         {
-            <article class="empty-state">
+            <article class="empty-state border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="mb-3 text-muted">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </div>
                 <h2>Chưa có hóa đơn</h2>
                 <p>Hóa đơn sẽ xuất hiện sau khi phòng khám lập chi phí cho lần khám của bạn.</p>
-                <a asp-controller="HoSoBenhAn" asp-action="Index">Xem hồ sơ bệnh án</a>
+                <a class="booking-button booking-button--primary text-decoration-none d-inline-flex align-items-center justify-content-center mt-3 px-4 py-2" asp-controller="HoSoBenhAn" asp-action="Index">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Xem hồ sơ bệnh án
+                </a>
             </article>
         }
         else
         {
             <section class="invoice-shell" aria-label="Danh sách và chi tiết hóa đơn">
-                <div class="invoice-list-panel">
-                    <div class="panel-heading">Danh sách hóa đơn</div>
+                <div class="invoice-list-panel shadow-sm border-0 bg-white" style="border-radius: 16px; overflow: hidden;">
+                    <div class="panel-heading d-flex align-items-center" style="border-radius: 16px 16px 0 0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 text-primary"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg> Danh sách hóa đơn</div>
                     <div class="invoice-list" id="invoiceList"></div>
                 </div>
 
-                <div class="invoice-detail-panel">
-                    <div class="invoice-detail__header">
+                <div class="invoice-detail-panel shadow-sm border-0 bg-white" style="border-radius: 16px; overflow: hidden;">
+                    <div class="invoice-detail__header p-4" style="border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
                         <div>
-                            <span id="invoiceCode" class="appointment-code"></span>
-                            <h2 id="invoiceTitle">Chi tiết hóa đơn</h2>
-                            <p id="invoiceMeta"></p>
+                            <span id="invoiceCode" class="appointment-code badge bg-light text-secondary border mb-2 px-2 py-1"></span>
+                            <h2 id="invoiceTitle" class="h5 fw-bold text-dark mb-1">Chi tiết hóa đơn</h2>
+                            <p id="invoiceMeta" class="text-muted mb-0 small fw-semibold"></p>
                         </div>
-                        <span id="invoiceStatus" class="status waiting"></span>
+                        <span id="invoiceStatus" class="status waiting px-3 py-1 rounded-pill fw-bold border"></span>
                     </div>
 
                     <dl class="invoice-summary-grid">
