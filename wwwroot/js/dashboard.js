@@ -36,6 +36,13 @@
     titleElement.textContent = form.dataset.confirmTitle || (isLogout ? "Xác nhận đăng xuất" : "Xác nhận thao tác");
     messageElement.textContent = form.dataset.confirmMessage || (isLogout ? "Bạn có chắc chắn muốn đăng xuất không?" : "Bạn có chắc chắn muốn tiếp tục?");
     okButton.textContent = form.dataset.confirmOk || (isLogout ? "Đăng xuất" : "Tiếp tục");
+    
+    // Update cancel button text if provided
+    const cancelButton = modal.querySelector(".app-confirm__button--ghost");
+    if (cancelButton) {
+        cancelButton.textContent = form.dataset.confirmCancel || "Ở lại";
+    }
+
     modal.classList.add("is-open");
     okButton.focus();
   }

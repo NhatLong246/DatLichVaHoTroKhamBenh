@@ -1,0 +1,354 @@
+﻿@model HeThongDatLichVaKhamBenh.Models.ViewModels.BaoCaoViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Báo cáo thống kê";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-theme.css" asp-append-version="true" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .catalog-panel {
+            background: #fff;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+            margin-top: 20px;
+            overflow: hidden;
+            padding: 24px;
+        }
+        .catalog-section-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin: 0 0 20px 0;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .catalog-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .catalog-form-grid .form-control, .catalog-form-grid .form-select {
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            padding: 10px 16px;
+            font-size: 0.95rem;
+            background-color: #f8fafc;
+            transition: all 0.2s;
+        }
+        .catalog-form-grid .form-control:focus, .catalog-form-grid .form-select:focus {
+            background-color: #fff;
+            border-color: var(--admin-primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+        .catalog-form-grid .btn-primary {
+            border-radius: 12px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+            transition: all 0.2s ease;
+        }
+        
+        .stat-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.04);
+        }
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .stat-icon svg { width: 28px; height: 28px; }
+        .stat-icon.primary { background: rgba(79, 70, 229, 0.1); color: #4f46e5; }
+        .stat-icon.success { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .stat-icon.warning { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .stat-content h3 {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin: 0 0 4px 0;
+            font-weight: 600;
+        }
+        .stat-content p {
+            font-size: 1.5rem;
+            color: #1e293b;
+            margin: 0;
+            font-weight: 800;
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .catalog-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .catalog-table th {
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 14px 20px;
+            font-weight: 700;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+        }
+        .catalog-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+            color: #334155;
+            transition: background 0.2s;
+        }
+        .catalog-table tbody tr:hover td { background-color: #f8fafc; }
+        .catalog-table tr:last-child td { border-bottom: none; }
+        
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body class="role-page web-dashboard admin-theme">
+    <partial name="_AdminSidebar" />
+
+    <main class="role-main">
+        <header class="role-header welcome-banner" style="margin-bottom: 26px; padding: 24px 40px;">
+            <div class="welcome-content">
+                <span class="eyebrow" style="color: var(--admin-primary); background: rgba(255,255,255,0.8); padding: 4px 12px; border-radius: 99px; display: inline-block; margin-bottom: 12px;">Hỗ trợ ra quyết định</span>
+                <h1>Báo cáo & Thống kê</h1>
+                <p>Theo dõi doanh thu, đánh giá hiệu suất bác sĩ và phân tích dữ liệu hoạt động.</p>
+            </div>
+        </header>
+
+        <section class="catalog-panel" style="margin: 0 40px;">
+            <h2 class="catalog-section-title">
+                <svg class="icon" viewBox="0 0 24 24" style="width: 24px; height: 24px; color: var(--admin-primary);"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                Bộ lọc Báo cáo
+            </h2>
+            <form asp-action="Index" asp-controller="BaoCao" method="get" class="catalog-form-grid">
+                <div>
+                    <label style="font-size:0.85rem; font-weight:600; color:#64748b; margin-bottom:4px; display:block;">Từ ngày</label>
+                    <input class="form-control" type="date" name="TuNgay" value="@(Model.Filter.TuNgay?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div>
+                    <label style="font-size:0.85rem; font-weight:600; color:#64748b; margin-bottom:4px; display:block;">Đến ngày</label>
+                    <input class="form-control" type="date" name="DenNgay" value="@(Model.Filter.DenNgay?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div>
+                    <label style="font-size:0.85rem; font-weight:600; color:#64748b; margin-bottom:4px; display:block;">Chuyên khoa</label>
+                    <select class="form-select" name="MaChuyenKhoa">
+                        <option value="">Tất cả chuyên khoa</option>
+                        @foreach (var ck in Model.DanhSachChuyenKhoa)
+                        {
+                            if (Model.Filter.MaChuyenKhoa == ck.Value) { <option value="@ck.Value" selected>@ck.Text</option> }
+                            else { <option value="@ck.Value">@ck.Text</option> }
+                        }
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:0.85rem; font-weight:600; color:#64748b; margin-bottom:4px; display:block;">Bác sĩ</label>
+                    <select class="form-select" name="MaBacSi">
+                        <option value="">Tất cả bác sĩ</option>
+                        @foreach (var bs in Model.DanhSachBacSi)
+                        {
+                            if (Model.Filter.MaBacSi == bs.Value) { <option value="@bs.Value" selected>@bs.Text</option> }
+                            else { <option value="@bs.Value">@bs.Text</option> }
+                        }
+                    </select>
+                </div>
+                <div style="display: flex; align-items: flex-end;">
+                    <button class="btn btn-primary" type="submit" style="width: 100%;">Lọc dữ liệu</button>
+                </div>
+            </form>
+        </section>
+
+        <div style="margin: 24px 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
+            <div class="stat-card">
+                <div class="stat-icon primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                </div>
+                <div class="stat-content">
+                    <h3>Tổng doanh thu</h3>
+                    <p>@Model.TongDoanhThu.ToString("N0") đ</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon success">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+                <div class="stat-content">
+                    <h3>Số lượt khám</h3>
+                    <p>@Model.TongLuotKham</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </div>
+                <div class="stat-content">
+                    <h3>Tổng hóa đơn</h3>
+                    <p>@Model.TongHoaDon</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="report-grid" style="margin: 0 40px 40px 40px;">
+            <!-- Biểu đồ -->
+            <section class="catalog-panel" style="margin-top: 0;">
+                <h2 class="catalog-section-title" style="font-size: 1.05rem;">Tỷ lệ bệnh nhân theo Chuyên khoa</h2>
+                <div style="position: relative; height: 300px; width: 100%; display:flex; justify-content:center;">
+                    @if (Model.ChartChuyenKhoa.Count > 0)
+                    {
+                        <canvas id="specialtyChart"></canvas>
+                    }
+                    else
+                    {
+                        <div style="display:flex; align-items:center; justify-content:center; color:#94a3b8; font-weight:500;">
+                            Không có dữ liệu trong khoảng thời gian này
+                        </div>
+                    }
+                </div>
+            </section>
+
+            <!-- Bảng Bác sĩ -->
+            <section class="catalog-panel" style="margin-top: 0; padding: 0;">
+                <div style="padding: 24px 24px 16px 24px;">
+                    <h2 class="catalog-section-title" style="font-size: 1.05rem;">Hiệu suất Bác sĩ</h2>
+                </div>
+                <div class="table-wrap" style="border: none; border-radius: 0; max-height: 350px; overflow-y: auto;">
+                    <table class="catalog-table">
+                        <thead>
+                            <tr>
+                                <th>Bác sĩ</th>
+                                <th>Chuyên khoa</th>
+                                <th style="text-align: right;">Lượt khám</th>
+                                <th style="text-align: right;">Doanh thu ước tính</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if(Model.ThongKeBacSi.Count == 0)
+                            {
+                                <tr><td colspan="4" style="text-align:center; padding:30px; color:#94a3b8;">Không có dữ liệu</td></tr>
+                            }
+                            @foreach (var item in Model.ThongKeBacSi)
+                            {
+                                <tr>
+                                    <td><strong>@item.TenBacSi</strong></td>
+                                    <td>@item.TenChuyenKhoa</td>
+                                    <td style="text-align: right; font-weight:700; color:var(--admin-primary);">@item.SoLuotKham</td>
+                                    <td style="text-align: right;">@item.DoanhThuMangLai.ToString("N0") đ</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+        
+        <section class="catalog-panel" style="margin: 0 40px 40px 40px; padding:0;">
+            <div style="padding: 24px 24px 16px 24px;">
+                <h2 class="catalog-section-title" style="font-size: 1.05rem;">Danh sách hóa đơn gần nhất</h2>
+            </div>
+            <div class="table-wrap" style="border: none; border-radius: 0;">
+                <table class="catalog-table">
+                    <thead>
+                        <tr>
+                            <th>Mã HĐ</th>
+                            <th>Bệnh nhân</th>
+                            <th>Ngày lập</th>
+                            <th style="text-align: right;">Tổng tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if(Model.DanhSachHoaDon.Count == 0)
+                        {
+                            <tr><td colspan="4" style="text-align:center; padding:30px; color:#94a3b8;">Không có dữ liệu</td></tr>
+                        }
+                        @foreach (var hd in Model.DanhSachHoaDon)
+                        {
+                            <tr>
+                                <td><strong>@hd.MaHoaDon</strong></td>
+                                <td>@hd.TenBenhNhan</td>
+                                <td>@hd.NgayLap.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td style="text-align: right; font-weight:700; color:#10b981;">@hd.TongTien.ToString("N0") đ</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+    
+    @if (Model.ChartChuyenKhoa.Count > 0)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var ctx = document.getElementById('specialtyChart').getContext('2d');
+                var data = {
+                    labels: [@Html.Raw(string.Join(",", Model.ChartChuyenKhoa.Select(x => $"'{x.TenChuyenKhoa}'")))],
+                    datasets: [{
+                        data: [@string.Join(",", Model.ChartChuyenKhoa.Select(x => x.SoLuotKham))],
+                        backgroundColor: [@Html.Raw(string.Join(",", Model.ChartChuyenKhoa.Select(x => $"'{x.Color}'")))],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                };
+                
+                var chart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: data,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 },
+                                    usePointStyle: true,
+                                    padding: 20
+                                }
+                            }
+                        },
+                        cutout: '70%'
+                    }
+                });
+            });
+        </script>
+    }
+</body>
+</html>

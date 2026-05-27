@@ -1,0 +1,295 @@
+﻿@model HeThongDatLichVaKhamBenh.Models.ViewModels.ThietLapLichViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Thiết lập Lịch Làm Việc";
+    var days = new[] { "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật" };
+    var shifts = new[] { "Sáng", "Chiều", "Tối" };
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-theme.css" asp-append-version="true" />
+    <style>
+        .schedule-grid-wrap {
+            overflow-x: auto;
+            padding-bottom: 16px;
+        }
+
+        .schedule-board {
+            min-width: 980px;
+            display: grid;
+            grid-template-columns: 150px repeat(7, minmax(110px, 1fr));
+            border: 1px solid var(--admin-border);
+            border-radius: 14px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        .schedule-board-cell {
+            border-right: 1px solid var(--admin-border);
+            border-bottom: 1px solid var(--admin-border);
+            padding: 10px;
+            min-height: 102px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 6px;
+            background: #fff;
+        }
+
+        .schedule-board-cell:nth-child(8n) {
+            border-right: none;
+        }
+
+        .schedule-board-cell.header {
+            min-height: 52px;
+            background: #f8fafc;
+            font-weight: 700;
+            align-items: center;
+            justify-content: center;
+            color: var(--admin-text-main);
+            text-align: center;
+        }
+
+        .schedule-board-cell.shift-cell {
+            align-items: flex-start;
+            background: #f8fafc;
+        }
+
+        .schedule-board-cell.bottom-row {
+            border-bottom: none;
+        }
+
+        .shift-label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .shift-time {
+            color: var(--admin-text-muted);
+            font-size: 0.82rem;
+            line-height: 1.35;
+        }
+
+        .shift-morning { background: rgba(59, 130, 246, 0.12); color: #2563eb; }
+        .shift-afternoon { background: rgba(245, 158, 11, 0.14); color: #d97706; }
+        .shift-evening { background: rgba(139, 92, 246, 0.14); color: #7c3aed; }
+
+        .schedule-slot {
+            justify-content: flex-start;
+            padding-top: 10px;
+        }
+
+        .select-room {
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+            min-height: 38px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .select-room:focus {
+            border-color: var(--admin-primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+        }
+
+        .select-room.has-value {
+            background-color: rgba(16, 185, 129, 0.06);
+            border-color: rgba(16, 185, 129, 0.35);
+            color: #047857;
+            font-weight: 600;
+        }
+
+        .slot-status {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 100%;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1.28;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .slot-status-label {
+            opacity: 0.9;
+            font-size: 0.74rem;
+        }
+
+        .slot-status-value {
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .slot-status.working {
+            background: rgba(16, 185, 129, 0.15);
+            color: #047857;
+        }
+
+        .slot-status.resting {
+            background: rgba(100, 116, 139, 0.14);
+            color: #475569;
+        }
+    </style>
+</head>
+<body class="role-page web-dashboard admin-theme">
+    <partial name="_AdminSidebar" />
+
+    <main class="role-main">
+        <header class="role-header" style="margin-bottom: 24px; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <a href="@Url.Action("Index", "QuanLyLich")" style="color: var(--admin-text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; margin-bottom: 8px;">
+                    &larr; Quay lại danh sách
+                </a>
+                <h1 style="font-size: 1.5rem; margin: 0; font-weight: 800;">Thiết lập Lịch: @Model.HoTenBacSi</h1>
+                <p style="color: var(--admin-text-muted); margin: 4px 0 0 0; font-size: 0.95rem;">
+                    Chuyên khoa: <strong style="color: var(--admin-primary);">@Model.TenChuyenKhoa</strong>
+                </p>
+            </div>
+            <button form="scheduleForm" type="submit" class="btn btn-primary" style="background: var(--admin-primary); border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600;">
+                <svg class="icon" viewBox="0 0 24 24" style="margin-right: 6px; width: 18px; height: 18px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Lưu lịch làm việc
+            </button>
+        </header>
+
+        <div style="padding: 0 40px 40px 40px;">
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 12px; margin-bottom: 24px;">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <form id="scheduleForm" method="post" action="@Url.Action("Manage", "QuanLyLich", new { id = Model.MaBacSi })">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="MaBacSi" />
+                <input type="hidden" asp-for="HoTenBacSi" />
+                <input type="hidden" asp-for="TenChuyenKhoa" />
+                <input type="hidden" asp-for="MaChuyenKhoa" />
+
+                <div class="schedule-grid-wrap">
+                    <div class="schedule-board">
+                        <div class="schedule-board-cell header">Ca \\ Ngày</div>
+                        @foreach (var day in days)
+                        {
+                            <div class="schedule-board-cell header">@day</div>
+                        }
+
+                        @for (int i = 0; i < shifts.Length; i++)
+                        {
+                            var shift = shifts[i];
+                            var shiftTime = shift == "Sáng" ? "07:30 - 11:30" : shift == "Chiều" ? "13:30 - 17:00" : "18:00 - 20:30";
+                            var shiftClass = shift == "Sáng" ? "shift-morning" : shift == "Chiều" ? "shift-afternoon" : "shift-evening";
+                            var isBottomRow = i == shifts.Length - 1 ? "bottom-row" : string.Empty;
+
+                            <div class="schedule-board-cell shift-cell @isBottomRow">
+                                <span class="shift-label @shiftClass">Ca @shift</span>
+                                <span class="shift-time">@shiftTime</span>
+                            </div>
+
+                            @foreach (var day in days)
+                            {
+                                var cellIndex = Array.IndexOf(days, day) * shifts.Length + i;
+                                var cell = Model.OTrongLich.FirstOrDefault(x => x.NgayTrongTuan == day && x.CaLamViec == shift);
+                                var selectedRoom = Model.DanhSachPhongKham.FirstOrDefault(x => x.Value == cell?.MaPhongKham)?.Text;
+
+                                <div class="schedule-board-cell schedule-slot @isBottomRow">
+                                    <input type="hidden" name="OTrongLich[@cellIndex].NgayTrongTuan" value="@day" />
+                                    <input type="hidden" name="OTrongLich[@cellIndex].CaLamViec" value="@shift" />
+
+                                    <select name="OTrongLich[@cellIndex].MaPhongKham" class="form-select select-room @(!string.IsNullOrEmpty(cell?.MaPhongKham) ? "has-value" : "")">
+                                        <option value="">-- Nghỉ --</option>
+                                        @foreach(var pk in Model.DanhSachPhongKham)
+                                        {
+                                            if (cell?.MaPhongKham == pk.Value)
+                                            {
+                                                <option value="@pk.Value" selected title="@pk.Text">@pk.Text</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@pk.Value" title="@pk.Text">@pk.Text</option>
+                                            }
+                                        }
+                                    </select>
+
+                                    @if (!string.IsNullOrEmpty(cell?.MaPhongKham) && !string.IsNullOrEmpty(selectedRoom))
+                                    {
+                                        <span class="slot-status working">
+                                            <span class="slot-status-label">Phòng:</span>
+                                            <span class="slot-status-value">@selectedRoom</span>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="slot-status resting">Nghỉ</span>
+                                    }
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+    <script>
+        document.querySelectorAll('.select-room').forEach((selectElement) => {
+            const updateStatus = () => {
+                const statusElement = selectElement.parentElement?.querySelector('.slot-status');
+                if (!statusElement) return;
+
+                const selectedOption = selectElement.options[selectElement.selectedIndex];
+                const hasRoom = selectElement.value !== '';
+                selectElement.classList.toggle('has-value', hasRoom);
+
+                if (hasRoom && selectedOption) {
+                    statusElement.classList.remove('resting');
+                    statusElement.classList.add('working');
+                    statusElement.textContent = '';
+
+                    const labelElement = document.createElement('span');
+                    labelElement.className = 'slot-status-label';
+                    labelElement.textContent = 'Phòng:';
+
+                    const valueElement = document.createElement('span');
+                    valueElement.className = 'slot-status-value';
+                    valueElement.textContent = selectedOption.text;
+
+                    statusElement.appendChild(labelElement);
+                    statusElement.appendChild(valueElement);
+                } else {
+                    statusElement.classList.remove('working');
+                    statusElement.classList.add('resting');
+                    statusElement.textContent = 'Nghỉ';
+                }
+            };
+
+            selectElement.addEventListener('change', updateStatus);
+            updateStatus();
+        });
+    </script>
+</body>
+</html>

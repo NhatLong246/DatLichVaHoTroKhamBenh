@@ -232,3 +232,16 @@ Việc cần làm tiếp:
 - Hoàn thiện luồng bác sĩ lập phiếu khám, kê đơn, chỉ định dịch vụ.
 - Hoàn thiện luồng tạo hóa đơn tự động từ chi phí dịch vụ và thuốc.
 - Cân nhắc chính sách cho sửa thông tin cá nhân nhạy cảm như họ tên, ngày sinh, giới tính nếu sau này cần quy trình xác minh.
+
+## Cập nhật tiến độ màn hình Quản trị (Admin)
+
+Đã hoàn thành:
+
+- **Báo cáo thống kê (Dashboard/BaoCao)**: Đã triển khai tính năng lọc doanh thu và lượt khám bệnh theo thời gian/chuyên khoa/bác sĩ. Tích hợp biểu đồ tròn Chart.js trực quan hóa dữ liệu chuyên khoa. Hiển thị danh sách hóa đơn theo khoảng thời gian.
+- **Admin Dashboard (`Dashboard/Admin`)**: Đã làm mới giao diện tổng quan quản trị cực kỳ hiện đại với thẻ thống kê tổng, xu hướng, và giao diện đẹp mắt có banner/image.
+- **Sidebar Menu Quản trị**: Đã tái cấu trúc tách rời thanh điều hướng ra thành Partial View chung (`_AdminSidebar.cshtml`), đảm bảo đồng bộ, có tính năng tự động active link hiện tại, áp dụng cho toàn bộ các màn hình Quản lý Danh mục, Quản lý Lịch, Quản lý Bác sĩ, Quản lý Tài khoản và Báo cáo.
+
+Việc cần làm tiếp:
+
+- Hoàn thiện luồng CRUD chi tiết các Danh mục (Phòng khám, Dịch vụ).
+- Phát triển thêm các biểu đồ Bar/Line về tăng trưởng doanh thu theo tháng/năm.

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -25,6 +25,9 @@ public partial class NguoiDung
     public string? VaiTro { get; set; }
 
     public bool? TrangThai { get; set; }
+
+    [StringLength(100)]
+    public string? Email { get; set; }
 
     [InverseProperty("MaNguoiDungNavigation")]
     public virtual BacSi? BacSi { get; set; }

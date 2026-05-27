@@ -46,3 +46,9 @@ Hướng dẫn cho mọi AI/coding agent làm việc trong repository này.
 - Các màn hình bệnh nhân phải lọc dữ liệu theo bệnh nhân đang đăng nhập qua `MaNguoiDung` trong session; không cho xem/sửa dữ liệu của bệnh nhân khác.
 - Các thao tác quan trọng như hủy lịch, thanh toán, đổi mật khẩu, đăng xuất dùng modal custom trong `wwwroot/js/dashboard.js`.
 - Trang cài đặt chỉ cho sửa điện thoại/địa chỉ; họ tên, ngày sinh, giới tính và thông tin tài khoản hiển thị chỉ đọc.
+
+## Ghi chú hiện trạng các màn hình quản trị
+
+- Các module: Báo cáo thống kê, Quản lý Danh mục, Quản lý Lịch, Quản lý Bác sĩ, Quản lý Tài khoản.
+- Sidebar menu quản trị đã được hợp nhất thành Partial View `Views/Shared/_AdminSidebar.cshtml`, sử dụng `ViewContext.RouteData` để xác định trạng thái active của menu. Không copy paste `<aside>` ở các file riêng lẻ nữa.
+- Các giao diện quản trị sử dụng `admin-theme` với thiết kế sáng sủa, góc bo tròn, màu xanh chủ đạo, có chứa các the metric-card hiển thị chỉ số tổng quát.

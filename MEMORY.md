@@ -1,5 +1,12 @@
 # MEMORY - HeThongDatLichVaKhamBenh
 
+## Cập nhật mới nhất - Báo cáo & Quản trị (Admin)
+
+- Đã triển khai trang **Báo cáo thống kê** tại `Views/BaoCao/Index.cshtml` (Controller: `BaoCaoController`), hỗ trợ tính tổng doanh thu từ hóa đơn đã thanh toán và đếm lượt khám bệnh từ lịch sử theo khoảng thời gian/chuyên khoa/bác sĩ.
+- **Admin Dashboard** (`Dashboard/Admin.cshtml`) đã được tân trang lại với giao diện hiện đại (banner màu sắc, thẻ chỉ số card, table gọn gàng).
+- **Sidebar Menu Quản trị** đã được đóng gói thành Partial View (`Views/Shared/_AdminSidebar.cshtml`) để dùng chung cho mọi màn hình quản trị, hỗ trợ auto-active link dựa trên `ViewContext.RouteData.Values["controller"]`.
+- Đã đồng bộ mã hóa UTF-8 cho toàn bộ Views để tránh lỗi font chữ tiếng Việt.
+
 ## Cập nhật mới nhất - màn hình bác sĩ
 
 Các màn hình bác sĩ đã được chuyển dần từ mockup tĩnh sang dữ liệu thật, dùng chung phong cách `role-page web-dashboard doctor-theme`, sidebar teal/trắng/xám nhẹ và modal xác nhận custom trong `wwwroot/js/dashboard.js`.

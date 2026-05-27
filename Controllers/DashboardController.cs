@@ -51,7 +51,7 @@ public class DashboardController : Controller
         return View(model);
     }
 
-    public IActionResult Admin()
+    public async Task<IActionResult> Admin()
     {
         var redirect = RequireRole(RoleAdmin);
         if (redirect != null)
@@ -59,8 +59,81 @@ public class DashboardController : Controller
             return redirect;
         }
 
+        var today = DateOnly.FromDateTime(DateTime.Now);
+        var todayName = GetVietnameseDayOfWeek(today);
+
+        var tongBenhNhan = await _context.BenhNhans.CountAsync();
+        var tongBacSi = await _context.BacSis.CountAsync();
+        
+        var lichKhamHomNayCount = await _context.DangKyLichKhams
+            .Where(x => x.NgayKham == today)
+            .CountAsync();
+
+        var tongDoanhThu = await _context.HoaDons
+            .Where(x => x.TrangThai == "Đã thanh toán")
+            .SumAsync(x => (decimal?)x.TongTien) ?? 0;
+
+        var danhSachLichKham = await _context.DangKyLichKhams
+            .AsNoTracking()
+            .Include(x => x.MaBenhNhanNavigation)
+            .Include(x => x.MaBacSiNavigation)
+            .Where(x => x.NgayKham == today)
+            .OrderBy(x => x.GioKham ?? TimeOnly.MinValue)
+            .Take(10)
+            .Select(x => new AdminLichKhamViewModel
+            {
+                TenBenhNhan = x.MaBenhNhanNavigation.HoTen,
+                TenBacSi = x.MaBacSiNavigation.HoTen,
+                CaKham = x.CaKham,
+                TrangThai = x.TrangThai ?? "Chờ khám"
+            })
+            .ToListAsync();
+
+        var danhSachBacSi = await _context.LichLamViecs
+            .AsNoTracking()
+            .Include(x => x.MaBacSiNavigation)
+                .ThenInclude(b => b.MaChuyenKhoaNavigation)
+            .Include(x => x.MaPhongKhamNavigation)
+            .Where(x => x.NgayTrongTuan == todayName)
+            .Take(10)
+            .Select(x => new AdminBacSiLamViecViewModel
+            {
+                TenBacSi = x.MaBacSiNavigation.HoTen,
+                ChuyenKhoa = x.MaBacSiNavigation.MaChuyenKhoaNavigation != null ? x.MaBacSiNavigation.MaChuyenKhoaNavigation.TenChuyenKhoa : "N/A",
+                CaLamViec = x.CaLamViec,
+                Phong = x.MaPhongKhamNavigation != null ? x.MaPhongKhamNavigation.TenPhongKham : "N/A"
+            })
+            .ToListAsync();
+
+        var danhSachHoaDon = await _context.HoaDons
+            .AsNoTracking()
+            .Include(x => x.MaBenhNhanNavigation)
+            .OrderByDescending(x => x.NgayLap)
+            .ThenByDescending(x => x.MaHoaDon)
+            .Take(7)
+            .Select(x => new AdminHoaDonViewModel
+            {
+                MaHoaDon = x.MaHoaDon,
+                TenBenhNhan = x.MaBenhNhanNavigation.HoTen,
+                NgayLap = x.NgayLap.HasValue ? x.NgayLap.Value.ToString("dd/MM/yyyy") : "N/A",
+                TongTien = x.TongTien ?? 0,
+                TrangThai = x.TrangThai ?? "Chưa thanh toán"
+            })
+            .ToListAsync();
+
+        var model = new AdminDashboardViewModel
+        {
+            TongBenhNhan = tongBenhNhan,
+            TongBacSi = tongBacSi,
+            LichKhamHomNay = lichKhamHomNayCount,
+            TongDoanhThu = tongDoanhThu,
+            DanhSachLichKhamHomNay = danhSachLichKham,
+            DanhSachBacSiLamViec = danhSachBacSi,
+            DanhSachHoaDonGanDay = danhSachHoaDon
+        };
+
         ViewBag.Today = DateTime.Now.ToString("dd/MM/yyyy");
-        return View();
+        return View(model);
     }
 
     private async Task<BacSiDashboardViewModel> BuildDoctorDashboardModelAsync()

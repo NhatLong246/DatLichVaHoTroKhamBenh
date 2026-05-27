@@ -1,0 +1,455 @@
+﻿@model HeThongDatLichVaKhamBenh.Models.ViewModels.QuanLyDanhMucViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Quản lý Danh mục";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-theme.css" asp-append-version="true" />
+    <style>
+        .catalog-toolbar {
+            display: inline-flex;
+            gap: 6px;
+            margin-top: 12px;
+            margin-bottom: 24px;
+            background: #f1f5f9;
+            padding: 8px;
+            border-radius: 16px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .catalog-toolbar .btn {
+            border-radius: 12px;
+            padding: 10px 24px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            color: #64748b;
+            background: transparent;
+            transition: all 0.25s ease;
+        }
+        .catalog-toolbar .btn:hover {
+            color: var(--admin-primary);
+            background: rgba(79, 70, 229, 0.05);
+        }
+        .catalog-toolbar .btn.active {
+            background: #fff;
+            color: var(--admin-primary);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            font-weight: 700;
+        }
+        
+        .catalog-panel {
+            background: #fff;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .catalog-section-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            background: rgba(248, 250, 252, 0.4);
+        }
+        .catalog-section-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin: 0;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .catalog-form-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(140px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .catalog-form-grid .full {
+            grid-column: 1 / -1;
+        }
+        .catalog-form-grid .form-control, .catalog-form-grid .form-select {
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            padding: 10px 16px;
+            font-size: 0.95rem;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.01);
+            transition: all 0.2s;
+            background-color: #f8fafc;
+        }
+        .catalog-form-grid .form-control:focus, .catalog-form-grid .form-select:focus {
+            background-color: #fff;
+            border-color: var(--admin-primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+        .catalog-form-grid .btn-primary {
+            border-radius: 12px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+            transition: all 0.2s ease;
+        }
+        .catalog-form-grid .btn-primary:hover {
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .catalog-table {
+            width: 100%;
+            min-width: 1000px;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .catalog-table th {
+            background: #fff;
+            color: #64748b;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 18px 24px;
+            font-weight: 700;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .catalog-table td {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+            color: #334155;
+            transition: background 0.2s;
+        }
+        .catalog-table tbody tr:hover td {
+            background-color: #f8fafc;
+        }
+        .catalog-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .inline-input,
+        .inline-select,
+        .inline-textarea {
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            width: 100%;
+            transition: all 0.2s;
+            background: #f8fafc;
+        }
+        .inline-input:focus,
+        .inline-select:focus,
+        .inline-textarea:focus {
+            background: #fff;
+            border-color: var(--admin-primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        .inline-textarea {
+            min-height: 64px;
+            resize: vertical;
+        }
+        
+        .status-badge {
+            border-radius: 999px;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            white-space: nowrap;
+            letter-spacing: 0.02em;
+        }
+        .status-ok {
+            background: rgba(16, 185, 129, 0.12);
+            color: #047857;
+        }
+        .status-muted {
+            background: rgba(100, 116, 139, 0.12);
+            color: #475569;
+        }
+        
+        .table-wrap {
+            overflow-x: auto;
+            padding: 0;
+        }
+        .btn-outline-primary {
+            border-radius: 10px;
+            font-weight: 600;
+            border-color: rgba(79, 70, 229, 0.3);
+            color: var(--admin-primary);
+        }
+        .btn-outline-primary:hover {
+            background: var(--admin-primary);
+            color: #fff;
+            border-color: var(--admin-primary);
+        }
+    </style>
+</head>
+<body class="role-page web-dashboard admin-theme">
+    <partial name="_AdminSidebar" />
+
+    <main class="role-main">
+        <header class="role-header welcome-banner" style="margin-bottom: 26px; padding: 24px 40px;">
+            <div class="welcome-content">
+                <span class="eyebrow" style="color: var(--admin-primary); background: rgba(255,255,255,0.8); padding: 4px 12px; border-radius: 99px; display: inline-block; margin-bottom: 12px;">Quản trị dữ liệu</span>
+                <h1>Quản lý Danh mục</h1>
+                <p>Cấu hình dữ liệu nền tảng gồm chuyên khoa, phòng khám và dịch vụ khám chữa bệnh.</p>
+            </div>
+        </header>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 12px;">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 12px;">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="catalog-toolbar">
+            <a class="btn @(Model.ActiveTab == "chuyen-khoa" ? "active" : "")" href="@Url.Action("Index", "QuanLyDanhMuc", new { tab = "chuyen-khoa" })">Chuyên khoa</a>
+            <a class="btn @(Model.ActiveTab == "phong-kham" ? "active" : "")" href="@Url.Action("Index", "QuanLyDanhMuc", new { tab = "phong-kham" })">Phòng khám</a>
+            <a class="btn @(Model.ActiveTab == "dich-vu" ? "active" : "")" href="@Url.Action("Index", "QuanLyDanhMuc", new { tab = "dich-vu" })">Dịch vụ</a>
+        </div>
+
+        @if (Model.ActiveTab == "chuyen-khoa")
+        {
+            <section class="catalog-panel">
+                <div class="catalog-section-header">
+                    <h2 class="catalog-section-title">Danh sách chuyên khoa y tế</h2>
+                    <form asp-action="TaoChuyenKhoa" asp-controller="QuanLyDanhMuc" method="post" class="catalog-form-grid">
+                        @Html.AntiForgeryToken()
+                        <input class="form-control" type="text" name="TenChuyenKhoa" placeholder="Tên chuyên khoa mới..." maxlength="100" required />
+                        <button class="btn btn-primary" type="submit" style="font-weight: 700;">Thêm chuyên khoa</button>
+                    </form>
+                </div>
+                <div class="table-wrap">
+                    <table class="catalog-table">
+                        <thead>
+                            <tr>
+                                <th>Mã</th>
+                                <th>Tên chuyên khoa</th>
+                                <th>Số phòng</th>
+                                <th>Số dịch vụ</th>
+                                <th style="width: 280px;">Cập nhật</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ChuyenKhoas)
+                            {
+                                <tr>
+                                    <td><strong>@item.MaChuyenKhoa</strong></td>
+                                    <td>@item.TenChuyenKhoa</td>
+                                    <td><span class="status-badge status-muted">@item.SoPhongKham phòng</span></td>
+                                    <td><span class="status-badge status-ok">@item.SoDichVu dịch vụ</span></td>
+                                    <td>
+                                        <form asp-action="CapNhatChuyenKhoa" asp-controller="QuanLyDanhMuc" method="post" style="display:flex; gap:8px;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="MaChuyenKhoa" value="@item.MaChuyenKhoa" />
+                                            <input class="inline-input" type="text" name="TenChuyenKhoa" value="@item.TenChuyenKhoa" maxlength="100" required />
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">Lưu</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        }
+
+        @if (Model.ActiveTab == "phong-kham")
+        {
+            <section class="catalog-panel">
+                <div class="catalog-section-header">
+                    <h2 class="catalog-section-title">Quản lý cơ sở vật chất - phòng khám</h2>
+                    <form asp-action="TaoPhongKham" asp-controller="QuanLyDanhMuc" method="post" class="catalog-form-grid">
+                        @Html.AntiForgeryToken()
+                        <input class="form-control" type="text" name="TenPhongKham" placeholder="Tên phòng khám" maxlength="100" required />
+                        <select class="form-select" name="MaChuyenKhoa" required>
+                            <option value="">Chọn chuyên khoa</option>
+                            @foreach (var ck in Model.DanhSachChuyenKhoa)
+                            {
+                                <option value="@ck.Value">@ck.Text</option>
+                            }
+                        </select>
+                        <input class="form-control" type="text" name="ViTri" placeholder="Vị trí phòng" maxlength="200" />
+                        <input class="form-control" type="number" name="SucChua" min="1" placeholder="Sức chứa tối đa" required />
+                        <select class="form-select" name="TrangThai" required>
+                            <option value="Hoạt động">Hoạt động</option>
+                            <option value="Tạm dừng">Tạm dừng</option>
+                            <option value="Bảo trì">Bảo trì</option>
+                        </select>
+                        <button class="btn btn-primary full" type="submit" style="font-weight: 700;">Thêm phòng khám</button>
+                    </form>
+                </div>
+                <div class="table-wrap">
+                    <table class="catalog-table">
+                        <thead>
+                            <tr>
+                                <th>Mã</th>
+                                <th>Tên phòng</th>
+                                <th>Chuyên khoa</th>
+                                <th>Vị trí</th>
+                                <th>Sức chứa</th>
+                                <th>Trạng thái</th>
+                                <th style="width: 340px;">Cập nhật</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.PhongKhams)
+                            {
+                                <tr>
+                                    <td><strong>@item.MaPhongKham</strong></td>
+                                    <td>@item.TenPhongKham</td>
+                                    <td>@item.TenChuyenKhoa</td>
+                                    <td>@(string.IsNullOrWhiteSpace(item.ViTri) ? "-" : item.ViTri)</td>
+                                    <td>@item.SucChua</td>
+                                    <td>
+                                        <span class="status-badge @(item.TrangThai == "Hoạt động" ? "status-ok" : "status-muted")">@item.TrangThai</span>
+                                    </td>
+                                    <td>
+                                        <form asp-action="CapNhatPhongKham" asp-controller="QuanLyDanhMuc" method="post" class="catalog-form-grid" style="grid-template-columns: repeat(2, minmax(110px, 1fr)); margin:0;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="MaPhongKham" value="@item.MaPhongKham" />
+                                            <input class="inline-input" type="text" name="TenPhongKham" value="@item.TenPhongKham" maxlength="100" required />
+                                            <input class="inline-input" type="text" name="ViTri" value="@item.ViTri" maxlength="200" />
+                                            <select class="inline-select" name="MaChuyenKhoa" required>
+                                                @foreach (var ck in Model.DanhSachChuyenKhoa)
+                                                {
+                                                    if (ck.Value == item.MaChuyenKhoa)
+                                                    {
+                                                        <option value="@ck.Value" selected>@ck.Text</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@ck.Value">@ck.Text</option>
+                                                    }
+                                                }
+                                            </select>
+                                            <input class="inline-input" type="number" name="SucChua" min="1" value="@item.SucChua" required />
+                                            <select class="inline-select" name="TrangThai" required>
+                                                @if (item.TrangThai == "Hoạt động") { <option value="Hoạt động" selected>Hoạt động</option> } else { <option value="Hoạt động">Hoạt động</option> }
+                                                @if (item.TrangThai == "Tạm dừng") { <option value="Tạm dừng" selected>Tạm dừng</option> } else { <option value="Tạm dừng">Tạm dừng</option> }
+                                                @if (item.TrangThai == "Bảo trì") { <option value="Bảo trì" selected>Bảo trì</option> } else { <option value="Bảo trì">Bảo trì</option> }
+                                            </select>
+                                            <button type="submit" class="btn btn-sm btn-outline-primary full">Lưu thay đổi</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        }
+
+        @if (Model.ActiveTab == "dich-vu")
+        {
+            <section class="catalog-panel">
+                <div class="catalog-section-header">
+                    <h2 class="catalog-section-title">Quản lý bảng giá và mô tả dịch vụ</h2>
+                    <form asp-action="TaoDichVu" asp-controller="QuanLyDanhMuc" method="post" class="catalog-form-grid">
+                        @Html.AntiForgeryToken()
+                        <input class="form-control" type="text" name="TenDichVu" placeholder="Tên dịch vụ" maxlength="100" required />
+                        <select class="form-select" name="MaChuyenKhoa" required>
+                            <option value="">Chọn chuyên khoa</option>
+                            @foreach (var ck in Model.DanhSachChuyenKhoa)
+                            {
+                                <option value="@ck.Value">@ck.Text</option>
+                            }
+                        </select>
+                        <input class="form-control" type="number" name="GiaTien" min="1" step="1000" placeholder="Giá dịch vụ (VNĐ)" required />
+                        <input class="form-control" type="number" name="ThoiGianTrungBinh" min="1" placeholder="Thời gian TB (phút)" required />
+                        <select class="form-select" name="TrangThai" required>
+                            <option value="Hoạt động">Hoạt động</option>
+                            <option value="Ngừng cung cấp">Ngừng cung cấp</option>
+                        </select>
+                        <textarea class="form-control full" name="MoTa" rows="2" maxlength="1000" placeholder="Mô tả chi tiết dịch vụ..."></textarea>
+                        <button class="btn btn-primary full" type="submit" style="font-weight: 700;">Thêm dịch vụ</button>
+                    </form>
+                </div>
+                <div class="table-wrap">
+                    <table class="catalog-table">
+                        <thead>
+                            <tr>
+                                <th>Mã</th>
+                                <th>Tên dịch vụ</th>
+                                <th>Chuyên khoa</th>
+                                <th>Giá</th>
+                                <th>Thời gian TB</th>
+                                <th>Trạng thái</th>
+                                <th>Mô tả</th>
+                                <th style="width: 360px;">Cập nhật</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.DichVus)
+                            {
+                                <tr>
+                                    <td><strong>@item.MaDichVu</strong></td>
+                                    <td>@item.TenDichVu</td>
+                                    <td>@item.TenChuyenKhoa</td>
+                                    <td>@item.GiaTien.ToString("N0") đ</td>
+                                    <td>@(item.ThoiGianTrungBinh.HasValue ? $"{item.ThoiGianTrungBinh} phút" : "-")</td>
+                                    <td>
+                                        <span class="status-badge @(item.TrangThai == "Hoạt động" ? "status-ok" : "status-muted")">@item.TrangThai</span>
+                                    </td>
+                                    <td>@(string.IsNullOrWhiteSpace(item.MoTa) ? "-" : item.MoTa)</td>
+                                    <td>
+                                        <form asp-action="CapNhatDichVu" asp-controller="QuanLyDanhMuc" method="post" class="catalog-form-grid" style="grid-template-columns: repeat(2, minmax(110px, 1fr)); margin:0;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="MaDichVu" value="@item.MaDichVu" />
+                                            <input class="inline-input" type="text" name="TenDichVu" value="@item.TenDichVu" maxlength="100" required />
+                                            <select class="inline-select" name="MaChuyenKhoa" required>
+                                                @foreach (var ck in Model.DanhSachChuyenKhoa)
+                                                {
+                                                    if (ck.Value == item.MaChuyenKhoa)
+                                                    {
+                                                        <option value="@ck.Value" selected>@ck.Text</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@ck.Value">@ck.Text</option>
+                                                    }
+                                                }
+                                            </select>
+                                            <input class="inline-input" type="number" name="GiaTien" min="1" step="1000" value="@item.GiaTien" required />
+                                            <input class="inline-input" type="number" name="ThoiGianTrungBinh" min="1" value="@item.ThoiGianTrungBinh" />
+                                            <select class="inline-select" name="TrangThai" required>
+                                                @if (item.TrangThai == "Hoạt động") { <option value="Hoạt động" selected>Hoạt động</option> } else { <option value="Hoạt động">Hoạt động</option> }
+                                                @if (item.TrangThai == "Ngừng cung cấp") { <option value="Ngừng cung cấp" selected>Ngừng cung cấp</option> } else { <option value="Ngừng cung cấp">Ngừng cung cấp</option> }
+                                            </select>
+                                            <textarea class="inline-textarea full" name="MoTa" maxlength="1000">@item.MoTa</textarea>
+                                            <button type="submit" class="btn btn-sm btn-outline-primary full">Lưu thay đổi</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        }
+    </main>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+</body>
+</html>

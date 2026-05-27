@@ -1,4 +1,4 @@
-﻿USE HeThongDatLichVaKhamBenh
+USE HeThongDatLichVaKhamBenh
 GO
 
 -- ============================================
@@ -53,22 +53,22 @@ SELECT * FROM HoaDon;
 SELECT * FROM ChiTietHoaDon;
 
 
-INSERT INTO NguoiDung (MaNguoiDung, TenDangNhap, MatKhau, VaiTro, TrangThai) VALUES
-('ND001', N'admin01', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Admin@123'), 2), N'Quản trị', 1),
-('ND002', N'bsnguyenvana', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bs@12345'), 2), N'Bác sĩ', 1),
-('ND003', N'bstranthib', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bs@12345'), 2), N'Bác sĩ', 1),
-('ND004', N'bslevanc', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bs@12345'), 2), N'Bác sĩ', 1),
-('ND005', N'bsphamthid', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bs@12345'), 2), N'Bác sĩ', 1),
-('ND006', N'bshoangvane', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bs@12345'), 2), N'Bác sĩ', 1),
-('ND007', N'bn.nguyenminh', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1),
-('ND008', N'bn.tranhong', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1),
-('ND009', N'bn.levanthanh', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1),
-('ND010', N'bn.phamthuhang', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1),
-('ND011', N'bn.hoangvanduc', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1),
-('ND012', N'bn.ngothilan', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1),
-('ND013', N'bn.vuvanbinh', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1),
-('ND014', N'bn.dothikhanh', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1),
-('ND015', N'bn.buithithu', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1);
+INSERT INTO NguoiDung (MaNguoiDung, TenDangNhap, MatKhau, VaiTro, TrangThai, Email) VALUES
+('ND001', N'admin01', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Admin@123'), 2), N'Quản trị', 1, 'admin@healthcare.com'),
+('ND002', N'bsnguyenvana', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bs@12345'), 2), N'Bác sĩ', 1, 'nguyenvana@healthcare.com'),
+('ND003', N'bstranthib', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bs@12345'), 2), N'Bác sĩ', 1, 'tranthib@healthcare.com'),
+('ND004', N'bslevanc', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bs@12345'), 2), N'Bác sĩ', 1, 'levanc@healthcare.com'),
+('ND005', N'bsphamthid', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bs@12345'), 2), N'Bác sĩ', 1, 'phamthid@healthcare.com'),
+('ND006', N'bshoangvane', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bs@12345'), 2), N'Bác sĩ', 1, 'hoangvane@healthcare.com'),
+('ND007', N'bn.nguyenminh', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1, 'nguyenminh@gmail.com'),
+('ND008', N'bn.tranhong', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1, 'tranhong@gmail.com'),
+('ND009', N'bn.levanthanh', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1, 'levanthanh@gmail.com'),
+('ND010', N'bn.phamthuhang', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1, 'phamthuhang@gmail.com'),
+('ND011', N'bn.hoangvanduc', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1, 'hoangvanduc@gmail.com'),
+('ND012', N'bn.ngothilan', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1, 'ngothilan@gmail.com'),
+('ND013', N'bn.vuvanbinh', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1, 'vuvanbinh@gmail.com'),
+('ND014', N'bn.dothikhanh', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1, 'dothikhanh@gmail.com'),
+('ND015', N'bn.buithithu', CONVERT(NVARCHAR(100), HASHBYTES('SHA2_256', N'Bn@12345'), 2), N'Bệnh nhân', 1, 'buithithu@gmail.com');
 
 -- ============================================
 -- 2. THÊM DỮ LIỆU CHUYÊN KHOA
@@ -123,12 +123,12 @@ INSERT INTO DichVuKham (MaDichVu, TenDichVu, MoTa, MaChuyenKhoa, GiaTien, ThoiGi
 -- ============================================
 -- 5. THÊM DỮ LIỆU BÁC SĨ
 -- ============================================
-INSERT INTO BacSi (MaBacSi, MaNguoiDung, HoTen, GioiTinh, NgaySinh, DienThoai, DiaChi, TrinhDo, MaChuyenKhoa) VALUES
-('BS001', 'ND002', N'Nguyễn Văn A', N'Nam', '1980-05-15', '0901234567', N'123 Lê Lợi, Q1, TP.HCM', N'Tiến sĩ', 'CK01'),
-('BS002', 'ND003', N'Trần Thị B', N'Nữ', '1985-08-20', '0912345678', N'456 Nguyễn Huệ, Q1, TP.HCM', N'Thạc sĩ', 'CK05'),
-('BS003', 'ND004', N'Lê Văn C', N'Nam', '1978-12-10', '0923456789', N'789 Hai Bà Trưng, Q3, TP.HCM', N'Giáo sư', 'CK06'),
-('BS004', 'ND005', N'Phạm Thị D', N'Nữ', '1990-03-25', '0934567890', N'321 Trần Hưng Đạo, Q5, TP.HCM', N'Bác sĩ', 'CK03'),
-('BS005', 'ND006', N'Hoàng Văn E', N'Nam', '1982-07-18', '0945678901', N'654 Lý Thường Kiệt, Q10, TP.HCM', N'Phó giáo sư', 'CK02');
+INSERT INTO BacSi (MaBacSi, MaNguoiDung, HoTen, GioiTinh, NgaySinh, DienThoai, DiaChi, TrinhDo, MaChuyenKhoa, Email) VALUES
+('BS001', 'ND002', N'Nguyễn Văn A', N'Nam', '1980-05-15', '0901234567', N'123 Lê Lợi, Q1, TP.HCM', N'Tiến sĩ', 'CK01', 'nguyenvana@healthcare.com'),
+('BS002', 'ND003', N'Trần Thị B', N'Nữ', '1985-08-20', '0912345678', N'456 Nguyễn Huệ, Q1, TP.HCM', N'Thạc sĩ', 'CK05', 'tranthib@healthcare.com'),
+('BS003', 'ND004', N'Lê Văn C', N'Nam', '1978-12-10', '0923456789', N'789 Hai Bà Trưng, Q3, TP.HCM', N'Giáo sư', 'CK06', 'levanc@healthcare.com'),
+('BS004', 'ND005', N'Phạm Thị D', N'Nữ', '1990-03-25', '0934567890', N'321 Trần Hưng Đạo, Q5, TP.HCM', N'Bác sĩ', 'CK03', 'phamthid@healthcare.com'),
+('BS005', 'ND006', N'Hoàng Văn E', N'Nam', '1982-07-18', '0945678901', N'654 Lý Thường Kiệt, Q10, TP.HCM', N'Phó giáo sư', 'CK02', 'hoangvane@healthcare.com');
 
 -- ============================================
 -- 6. THÊM DỮ LIỆU LỊCH LÀM VIỆC

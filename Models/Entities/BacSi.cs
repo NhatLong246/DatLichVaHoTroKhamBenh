@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -40,6 +40,9 @@ public partial class BacSi
     [StringLength(10)]
     [Unicode(false)]
     public string? MaChuyenKhoa { get; set; }
+
+    [StringLength(100)]
+    public string? Email { get; set; }
 
     [InverseProperty("MaBacSiNavigation")]
     public virtual ICollection<DangKyLichKham> DangKyLichKhams { get; set; } = new List<DangKyLichKham>();

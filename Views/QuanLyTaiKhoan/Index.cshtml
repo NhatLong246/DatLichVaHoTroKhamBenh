@@ -1,0 +1,144 @@
+﻿@model HeThongDatLichVaKhamBenh.Models.ViewModels.QuanLyTaiKhoanViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Quản lý Tài khoản";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-theme.css" asp-append-version="true" />
+</head>
+<body class="role-page web-dashboard admin-theme">
+    <partial name="_AdminSidebar" />
+
+    <main class="role-main">
+        <header class="role-header welcome-banner" style="margin-bottom: 36px; padding: 24px 40px;">
+            <div class="welcome-content">
+                <span class="eyebrow" style="color: var(--admin-primary); background: rgba(255,255,255,0.8); padding: 4px 12px; border-radius: 99px; display: inline-block; margin-bottom: 12px;">Bảo mật & Hệ thống</span>
+                <h1>Quản lý Tài khoản</h1>
+                <p>Theo dõi và khóa/mở khóa các tài khoản Bác sĩ, Bệnh nhân trong hệ thống.</p>
+            </div>
+            <div style="opacity: 0.15; position: absolute; right: -20px; bottom: -40px; pointer-events: none;">
+                <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+        </header>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 12px; margin-bottom: 24px;">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 12px; margin-bottom: 24px;">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <section class="admin-grid" style="grid-template-columns: 1fr;">
+            <article class="table-section">
+                <div style="padding: 24px 28px; border-bottom: 1px solid var(--admin-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                    <h2 style="margin: 0; padding: 0; border: none;">Danh sách Người dùng</h2>
+                    
+                    <form method="get" action="@Url.Action("Index", "QuanLyTaiKhoan")" style="display: flex; gap: 12px;">
+                        <select name="role" class="form-select" style="width: auto; border-radius: 8px;" onchange="this.form.submit()">
+                            <option value="">Tất cả vai trò</option>
+                            @if(Model.Role == "Bác sĩ") { <option value="Bác sĩ" selected>Bác sĩ</option> } else { <option value="Bác sĩ">Bác sĩ</option> }
+                            @if(Model.Role == "Bệnh nhân") { <option value="Bệnh nhân" selected>Bệnh nhân</option> } else { <option value="Bệnh nhân">Bệnh nhân</option> }
+                        </select>
+                        
+                        <div class="input-group" style="width: 250px;">
+                            <input type="text" name="search" class="form-control" placeholder="Tìm kiếm tên, tài khoản..." value="@Model.Search" style="border-radius: 8px 0 0 8px;" oninput="clearTimeout(this.delay); this.delay = setTimeout(() => this.form.submit(), 500);">
+                            <button class="btn btn-primary" type="submit" style="border-radius: 0 8px 8px 0; background-color: var(--admin-primary); border-color: var(--admin-primary);">Tìm</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="data-table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tài khoản</th>
+                                <th>Họ tên</th>
+                                <th>Thông tin thêm</th>
+                                <th>Vai trò</th>
+                                <th>Trạng thái</th>
+                                <th style="text-align: right;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.DanhSachTaiKhoan.Any())
+                            {
+                                foreach (var item in Model.DanhSachTaiKhoan)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div style="color: var(--admin-text-main); font-weight: 700;">@item.TenDangNhap</div>
+                                            <div style="color: var(--admin-text-muted); font-size: 0.8rem;">@item.MaNguoiDung</div>
+                                        </td>
+                                        <td>
+                                            <div class="user-info">
+                                                <div class="avatar @(item.VaiTro == "Bệnh nhân" ? "patient" : "")">
+                                                    @(string.IsNullOrEmpty(item.HoTen) || item.HoTen == "Chưa cập nhật hồ sơ" ? "?" : item.HoTen.Substring(0, 1).ToUpper())
+                                                </div>
+                                                <span>@item.HoTen</span>
+                                            </div>
+                                        </td>
+                                        <td>@item.ChuyenKhoaHoacGioiTinh</td>
+                                        <td>
+                                            <span class="status info" style="@(item.VaiTro == "Bác sĩ" ? "background: rgba(79, 70, 229, 0.1); color: var(--admin-primary);" : "")">@item.VaiTro</span>
+                                        </td>
+                                        <td>
+                                            @if (item.TrangThai)
+                                            {
+                                                <span class="status success" style="background: rgba(16, 185, 129, 0.1); color: var(--admin-success); border-radius: 99px; padding: 6px 14px; font-weight: 700; font-size: 0.8rem; display: inline-block;">Hoạt động</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="status danger" style="background: rgba(239, 68, 68, 0.1); color: var(--admin-danger); border-radius: 99px; padding: 6px 14px; font-weight: 700; font-size: 0.8rem; display: inline-block;">Bị khóa</span>
+                                            }
+                                        </td>
+                                        <td style="text-align: right;">
+                                            <form method="post" action="@Url.Action("ToggleLock", "QuanLyTaiKhoan")" class="confirm-form" style="display: inline;" data-confirm-title="Khóa/Mở khóa Tài khoản" data-confirm-message="Bạn có chắc chắn muốn @(item.TrangThai ? "khóa" : "mở khóa") tài khoản @item.TenDangNhap không?" data-confirm-cancel="Không" data-confirm-ok="Có">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="maNguoiDung" value="@item.MaNguoiDung" />
+                                                @if (item.TrangThai)
+                                                {
+                                                    <button type="submit" class="btn btn-sm" style="background: rgba(239, 68, 68, 0.1); color: var(--admin-danger); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; padding: 6px 12px; font-weight: 600;">Khóa</button>
+                                                }
+                                                else
+                                                {
+                                                    <button type="submit" class="btn btn-sm" style="background: rgba(16, 185, 129, 0.1); color: var(--admin-success); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 6px 12px; font-weight: 600;">Mở khóa</button>
+                                                }
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted" style="padding: 24px; text-align: center;">Không tìm thấy tài khoản nào phù hợp</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+    </main>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+</body>
+</html>

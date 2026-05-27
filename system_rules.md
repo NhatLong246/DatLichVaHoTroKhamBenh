@@ -50,6 +50,7 @@ Trước khi sửa code:
 - ViewModel nên dùng cho form và màn hình tổng hợp, không truyền entity phức tạp trực tiếp nếu màn hình cần dữ liệu từ nhiều bảng.
 - Dùng validation ở cả server-side và client-side khi có form.
 - Sau POST thành công, dùng redirect theo pattern PRG để tránh submit lại form.
+- Sidebar menu của trang Quản trị (Admin) PHẢI sử dụng component dùng chung `<partial name="_AdminSidebar" />`, không copy paste mã HTML rời rạc.
 
 ## Quy tắc giao diện
 

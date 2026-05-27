@@ -1,4 +1,4 @@
-﻿CREATE DATABASE HeThongDatLichVaKhamBenh
+CREATE DATABASE HeThongDatLichVaKhamBenh
 GO
 
 USE HeThongDatLichVaKhamBenh
@@ -10,7 +10,8 @@ CREATE TABLE NguoiDung (
     TenDangNhap NVARCHAR(50) UNIQUE,
     MatKhau NVARCHAR(100),
     VaiTro NVARCHAR(20) CHECK (VaiTro IN (N'Quản trị', N'Bệnh nhân', N'Bác sĩ')),
-	TrangThai BIT DEFAULT 1 -- 1: hoạt động, 0: bị khóa / ngừng sử dụng
+	TrangThai BIT DEFAULT 1, -- 1: hoạt động, 0: bị khóa / ngừng sử dụng
+    Email VARCHAR(100)
 );
 
 -- 2. Bảng Chuyên Khoa
@@ -62,6 +63,7 @@ CREATE TABLE BacSi (
     DiaChi NVARCHAR(200),
     TrinhDo NVARCHAR(100),
     MaChuyenKhoa VARCHAR(10),
+    Email VARCHAR(100),
 	FOREIGN KEY (MaNguoiDung) REFERENCES NguoiDung(MaNguoiDung),
     FOREIGN KEY (MaChuyenKhoa) REFERENCES ChuyenKhoa(MaChuyenKhoa) ON UPDATE CASCADE,
     -- Thêm ràng buộc giới tính

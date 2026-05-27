@@ -1,0 +1,183 @@
+﻿@model HeThongDatLichVaKhamBenh.Models.ViewModels.BacSiCreateEditViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Cập nhật Bác sĩ";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-theme.css" asp-append-version="true" />
+    <style>
+        .form-section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            margin-bottom: 24px;
+        }
+        .form-section h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--admin-text-main);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--admin-border);
+        }
+        .form-label {
+            font-weight: 600;
+            color: var(--admin-text-main);
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid var(--admin-border);
+            padding: 10px 14px;
+            transition: all 0.2s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--admin-primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+        .form-control[readonly] {
+            background-color: #f8fafc;
+            color: #64748b;
+        }
+        .btn-action {
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 10px 24px;
+            transition: all 0.2s ease;
+        }
+    </style>
+</head>
+<body class="role-page web-dashboard admin-theme">
+    <partial name="_AdminSidebar" />
+
+    <main class="role-main">
+        <header class="role-header" style="margin-bottom: 24px; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <a href="@Url.Action("Index", "QuanLyBacSi")" style="color: var(--admin-text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; margin-bottom: 8px;">
+                    &larr; Quay lại danh sách
+                </a>
+                <h1 style="font-size: 1.5rem; margin: 0; font-weight: 800;">Cập nhật Bác sĩ: @Model.MaBacSi</h1>
+            </div>
+        </header>
+
+        <div style="padding: 0 40px;">
+            <form method="post" action="@Url.Action("Edit", "QuanLyBacSi", new { id = Model.MaBacSi })">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="MaBacSi" />
+                <input type="hidden" asp-for="MaNguoiDung" />
+                <input type="hidden" asp-for="TenDangNhap" />
+                
+                <div asp-validation-summary="ModelOnly" class="text-danger" style="margin-bottom: 20px;"></div>
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="form-section">
+                            <h3>Thông tin cá nhân & Chuyên môn</h3>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="HoTen" class="form-label"></label>
+                                    <input asp-for="HoTen" class="form-control" placeholder="Nhập họ và tên bác sĩ" />
+                                    <span asp-validation-for="HoTen" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="NgaySinh" class="form-label"></label>
+                                    <input asp-for="NgaySinh" class="form-control" type="date" />
+                                    <span asp-validation-for="NgaySinh" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="GioiTinh" class="form-label"></label>
+                                    <select asp-for="GioiTinh" class="form-select">
+                                        <option value="">-- Chọn giới tính --</option>
+                                        <option value="Nam">Nam</option>
+                                        <option value="Nữ">Nữ</option>
+                                    </select>
+                                    <span asp-validation-for="GioiTinh" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="DienThoai" class="form-label"></label>
+                                    <input asp-for="DienThoai" class="form-control" placeholder="Nhập số điện thoại (10 số)" />
+                                    <span asp-validation-for="DienThoai" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="DiaChi" class="form-label"></label>
+                                <input asp-for="DiaChi" class="form-control" placeholder="Nhập địa chỉ liên hệ" />
+                                <span asp-validation-for="DiaChi" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" class="form-control" placeholder="example@healthcare.com" type="email" />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+
+                            <div class="row mt-4 pt-4" style="border-top: 1px dashed var(--admin-border);">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="MaChuyenKhoa" class="form-label"></label>
+                                    <select asp-for="MaChuyenKhoa" asp-items="Model.DanhSachChuyenKhoa" class="form-select">
+                                        <option value="">-- Chọn chuyên khoa --</option>
+                                    </select>
+                                    <span asp-validation-for="MaChuyenKhoa" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="TrinhDo" class="form-label"></label>
+                                    <select asp-for="TrinhDo" asp-items="Model.DanhSachTrinhDo" class="form-select">
+                                        <option value="">-- Chọn trình độ --</option>
+                                    </select>
+                                    <span asp-validation-for="TrinhDo" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <div class="form-section">
+                            <h3>Tài khoản Đăng nhập</h3>
+                            
+                            <div class="mb-3">
+                                <label asp-for="TenDangNhap" class="form-label"></label>
+                                <input class="form-control" value="@Model.TenDangNhap" readonly />
+                                <small class="text-muted d-block mt-1">Tên đăng nhập không thể thay đổi</small>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label asp-for="MatKhau" class="form-label">Đặt lại Mật khẩu</label>
+                                <input asp-for="MatKhau" class="form-control" placeholder="Nhập mật khẩu mới (nếu đổi)" />
+                                <small class="text-muted d-block mt-1">Bỏ trống nếu không muốn đổi mật khẩu</small>
+                                <span asp-validation-for="MatKhau" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-action" style="background: var(--admin-primary); border: none;">Lưu thay đổi</button>
+                                <a href="@Url.Action("Index", "QuanLyBacSi")" class="btn btn-light btn-action" style="background: #f1f5f9; border: 1px solid #e2e8f0; color: #475569;">Hủy bỏ</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+</body>
+</html>

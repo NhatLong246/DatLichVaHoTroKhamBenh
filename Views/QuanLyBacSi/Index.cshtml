@@ -1,0 +1,160 @@
+﻿@model HeThongDatLichVaKhamBenh.Models.ViewModels.QuanLyBacSiViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Quản lý Bác sĩ";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-theme.css" asp-append-version="true" />
+</head>
+<body class="role-page web-dashboard admin-theme">
+    <partial name="_AdminSidebar" />
+
+    <main class="role-main">
+        <header class="role-header welcome-banner" style="margin-bottom: 36px; padding: 24px 40px;">
+            <div class="welcome-content">
+                <span class="eyebrow" style="color: var(--admin-primary); background: rgba(255,255,255,0.8); padding: 4px 12px; border-radius: 99px; display: inline-block; margin-bottom: 12px;">Nhân sự</span>
+                <h1>Quản lý Bác sĩ</h1>
+                <p>Theo dõi, thêm mới và cập nhật hồ sơ các bác sĩ trong hệ thống.</p>
+            </div>
+            <div style="opacity: 0.15; position: absolute; right: -20px; bottom: -40px; pointer-events: none;">
+                <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+        </header>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 12px; margin-bottom: 24px;">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 12px; margin-bottom: 24px;">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <section class="admin-grid" style="grid-template-columns: 1fr;">
+            <article class="table-section">
+                <div style="padding: 24px 28px; border-bottom: 1px solid var(--admin-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <h2 style="margin: 0; padding: 0; border: none;">Danh sách Bác sĩ</h2>
+                        <a href="@Url.Action("Create", "QuanLyBacSi")" class="btn btn-sm" style="background: var(--admin-primary); color: white; border-radius: 8px; font-weight: 600; padding: 8px 16px; text-decoration: none;">+ Thêm bác sĩ</a>
+                    </div>
+                    
+                    <form method="get" action="@Url.Action("Index", "QuanLyBacSi")" style="display: flex; gap: 12px;">
+                        <select name="chuyenKhoaId" class="form-select" style="width: auto; border-radius: 8px;" onchange="this.form.submit()">
+                            <option value="">Tất cả chuyên khoa</option>
+                            @foreach (var ck in Model.DanhSachChuyenKhoa)
+                            {
+                                if (Model.ChuyenKhoaId == ck.Value)
+                                {
+                                    <option value="@ck.Value" selected>@ck.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@ck.Value">@ck.Text</option>
+                                }
+                            }
+                        </select>
+                        
+                        <div class="input-group" style="width: 250px;">
+                            <input type="text" name="search" class="form-control" placeholder="Tìm kiếm tên, SĐT, Email..." value="@Model.Search" style="border-radius: 8px 0 0 8px;" oninput="clearTimeout(this.delay); this.delay = setTimeout(() => this.form.submit(), 500);">
+                            <button class="btn btn-primary" type="submit" style="border-radius: 0 8px 8px 0; background-color: var(--admin-primary); border-color: var(--admin-primary);">Tìm</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="data-table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã BS</th>
+                                <th>Họ tên</th>
+                                <th>Thông tin liên hệ</th>
+                                <th>Chuyên khoa</th>
+                                <th>Tài khoản</th>
+                                <th style="text-align: right;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.DanhSachBacSi.Any())
+                            {
+                                foreach (var item in Model.DanhSachBacSi)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div style="color: var(--admin-text-main); font-weight: 700;">@item.MaBacSi</div>
+                                        </td>
+                                        <td>
+                                            <div class="user-info">
+                                                <div class="avatar">
+                                                    @(string.IsNullOrEmpty(item.HoTen) ? "?" : item.HoTen.Substring(0, 1).ToUpper())
+                                                </div>
+                                                <div>
+                                                    <span style="display: block; font-weight: 600;">@item.HoTen</span>
+                                                    <small style="color: var(--admin-text-muted);">@item.GioiTinh</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div style="font-size: 0.85rem;">
+                                                <div>📞 @item.DienThoai</div>
+                                                @if (!string.IsNullOrEmpty(item.Email))
+                                                {
+                                                    <div>📧 @item.Email</div>
+                                                }
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="status info" style="background: rgba(79, 70, 229, 0.1); color: var(--admin-primary);">@item.ChuyenKhoa</span>
+                                        </td>
+                                        <td>
+                                            @if (item.TrangThai)
+                                            {
+                                                <span class="status success" style="background: rgba(16, 185, 129, 0.1); color: var(--admin-success); border-radius: 99px; padding: 4px 10px; font-weight: 700; font-size: 0.75rem; display: inline-block;">Hoạt động</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="status danger" style="background: rgba(239, 68, 68, 0.1); color: var(--admin-danger); border-radius: 99px; padding: 4px 10px; font-weight: 700; font-size: 0.75rem; display: inline-block;">Bị khóa</span>
+                                            }
+                                        </td>
+                                        <td style="text-align: right;">
+                                            <a href="@Url.Action("Edit", "QuanLyBacSi", new { id = item.MaBacSi })" class="btn btn-sm" style="background: rgba(79, 70, 229, 0.1); color: var(--admin-primary); border: 1px solid rgba(79, 70, 229, 0.2); border-radius: 8px; padding: 6px 12px; font-weight: 600; text-decoration: none; margin-right: 4px;">Sửa</a>
+                                            <form method="post" action="@Url.Action("Delete", "QuanLyBacSi")" class="confirm-form" style="display: inline;" data-confirm-title="Xóa Bác sĩ" data-confirm-message="Bạn có chắc chắn muốn xóa bác sĩ @item.HoTen không? Nếu bác sĩ đã có lịch khám, tài khoản sẽ được khóa thay vì xóa." data-confirm-cancel="Hủy" data-confirm-ok="Xóa">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@item.MaBacSi" />
+                                                <button type="submit" class="btn btn-sm" style="background: rgba(239, 68, 68, 0.1); color: var(--admin-danger); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; padding: 6px 12px; font-weight: 600;">Xóa</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted" style="padding: 24px; text-align: center;">Không tìm thấy bác sĩ nào phù hợp</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+    </main>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+</body>
+</html>
