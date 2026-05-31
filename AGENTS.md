@@ -32,16 +32,18 @@ Hướng dẫn cho mọi AI/coding agent làm việc trong repository này.
 ## Ghi chú hiện trạng module đặt lịch
 
 - Trang đặt lịch bệnh nhân đã có tại `Views/LichKham/DatLich.cshtml`, controller `LichKhamController`, ViewModel `DatLichKhamViewModel`.
-- Chức năng hiện có: gợi ý chuyên khoa theo triệu chứng bằng rule-based, chọn bác sĩ theo chuyên khoa, xem lịch làm việc, chọn ngày/ca/giờ/thời lượng, xác nhận thông tin và tạo `DangKyLichKham`.
+- Chức năng hiện có: gợi ý chuyên khoa theo triệu chứng bằng **Gemini AI API**, chọn bác sĩ theo chuyên khoa, xem lịch làm việc.
+- Việc chọn ngày/ca/giờ hiện sử dụng **Khung giờ khám động (AJAX)** qua API `LayThongTinCaKham`. Hệ thống sẽ chặn các giờ bị trùng (overlap) và kiểm tra quá tải dựa trên sức chứa của phòng khám.
 - Schema `DangKyLichKham` đã mở rộng thêm `GioKham` và `ThoiLuongKham`; database cũ cần chạy `sql_update_add_gio_kham_dang_ky.sql`.
 - Khi sửa tiếp module này, giữ gợi ý triệu chứng ở mức hỗ trợ chọn chuyên khoa, không viết nội dung như chẩn đoán bệnh.
 
 ## Ghi chú hiện trạng các màn hình bệnh nhân
 
+- Tổng quan: `Views/Dashboard/BenhNhan.cshtml`, `DashboardController.BenhNhan`, ViewModel `BenhNhanDashboardViewModel`. Đã dùng dữ liệu thật từ DB.
 - Quản lý lịch hẹn: `Views/LichKham/QuanLy.cshtml`, `LichKhamController.QuanLy`, `LichKhamController.HuyLich`, ViewModel `QuanLyLichHenViewModel`.
 - Hồ sơ bệnh án: `Views/HoSoBenhAn/Index.cshtml`, `HoSoBenhAnController`, ViewModel `HoSoBenhAnViewModel`.
 - Hóa đơn: `Views/HoaDon/Index.cshtml`, `HoaDonController`, ViewModel `HoaDonViewModel`.
-- Cài đặt: `Views/CaiDat/Index.cshtml`, `CaiDatController`, ViewModel `CaiDatViewModel`.
+- Cài đặt: `Views/CaiDat/Index.cshtml`, `CaiDatController`, ViewModel `CaiDatViewModel`. Giao diện dùng **Bootstrap 5 Card và Floating Labels** hiện đại.
 - Sidebar bệnh nhân dùng các mục: `Tổng quan`, `Đặt lịch khám`, `Lịch hẹn`, `Hồ sơ bệnh án`, `Hóa đơn`, `Cài đặt`.
 - Các màn hình bệnh nhân phải lọc dữ liệu theo bệnh nhân đang đăng nhập qua `MaNguoiDung` trong session; không cho xem/sửa dữ liệu của bệnh nhân khác.
 - Các thao tác quan trọng như hủy lịch, thanh toán, đổi mật khẩu, đăng xuất dùng modal custom trong `wwwroot/js/dashboard.js`.

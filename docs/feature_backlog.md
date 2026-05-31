@@ -200,10 +200,10 @@ Danh sách này giúp chia nhỏ việc code với AI. Khi làm chức năng nà
 - Danh sách chuyên khoa trong trang đặt lịch.
 - Danh sách bác sĩ theo chuyên khoa.
 - Xem lịch làm việc bác sĩ.
-- Gợi ý chuyên khoa theo triệu chứng bằng rule-based.
-- Chọn ngày, ca, khung giờ và thời lượng khám.
+- Gợi ý chuyên khoa theo triệu chứng bằng **Gemini AI API**.
+- Chọn ngày, ca, thời lượng khám và **Khung giờ khám động** sinh ra bằng AJAX.
 - Đặt lịch khám và tạo `DangKyLichKham`.
-- Kiểm tra ca/giờ khám hợp lệ, phòng hoạt động, ngày không quá khứ, không trùng giờ cùng bác sĩ.
+- Kiểm tra ca/giờ khám hợp lệ, phòng hoạt động, ngày không quá khứ, **không trùng giờ cùng bác sĩ (overlap)**, kiểm soát **sức chứa (quá tải)**.
 - Hiển thị danh sách lịch hẹn của bệnh nhân, gồm ngày/ca/giờ/thời lượng, bác sĩ, chuyên khoa, phòng khám và trạng thái.
 - Hủy lịch hẹn bằng modal custom khi lịch còn `Chờ khám`, chưa tới giờ khám và chưa có phiếu khám.
 
@@ -212,7 +212,6 @@ Việc cần làm tiếp:
 - Cho phép đổi lịch hẹn nếu nghiệp vụ yêu cầu.
 - Bác sĩ xem lịch khám theo ngày/ca/giờ.
 - Quản trị viên quản lý lịch làm việc bác sĩ và sức chứa phòng.
-- Có thể nâng cấp gợi ý chuyên khoa sang AI API sau này, nhưng vẫn phải đối chiếu với bảng `ChuyenKhoa`.
 
 ## Cập nhật tiến độ màn hình bệnh nhân
 

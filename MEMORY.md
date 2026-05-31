@@ -181,7 +181,8 @@ Các bảng hiện có:
 - Link từ dashboard bệnh nhân sang trang đặt lịch đã được nối trong `Views/Dashboard/BenhNhan.cshtml`.
 - CSS cho giao diện đặt lịch nằm trong `wwwroot/css/site.css`, dùng chung phong cách `web-dashboard`.
 - Trang đặt lịch hiện có: nhập triệu chứng để gợi ý chuyên khoa, chọn bác sĩ theo chuyên khoa, chọn lịch làm việc/ngày/ca/giờ/thời lượng và xác nhận thông tin.
-- Gợi ý chuyên khoa đang dùng rule-based trong `LichKhamController.GoiYChuyenKhoa`, chưa gọi AI/API ngoài.
+- **Gợi ý chuyên khoa**: Đã tích hợp **Gemini AI API** (`GeminiService`) để phân tích triệu chứng thông minh thay cho rule-based cũ. AI trả về chuyên khoa, thời gian khám dự kiến, và cảnh báo khẩn cấp.
+- **Khung giờ khám động**: Đã có chức năng gọi API `LayThongTinCaKham` (AJAX) để tự động sinh danh sách khung giờ trống. Tính năng này chặn giờ bị trùng với người khác (overlap) và kiểm tra quá tải dựa trên sức chứa của phòng khám.
 - Bệnh nhân chỉ được hủy lịch của chính mình khi lịch ở trạng thái `Chờ khám`, chưa tới thời gian khám và chưa có `PhieuKham`.
 - Hủy lịch cập nhật `DangKyLichKham.TrangThai = Hủy`, dùng modal custom, không dùng `confirm()`.
 
@@ -207,7 +208,7 @@ Các bảng hiện có:
 
 ### Cài đặt bệnh nhân
 
-- Trang cài đặt nằm tại `Views/CaiDat/Index.cshtml`.
+- Trang cài đặt nằm tại `Views/CaiDat/Index.cshtml`. Đã được thiết kế lại theo phong cách giao diện **hiện đại, Bootstrap 5 Card và Floating Labels**.
 - Controller: `Controllers/CaiDatController.cs`.
 - ViewModel: `Models/ViewModels/CaiDatViewModel.cs`.
 - Sidebar bệnh nhân đã đổi mục `Đổi mật khẩu` thành `Cài đặt`.
@@ -215,3 +216,6 @@ Các bảng hiện có:
 - Các trường định danh như mã bệnh nhân, họ tên, ngày sinh, giới tính, mã người dùng, tên đăng nhập, vai trò, trạng thái tài khoản hiển thị `readonly`.
 - Bệnh nhân hiện chỉ cập nhật số điện thoại và địa chỉ.
 - Đổi mật khẩu yêu cầu mật khẩu hiện tại, mật khẩu mới và xác nhận mật khẩu mới; mật khẩu được hash SHA-256 giống `AccountController`.
+
+### Tổng quan bệnh nhân
+- Trang `Views/Dashboard/BenhNhan.cshtml` hiện **đã lấy dữ liệu thật từ cơ sở dữ liệu** (thông tin cá nhân, bác sĩ nổi bật, tổng số lịch khám, trạng thái lịch) thông qua `BenhNhanDashboardViewModel`. Màn hình này không còn dùng dữ liệu tĩnh mẫu.

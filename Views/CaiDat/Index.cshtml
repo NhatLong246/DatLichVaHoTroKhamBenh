@@ -55,106 +55,164 @@
             <div class="booking-alert booking-alert--danger">@Model.ErrorMessage</div>
         }
 
-        <section class="settings-layout" aria-label="Cài đặt bệnh nhân">
-            <form asp-controller="CaiDat" asp-action="CapNhatThongTin" method="post" class="settings-panel shadow-sm border-0 bg-white" style="border-radius: 16px;">
-                @Html.AntiForgeryToken()
-                <div class="panel-heading d-flex align-items-center" style="border-radius: 16px 16px 0 0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 text-primary"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Thông tin cá nhân</div>
-                <div class="settings-panel__body">
-                    <div class="settings-field">
-                        <label>Mã bệnh nhân</label>
-                        <input value="@Model.MaBenhNhan" readonly />
-                    </div>
-                    <div class="settings-field">
-                        <label>Họ tên</label>
-                        <input value="@Model.HoTen" readonly />
-                    </div>
-                    <div class="settings-field">
-                        <label>Ngày sinh</label>
-                        <input value="@(Model.NgaySinh?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")" readonly />
-                    </div>
-                    <div class="settings-field">
-                        <label>Giới tính</label>
-                        <input value="@Model.GioiTinh" readonly />
-                    </div>
-                    <div class="settings-field">
-                        <label asp-for="DienThoai">Số điện thoại</label>
-                        <input asp-for="DienThoai" inputmode="numeric" maxlength="10" placeholder="Nhập số điện thoại 10 chữ số" />
-                        <span asp-validation-for="DienThoai"></span>
-                    </div>
-                    <div class="settings-field settings-field--wide">
-                        <label asp-for="DiaChi">Địa chỉ</label>
-                        <textarea asp-for="DiaChi" rows="3" maxlength="200" placeholder="Nhập địa chỉ liên hệ"></textarea>
-                        <span asp-validation-for="DiaChi"></span>
-                    </div>
-                </div>
-                <div class="settings-actions">
-                    <button type="submit" class="booking-button booking-button--primary d-inline-flex align-items-center justify-content-center px-4 py-2 border-0">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Lưu thông tin
-                    </button>
-                </div>
-            </form>
+        <div class="container-fluid px-0 mt-4">
+            <div class="row justify-content-center">
+                <div class="col-12 col-xl-10 col-xxl-9">
+                    
+                    <!-- Thông tin cá nhân -->
+                    <form asp-controller="CaiDat" asp-action="CapNhatThongTin" method="post" class="card shadow-sm border-0 mb-4" style="border-radius: 1rem;">
+                        @Html.AntiForgeryToken()
+                        <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+                            <h5 class="d-flex align-items-center mb-0 fw-bold text-dark">
+                                <span class="bg-primary bg-opacity-10 text-primary p-2 rounded-circle me-3">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                </span>
+                                Thông tin cá nhân
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control bg-light border-0 fw-semibold text-secondary" id="maBenhNhan" value="@Model.MaBenhNhan" readonly>
+                                        <label for="maBenhNhan">Mã bệnh nhân</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control bg-light border-0 fw-semibold text-secondary" id="hoTen" value="@Model.HoTen" readonly>
+                                        <label for="hoTen">Họ tên</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control bg-light border-0 fw-semibold text-secondary" id="ngaySinh" value="@(Model.NgaySinh?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")" readonly>
+                                        <label for="ngaySinh">Ngày sinh</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control bg-light border-0 fw-semibold text-secondary" id="gioiTinh" value="@Model.GioiTinh" readonly>
+                                        <label for="gioiTinh">Giới tính</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input asp-for="DienThoai" class="form-control fw-semibold" placeholder="Nhập số điện thoại" inputmode="numeric" maxlength="10">
+                                        <label asp-for="DienThoai">Số điện thoại</label>
+                                        <span asp-validation-for="DienThoai" class="text-danger small mt-1 d-block"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-floating">
+                                        <textarea asp-for="DiaChi" class="form-control fw-semibold" placeholder="Nhập địa chỉ" style="height: 100px" maxlength="200"></textarea>
+                                        <label asp-for="DiaChi">Địa chỉ liên hệ</label>
+                                        <span asp-validation-for="DiaChi" class="text-danger small mt-1 d-block"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white border-top-0 pb-4 px-4 text-end">
+                            <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold rounded-pill shadow-sm" style="transition: all 0.2s;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                                Lưu thay đổi
+                            </button>
+                        </div>
+                    </form>
 
-            <section class="settings-panel shadow-sm border-0 bg-white" style="border-radius: 16px;">
-                <div class="panel-heading d-flex align-items-center" style="border-radius: 16px 16px 0 0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 text-primary"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> Thông tin tài khoản</div>
-                <div class="settings-panel__body">
-                    <div class="settings-field">
-                        <label>Mã người dùng</label>
-                        <input value="@Model.MaNguoiDung" readonly />
+                    <!-- Thông tin tài khoản -->
+                    <div class="card shadow-sm border-0 mb-4" style="border-radius: 1rem;">
+                        <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+                            <h5 class="d-flex align-items-center mb-0 fw-bold text-dark">
+                                <span class="bg-info bg-opacity-10 text-info p-2 rounded-circle me-3">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                </span>
+                                Thông tin tài khoản
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control bg-light border-0 fw-semibold text-secondary" id="maNguoiDung" value="@Model.MaNguoiDung" readonly>
+                                        <label for="maNguoiDung">Mã người dùng</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control bg-light border-0 fw-semibold text-secondary" id="tenDangNhap" value="@Model.TenDangNhap" readonly>
+                                        <label for="tenDangNhap">Tên đăng nhập</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control bg-light border-0 fw-semibold text-secondary" id="vaiTro" value="@Model.VaiTro" readonly>
+                                        <label for="vaiTro">Vai trò</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control bg-light border-0 fw-semibold text-secondary" id="trangThaiTaiKhoan" value="@Model.TrangThaiTaiKhoan" readonly>
+                                        <label for="trangThaiTaiKhoan">Trạng thái</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="settings-field">
-                        <label>Tên đăng nhập</label>
-                        <input value="@Model.TenDangNhap" readonly />
-                    </div>
-                    <div class="settings-field">
-                        <label>Vai trò</label>
-                        <input value="@Model.VaiTro" readonly />
-                    </div>
-                    <div class="settings-field">
-                        <label>Trạng thái</label>
-                        <input value="@Model.TrangThaiTaiKhoan" readonly />
-                    </div>
-                </div>
-            </section>
 
-            <form asp-controller="CaiDat" asp-action="DoiMatKhau" method="post" class="settings-panel confirm-form shadow-sm border-0 bg-white" data-confirm-title="Xác nhận đổi mật khẩu" data-confirm-ok="Đổi mật khẩu" data-confirm-message="Bạn có chắc chắn muốn đổi mật khẩu đăng nhập không?" style="border-radius: 16px;">
-                @Html.AntiForgeryToken()
-                <div class="panel-heading d-flex align-items-center" style="border-radius: 16px 16px 0 0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 text-primary"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Đổi mật khẩu</div>
-                <div class="settings-panel__body">
-                    <div class="settings-field">
-                        <label for="MatKhauHienTai">Mật khẩu hiện tại</label>
-                        <div class="position-relative">
-                            <input id="MatKhauHienTai" name="MatKhauHienTai" type="password" autocomplete="current-password" style="padding-right: 40px;" />
-                            <button type="button" class="btn position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent text-muted p-2 toggle-password" tabindex="-1">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <!-- Đổi mật khẩu -->
+                    <form asp-controller="CaiDat" asp-action="DoiMatKhau" method="post" class="card shadow-sm border-0 mb-4 confirm-form" data-confirm-title="Xác nhận đổi mật khẩu" data-confirm-ok="Đổi mật khẩu" data-confirm-message="Bạn có chắc chắn muốn đổi mật khẩu đăng nhập không?" style="border-radius: 1rem;">
+                        @Html.AntiForgeryToken()
+                        <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+                            <h5 class="d-flex align-items-center mb-0 fw-bold text-dark">
+                                <span class="bg-warning bg-opacity-10 text-warning p-2 rounded-circle me-3">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                </span>
+                                Bảo mật & Đổi mật khẩu
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row g-4">
+                                <div class="col-md-12">
+                                    <div class="form-floating position-relative">
+                                        <input id="MatKhauHienTai" name="MatKhauHienTai" type="password" class="form-control fw-semibold" placeholder="Mật khẩu hiện tại" style="padding-right: 45px;">
+                                        <label for="MatKhauHienTai">Mật khẩu hiện tại</label>
+                                        <button type="button" class="btn position-absolute end-0 top-50 translate-middle-y border-0 text-muted p-2 toggle-password" tabindex="-1">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating position-relative">
+                                        <input id="MatKhauMoi" name="MatKhauMoi" type="password" class="form-control fw-semibold" placeholder="Mật khẩu mới" style="padding-right: 45px;">
+                                        <label for="MatKhauMoi">Mật khẩu mới</label>
+                                        <button type="button" class="btn position-absolute end-0 top-50 translate-middle-y border-0 text-muted p-2 toggle-password" tabindex="-1">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating position-relative">
+                                        <input id="XacNhanMatKhauMoi" name="XacNhanMatKhauMoi" type="password" class="form-control fw-semibold" placeholder="Xác nhận mật khẩu mới" style="padding-right: 45px;">
+                                        <label for="XacNhanMatKhauMoi">Xác nhận mật khẩu mới</label>
+                                        <button type="button" class="btn position-absolute end-0 top-50 translate-middle-y border-0 text-muted p-2 toggle-password" tabindex="-1">
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white border-top-0 pb-4 px-4 text-end">
+                            <button type="submit" class="btn btn-warning px-4 py-2 fw-semibold rounded-pill shadow-sm text-dark" style="transition: all 0.2s;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg> 
+                                Đổi mật khẩu
                             </button>
                         </div>
-                    </div>
-                    <div class="settings-field">
-                        <label for="MatKhauMoi">Mật khẩu mới</label>
-                        <div class="position-relative">
-                            <input id="MatKhauMoi" name="MatKhauMoi" type="password" autocomplete="new-password" style="padding-right: 40px;" />
-                            <button type="button" class="btn position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent text-muted p-2 toggle-password" tabindex="-1">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="settings-field">
-                        <label for="XacNhanMatKhauMoi">Xác nhận mật khẩu mới</label>
-                        <div class="position-relative">
-                            <input id="XacNhanMatKhauMoi" name="XacNhanMatKhauMoi" type="password" autocomplete="new-password" style="padding-right: 40px;" />
-                            <button type="button" class="btn position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent text-muted p-2 toggle-password" tabindex="-1">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                            </button>
-                        </div>
-                    </div>
+                    </form>
+
                 </div>
-                <div class="settings-actions">
-                    <button type="submit" class="booking-button booking-button--primary d-inline-flex align-items-center justify-content-center px-4 py-2 border-0">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg> Đổi mật khẩu
-                    </button>
-                </div>
-            </form>
-        </section>
+            </div>
+        </div>
     </main>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>

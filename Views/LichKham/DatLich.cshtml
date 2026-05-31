@@ -211,6 +211,7 @@
             const shiftInputs = Array.from(document.querySelectorAll("input[name='CaKham']"));
             const antiForgeryToken = document.querySelector("input[name='__RequestVerificationToken']")?.value || "";
             const suggestionUrl = "@Url.Action("GoiYChuyenKhoa", "LichKham")";
+            const shiftInfoUrl = "@Url.Action("LayThongTinCaKham", "LichKham")";
 
             const confirmSpecialty = document.getElementById("confirmSpecialty");
             const confirmDoctor = document.getElementById("confirmDoctor");
@@ -322,41 +323,82 @@
                 updateConfirmation();
             }
 
-            function renderTimeSlots() {
+            async function renderTimeSlots() {
+                const doctorId = doctorInput.value;
+                const dateVal = dateInput.value;
                 const shift = selectedShift();
                 const duration = selectedDuration();
                 const range = shiftRanges[shift];
                 const previousValue = timeSlotSelect.value;
 
                 timeSlotSelect.innerHTML = "";
-                if (!range) {
-                    timeSlotSelect.innerHTML = "<option value=\"\">Chọn ngày và ca trước</option>";
+                if (!range || !doctorId || !dateVal) {
+                    timeSlotSelect.innerHTML = "<option value=\"\">Chọn đủ bác sĩ, ngày và ca khám trước</option>";
                     updateConfirmation();
                     return;
                 }
 
-                const start = toMinutes(range.start);
-                const end = toMinutes(range.end);
-                const options = [];
+                timeSlotSelect.innerHTML = "<option value=\"\">Đang tải khung giờ...</option>";
+                timeSlotSelect.disabled = true;
 
-                for (let current = start; current + duration <= end; current += duration) {
-                    const from = toTimeLabel(current);
-                    const to = toTimeLabel(current + duration);
-                    options.push({ value: from, label: `${from} - ${to}` });
-                }
+                try {
+                    const url = new URL(shiftInfoUrl, window.location.origin);
+                    url.searchParams.append("maBacSi", doctorId);
+                    url.searchParams.append("ngayKham", dateVal);
+                    url.searchParams.append("caKham", shift);
+                    
+                    const response = await fetch(url);
+                    const result = await response.json();
 
-                if (!options.length) {
-                    timeSlotSelect.innerHTML = "<option value=\"\">Thời lượng vượt quá ca khám</option>";
+                    if (!response.ok || result.isFull) {
+                        timeSlotSelect.innerHTML = `<option value="">${result.message || "Ca khám đã đầy hoặc không tồn tại"}</option>`;
+                        updateConfirmation();
+                        return;
+                    }
+
+                    const bookedSlots = result.bookedSlots || [];
+                    const start = toMinutes(range.start);
+                    const end = toMinutes(range.end);
+                    const options = [];
+
+                    for (let current = start; current + duration <= end; current += duration) {
+                        const from = toTimeLabel(current);
+                        const to = toTimeLabel(current + duration);
+                        const slotStartMinutes = current;
+                        
+                        let isOverlap = false;
+                        for (const booked of bookedSlots) {
+                            const bookedStartMin = toMinutes(booked.gioKham);
+                            const bookedEndMin = bookedStartMin + booked.thoiLuongKham;
+                            
+                            const maxStart = Math.max(slotStartMinutes, bookedStartMin);
+                            const minEnd = Math.min(slotStartMinutes + duration, bookedEndMin);
+                            
+                            if (maxStart < minEnd) {
+                                isOverlap = true;
+                                break;
+                            }
+                        }
+
+                        if (!isOverlap) {
+                            options.push({ value: from, label: `${from} - ${to}` });
+                        }
+                    }
+
+                    if (!options.length) {
+                        timeSlotSelect.innerHTML = "<option value=\"\">Đã kín lịch, vui lòng chọn ngày/ca khác</option>";
+                    } else {
+                        timeSlotSelect.innerHTML = options.map(option => `<option value="${option.value}">${option.label}</option>`).join("");
+                        if (options.some(option => option.value === previousValue)) {
+                            timeSlotSelect.value = previousValue;
+                        }
+                    }
+                } catch (e) {
+                    timeSlotSelect.innerHTML = "<option value=\"\">Lỗi khi tải lịch khám</option>";
+                } finally {
+                    timeSlotSelect.disabled = false;
                     updateConfirmation();
-                    return;
                 }
-
-                timeSlotSelect.innerHTML = options.map(option => `<option value="${option.value}">${option.label}</option>`).join("");
-                if (options.some(option => option.value === previousValue)) {
-                    timeSlotSelect.value = previousValue;
-                }
-
-                updateConfirmation();
             }
 
             function updateConfirmation() {

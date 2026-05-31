@@ -35,8 +35,59 @@ public class DashboardController : Controller
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.MaNguoiDung == maNguoiDung);
 
-        ViewBag.HoTen = benhNhan?.HoTen ?? HttpContext.Session.GetString("TenDangNhap") ?? RolePatient;
-        return View();
+        if (benhNhan == null)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        var now = DateTime.Now;
+        var today = DateOnly.FromDateTime(now);
+        var currentTime = TimeOnly.FromDateTime(now);
+
+        var lichHenChoKhamCount = await _context.DangKyLichKhams
+            .CountAsync(x => x.MaBenhNhan == benhNhan.MaBenhNhan && (x.TrangThai == TrangThaiChoKham || x.TrangThai == TrangThaiDangKham));
+
+        var hoSoDaLuuCount = await _context.PhieuKhams
+            .CountAsync(x => x.MaDangKyNavigation.MaBenhNhan == benhNhan.MaBenhNhan);
+
+        var hoaDonDaThanhToanCount = await _context.HoaDons
+            .CountAsync(x => x.MaBenhNhan == benhNhan.MaBenhNhan && x.TrangThai == "Đã thanh toán");
+
+        var upcomingAppointment = await _context.DangKyLichKhams
+            .AsNoTracking()
+            .Include(x => x.MaBacSiNavigation)
+                .ThenInclude(b => b.MaChuyenKhoaNavigation)
+            .Include(x => x.MaPhongKhamNavigation)
+            .Where(x => x.MaBenhNhan == benhNhan.MaBenhNhan && x.TrangThai == TrangThaiChoKham && (x.NgayKham > today || (x.NgayKham == today && x.GioKham >= currentTime)))
+            .OrderBy(x => x.NgayKham)
+            .ThenBy(x => x.GioKham)
+            .FirstOrDefaultAsync();
+
+        UpcomingAppointmentViewModel? upcomingVm = null;
+        if (upcomingAppointment != null)
+        {
+            upcomingVm = new UpcomingAppointmentViewModel
+            {
+                Ngay = upcomingAppointment.NgayKham.Day.ToString("D2"),
+                Thang = $"Tháng {upcomingAppointment.NgayKham.Month}",
+                CaKham = upcomingAppointment.CaKham ?? "",
+                TenBacSi = upcomingAppointment.MaBacSiNavigation?.HoTen ?? "",
+                ChuyenKhoa = upcomingAppointment.MaBacSiNavigation?.MaChuyenKhoaNavigation?.TenChuyenKhoa ?? "",
+                TenPhongKham = upcomingAppointment.MaPhongKhamNavigation?.TenPhongKham ?? "",
+                GioKham = upcomingAppointment.GioKham?.ToString("HH:mm") ?? ""
+            };
+        }
+
+        var model = new BenhNhanDashboardViewModel
+        {
+            HoTen = benhNhan.HoTen ?? HttpContext.Session.GetString("TenDangNhap") ?? RolePatient,
+            LichHenChoKham = lichHenChoKhamCount,
+            HoSoBenhAnDaLuu = hoSoDaLuuCount,
+            HoaDonDaThanhToan = hoaDonDaThanhToanCount,
+            LichHenSapToi = upcomingVm
+        };
+
+        return View(model);
     }
 
     public async Task<IActionResult> BacSi()

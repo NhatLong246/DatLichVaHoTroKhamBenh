@@ -39,10 +39,12 @@ public class LichKhamController : Controller
     };
 
     private readonly ApplicationDbContext _context;
+    private readonly HeThongDatLichVaKhamBenh.Services.IGeminiService _geminiService;
 
-    public LichKhamController(ApplicationDbContext context)
+    public LichKhamController(ApplicationDbContext context, HeThongDatLichVaKhamBenh.Services.IGeminiService geminiService)
     {
         _context = context;
+        _geminiService = geminiService;
     }
 
     [HttpGet]
@@ -310,11 +312,37 @@ public class LichKhamController : Controller
             })
             .ToDictionaryAsync(x => x.MaChuyenKhoa, x => x.Minutes);
 
+        var specialtyInfos = specialties.Select(x => new HeThongDatLichVaKhamBenh.Services.SpecialtyInfo(
+            x.MaChuyenKhoa,
+            x.TenChuyenKhoa,
+            averageDurations.GetValueOrDefault(x.MaChuyenKhoa, 30)));
+
+        var geminiResponse = await _geminiService.SuggestSpecialtiesAsync(request.TrieuChung, specialtyInfos);
+
+        if (geminiResponse != null && geminiResponse.Suggestions != null && geminiResponse.Suggestions.Count > 0)
+        {
+            var geminiSuggestions = geminiResponse.Suggestions
+                .Select(x => new SpecialtySuggestionResponse(x.SpecialtyId, x.SpecialtyName, x.EstimatedMinutes, x.Reason, 0))
+                .ToList();
+
+            var urgentMatchesLocal = UrgentKeywords
+                .Where(keyword => normalizedSymptoms.Contains(NormalizeText(keyword), StringComparison.Ordinal))
+                .ToList();
+
+            var hasUrgentWarning = geminiResponse.HasUrgentWarning || urgentMatchesLocal.Count > 0;
+            var message = hasUrgentWarning
+                ? (geminiResponse.HasUrgentWarning ? geminiResponse.Message : $"Có dấu hiệu cần chú ý: {string.Join(", ", urgentMatchesLocal.Take(3))}. Nếu triệu chứng nặng hoặc diễn tiến nhanh, hãy đến cơ sở y tế gần nhất.")
+                : "Gợi ý chỉ mang tính hỗ trợ chọn chuyên khoa, không thay thế chẩn đoán của bác sĩ.";
+
+            return Json(new SymptomSuggestionResult(geminiSuggestions, hasUrgentWarning, message));
+        }
+
+        // Fallback to rule-based system if Gemini fails
         var suggestions = SymptomRules
             .Select(rule =>
             {
                 var matchedKeywords = rule.Keywords
-                    .Where(keyword => normalizedSymptoms.Contains(NormalizeText(keyword), StringComparison.Ordinal))
+                    .Where(keyword => System.Text.RegularExpressions.Regex.IsMatch(normalizedSymptoms, $@"\b{System.Text.RegularExpressions.Regex.Escape(NormalizeText(keyword))}\b"))
                     .ToList();
 
                 var specialty = specialties.FirstOrDefault(item =>
@@ -366,6 +394,48 @@ public class LichKhamController : Controller
             urgentMatches.Count > 0
                 ? $"Có dấu hiệu cần chú ý: {string.Join(", ", urgentMatches.Take(3))}. Nếu triệu chứng nặng hoặc diễn tiến nhanh, hãy đến cơ sở y tế gần nhất."
                 : "Gợi ý chỉ mang tính hỗ trợ chọn chuyên khoa, không thay thế chẩn đoán của bác sĩ."));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> LayThongTinCaKham(string maBacSi, string ngayKham, string caKham)
+    {
+        if (string.IsNullOrWhiteSpace(maBacSi) || string.IsNullOrWhiteSpace(ngayKham) || string.IsNullOrWhiteSpace(caKham))
+        {
+            return BadRequest(new { message = "Thiếu thông tin bắt buộc" });
+        }
+
+        if (!DateOnly.TryParseExact(ngayKham, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedNgayKham))
+        {
+            return BadRequest(new { message = "Định dạng ngày không hợp lệ" });
+        }
+
+        var ngayTrongTuan = GetVietnameseDayOfWeek(parsedNgayKham.ToDateTime(TimeOnly.MinValue).DayOfWeek);
+
+        var lichLamViec = await _context.LichLamViecs
+            .AsNoTracking()
+            .Include(x => x.MaPhongKhamNavigation)
+            .FirstOrDefaultAsync(x => x.MaBacSi == maBacSi && x.NgayTrongTuan == ngayTrongTuan && x.CaLamViec == caKham);
+
+        if (lichLamViec?.MaPhongKhamNavigation == null)
+        {
+            return Json(new { isFull = true, message = "Ca khám không tồn tại hoặc phòng khám không hoạt động" });
+        }
+
+        var soLichDaDat = await _context.DangKyLichKhams
+            .CountAsync(x => x.MaBacSi == maBacSi && x.MaPhongKham == lichLamViec.MaPhongKham && x.NgayKham == parsedNgayKham && x.CaKham == caKham && x.TrangThai != "Hủy");
+
+        if (soLichDaDat >= lichLamViec.MaPhongKhamNavigation.SucChua)
+        {
+            return Json(new { isFull = true, message = $"Ca khám đã đầy ({soLichDaDat}/{lichLamViec.MaPhongKhamNavigation.SucChua})" });
+        }
+
+        var bookedSlots = await _context.DangKyLichKhams
+            .AsNoTracking()
+            .Where(x => x.MaBacSi == maBacSi && x.NgayKham == parsedNgayKham && x.CaKham == caKham && x.TrangThai != "Hủy" && x.GioKham != null && x.ThoiLuongKham != null)
+            .Select(x => new { gioKham = x.GioKham!.Value.ToString("HH:mm"), thoiLuongKham = x.ThoiLuongKham!.Value })
+            .ToListAsync();
+
+        return Json(new { isFull = false, bookedSlots });
     }
 
     private async Task<DatLichKhamViewModel> BuildDatLichModelAsync(DatLichKhamViewModel model)

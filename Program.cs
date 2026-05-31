@@ -9,6 +9,7 @@ builder.Logging.AddDebug();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient<HeThongDatLichVaKhamBenh.Services.IGeminiService, HeThongDatLichVaKhamBenh.Services.GeminiService>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddSession(options =>
