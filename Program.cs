@@ -12,7 +12,9 @@ builder.Logging.AddDebug();
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<HeThongDatLichVaKhamBenh.Services.IGeminiService, HeThongDatLichVaKhamBenh.Services.GeminiService>();
 builder.Services.Configure<MoMoSettings>(builder.Configuration.GetSection("MoMo"));
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddHttpClient<HeThongDatLichVaKhamBenh.Services.IMoMoService, HeThongDatLichVaKhamBenh.Services.MoMoService>();
+builder.Services.AddTransient<HeThongDatLichVaKhamBenh.Services.IEmailService, HeThongDatLichVaKhamBenh.Services.EmailService>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddSession(options =>

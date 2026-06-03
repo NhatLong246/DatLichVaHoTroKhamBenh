@@ -3223,3 +3223,107 @@ body.web-dashboard {
   background: #0f766e !important;
   color: #ffffff !important;
 }
+
+/* Global Toast Notifications */
+.app-toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+.app-toast {
+  min-width: 280px;
+  max-width: 400px;
+  padding: 16px 20px;
+  background: white;
+  border-left: 5px solid #dc3545;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  color: #1f2937;
+  font-weight: 600;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transform: translateX(120%);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.app-toast.is-visible {
+  transform: translateX(0);
+  opacity: 1;
+}
+.app-toast.toast-error {
+  border-left-color: #ef4444;
+}
+.app-toast.toast-warning {
+  border-left-color: #f59e0b;
+}
+.app-toast.toast-success {
+  border-left-color: #10b981;
+}
+.app-toast svg {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+/* Week Calendar Styles */
+.week-calendar {
+  margin-bottom: 24px;
+}
+.week-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+}
+.week-day-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 8px;
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.week-day-btn:hover:not(.is-disabled) {
+  border-color: #0f766e;
+  background: #f0fdfa;
+  transform: translateY(-2px);
+}
+.week-day-btn.is-selected {
+  background: #0f766e;
+  border-color: #0f766e;
+  color: white;
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+}
+.week-day-btn.is-disabled {
+  background: #f8fafc;
+  color: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.week-day-btn strong {
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+.week-day-btn span {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.week-day-btn.is-selected span {
+  color: white;
+}
+

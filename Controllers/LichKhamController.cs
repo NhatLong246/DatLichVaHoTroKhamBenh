@@ -40,11 +40,13 @@ public class LichKhamController : Controller
 
     private readonly ApplicationDbContext _context;
     private readonly HeThongDatLichVaKhamBenh.Services.IGeminiService _geminiService;
+    private readonly HeThongDatLichVaKhamBenh.Services.IEmailService _emailService;
 
-    public LichKhamController(ApplicationDbContext context, HeThongDatLichVaKhamBenh.Services.IGeminiService geminiService)
+    public LichKhamController(ApplicationDbContext context, HeThongDatLichVaKhamBenh.Services.IGeminiService geminiService, HeThongDatLichVaKhamBenh.Services.IEmailService emailService)
     {
         _context = context;
         _geminiService = geminiService;
+        _emailService = emailService;
     }
 
     [HttpGet]
@@ -103,21 +105,33 @@ public class LichKhamController : Controller
         {
             ModelState.AddModelError(nameof(model.GioKham), "Vui lòng chọn khung giờ khám hợp lệ.");
         }
+        else if (model.NgayKham.HasValue && ngayKham == DateOnly.FromDateTime(DateTime.Today) && gioKham.Value <= TimeOnly.FromDateTime(DateTime.Now))
+        {
+            ModelState.AddModelError(nameof(model.GioKham), "Khung giờ khám không được ở trong quá khứ.");
+        }
 
         if (model.ThoiLuongKham is null or < 15 or > 180)
         {
             ModelState.AddModelError(nameof(model.ThoiLuongKham), "Thời lượng khám phải từ 15 đến 180 phút.");
         }
 
-        if (gioKham.HasValue && model.ThoiLuongKham.HasValue && !string.IsNullOrWhiteSpace(model.CaKham))
+        if (!string.IsNullOrWhiteSpace(model.CaKham))
         {
             if (!ShiftTimeRanges.TryGetValue(model.CaKham, out var shiftRange))
             {
                 ModelState.AddModelError(nameof(model.CaKham), "Ca khám không hợp lệ.");
             }
-            else if (!IsInShiftRange(gioKham.Value, model.ThoiLuongKham.Value, shiftRange))
+            else
             {
-                ModelState.AddModelError(nameof(model.GioKham), "Khung giờ khám không nằm trong ca đã chọn.");
+                if (model.NgayKham.HasValue && ngayKham == DateOnly.FromDateTime(DateTime.Today) && TimeOnly.FromDateTime(DateTime.Now) >= shiftRange.End)
+                {
+                    ModelState.AddModelError(nameof(model.CaKham), $"Ca {model.CaKham} đã kết thúc, vui lòng chọn ca khác.");
+                }
+                
+                if (gioKham.HasValue && model.ThoiLuongKham.HasValue && !IsInShiftRange(gioKham.Value, model.ThoiLuongKham.Value, shiftRange))
+                {
+                    ModelState.AddModelError(nameof(model.GioKham), "Khung giờ khám không nằm trong ca đã chọn.");
+                }
             }
         }
 
@@ -156,6 +170,18 @@ public class LichKhamController : Controller
             }
             else
             {
+                var daDatLichCaNay = await _context.DangKyLichKhams.AnyAsync(x =>
+                    x.MaBenhNhan == benhNhan.MaBenhNhan &&
+                    x.MaBacSi == bacSi.MaBacSi &&
+                    x.NgayKham == ngayKham &&
+                    x.CaKham == model.CaKham &&
+                    x.TrangThai != "Hủy");
+
+                if (daDatLichCaNay)
+                {
+                    ModelState.AddModelError(nameof(model.CaKham), "Bạn đã đặt một lịch khám với bác sĩ này trong ca này rồi. Vui lòng chọn ca hoặc bác sĩ khác.");
+                }
+
                 var soLichDaDat = await _context.DangKyLichKhams.CountAsync(x =>
                     x.MaBacSi == bacSi.MaBacSi &&
                     x.MaPhongKham == lichLamViec.MaPhongKham &&
@@ -214,6 +240,33 @@ public class LichKhamController : Controller
         _context.DangKyLichKhams.Add(lichKham);
         await _context.SaveChangesAsync();
 
+        var patientEmail = benhNhan.MaNguoiDungNavigation?.Email;
+        if (!string.IsNullOrEmpty(patientEmail))
+        {
+            var emailSubject = $"Xác nhận đặt lịch khám thành công - {lichKham.MaDangKy}";
+            var emailBody = $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;'>
+                    <div style='background-color: #0f766e; padding: 20px; text-align: center; color: white;'>
+                        <h2 style='margin: 0;'>Xác nhận lịch hẹn</h2>
+                    </div>
+                    <div style='padding: 20px; color: #374151;'>
+                        <p>Xin chào <strong>{benhNhan.HoTen}</strong>,</p>
+                        <p>Lịch khám của bạn đã được đặt thành công. Dưới đây là thông tin chi tiết:</p>
+                        <ul style='list-style: none; padding: 0;'>
+                            <li style='margin-bottom: 10px;'><strong>Mã lịch hẹn:</strong> {lichKham.MaDangKy}</li>
+                            <li style='margin-bottom: 10px;'><strong>Bác sĩ:</strong> {bacSi!.HoTen}</li>
+                            <li style='margin-bottom: 10px;'><strong>Phòng khám:</strong> {lichLamViec!.MaPhongKhamNavigation.TenPhongKham} ({lichLamViec.MaPhongKhamNavigation.ViTri})</li>
+                            <li style='margin-bottom: 10px;'><strong>Ngày khám:</strong> {ngayKham:dd/MM/yyyy}</li>
+                            <li style='margin-bottom: 10px;'><strong>Ca khám:</strong> {model.CaKham}</li>
+                            {(model.GioKham != null ? $"<li style='margin-bottom: 10px;'><strong>Khung giờ dự kiến:</strong> {model.GioKham} ({model.ThoiLuongKham} phút)</li>" : "")}
+                        </ul>
+                        <p style='margin-top: 20px;'>Vui lòng đến trước giờ khám ít nhất 15 phút để hoàn tất thủ tục.</p>
+                        <p>Trân trọng,<br>Hệ thống Đặt lịch Khám bệnh</p>
+                    </div>
+                </div>";
+            _ = _emailService.SendEmailAsync(patientEmail, emailSubject, emailBody);
+        }
+
         var gioKhamMessage = string.IsNullOrWhiteSpace(model.GioKham)
             ? string.Empty
             : $" Khung giờ dự kiến: {model.GioKham}, thời lượng khoảng {model.ThoiLuongKham ?? 30} phút.";
@@ -258,6 +311,8 @@ public class LichKhamController : Controller
         }
 
         var lichHen = await _context.DangKyLichKhams
+            .Include(x => x.MaBacSiNavigation)
+            .Include(x => x.MaPhongKhamNavigation)
             .FirstOrDefaultAsync(x => x.MaDangKy == maDangKy && x.MaBenhNhan == benhNhan.MaBenhNhan);
 
         if (lichHen == null)
@@ -269,12 +324,37 @@ public class LichKhamController : Controller
         var daCoPhieuKham = await _context.PhieuKhams.AnyAsync(x => x.MaDangKy == lichHen.MaDangKy);
         if (daCoPhieuKham || !CanCancelAppointment(lichHen))
         {
-            TempData["LichHenError"] = "Chỉ có thể hủy lịch hẹn đang chờ khám và chưa đến thời gian khám.";
+            TempData["LichHenError"] = "Chỉ có thể hủy lịch khi đang chờ khám và phải hủy trước giờ khám ít nhất 2 tiếng.";
             return RedirectToAction(nameof(QuanLy));
         }
 
         lichHen.TrangThai = "Hủy";
         await _context.SaveChangesAsync();
+
+        var patientEmail = benhNhan.MaNguoiDungNavigation?.Email;
+        if (!string.IsNullOrEmpty(patientEmail))
+        {
+            var emailSubject = $"Xác nhận hủy lịch khám - {lichHen.MaDangKy}";
+            var emailBody = $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;'>
+                    <div style='background-color: #dc2626; padding: 20px; text-align: center; color: white;'>
+                        <h2 style='margin: 0;'>Đã hủy lịch hẹn</h2>
+                    </div>
+                    <div style='padding: 20px; color: #374151;'>
+                        <p>Xin chào <strong>{benhNhan.HoTen}</strong>,</p>
+                        <p>Lịch khám của bạn đã được hủy thành công trên hệ thống. Dưới đây là thông tin lịch hẹn đã bị hủy:</p>
+                        <ul style='list-style: none; padding: 0; color: #6b7280; text-decoration: line-through;'>
+                            <li style='margin-bottom: 10px;'><strong>Mã lịch hẹn:</strong> {lichHen.MaDangKy}</li>
+                            <li style='margin-bottom: 10px;'><strong>Bác sĩ:</strong> {lichHen.MaBacSiNavigation?.HoTen}</li>
+                            <li style='margin-bottom: 10px;'><strong>Ngày khám:</strong> {lichHen.NgayKham:dd/MM/yyyy}</li>
+                            <li style='margin-bottom: 10px;'><strong>Ca khám:</strong> {lichHen.CaKham}</li>
+                        </ul>
+                        <p style='margin-top: 20px;'>Cảm ơn bạn đã thông báo trước để phòng khám có thể sắp xếp lại thời gian. Nếu cần hỗ trợ thêm, vui lòng liên hệ hoặc đặt lịch hẹn mới.</p>
+                        <p>Trân trọng,<br>Hệ thống Đặt lịch Khám bệnh</p>
+                    </div>
+                </div>";
+            _ = _emailService.SendEmailAsync(patientEmail, emailSubject, emailBody);
+        }
 
         TempData["LichHenSuccess"] = "Đã hủy lịch hẹn thành công.";
         return RedirectToAction(nameof(QuanLy));
@@ -553,7 +633,9 @@ public class LichKhamController : Controller
             return null;
         }
 
-        return await _context.BenhNhans.FirstOrDefaultAsync(x => x.MaNguoiDung == maNguoiDung);
+        return await _context.BenhNhans
+            .Include(x => x.MaNguoiDungNavigation)
+            .FirstOrDefaultAsync(x => x.MaNguoiDung == maNguoiDung);
     }
 
     private async Task<string> GenerateAppointmentIdAsync()
@@ -589,15 +671,16 @@ public class LichKhamController : Controller
             return false;
         }
 
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        if (lichHen.NgayKham > today)
+        if (!lichHen.GioKham.HasValue)
         {
-            return true;
+            // Lịch cũ chưa có giờ khám cụ thể -> cho phép hủy nếu ngày khám là ngày mai trở đi
+            return lichHen.NgayKham > DateOnly.FromDateTime(DateTime.Now);
         }
 
-        return lichHen.NgayKham == today &&
-            lichHen.GioKham.HasValue &&
-            lichHen.GioKham.Value > TimeOnly.FromDateTime(DateTime.Now);
+        var appointmentDateTime = lichHen.NgayKham.ToDateTime(lichHen.GioKham.Value);
+        
+        // Không cho phép hủy trước giờ khám 2 tiếng để tránh thủng lịch
+        return (appointmentDateTime - DateTime.Now).TotalHours >= 2;
     }
 
     private static string GetVietnameseDayOfWeek(DayOfWeek dayOfWeek)

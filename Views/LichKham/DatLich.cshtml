@@ -101,10 +101,20 @@
                 <div class="booking-panel">
                     <div class="panel-heading d-flex align-items-center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 text-warning"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> 2. Chọn lịch làm việc, ngày và giờ khám</div>
                     <div class="booking-panel__body">
-                        <div class="booking-schedule" id="scheduleList" aria-live="polite"></div>
+                        <div class="week-calendar" id="weekCalendar" style="display: none;">
+                            <div class="week-header">
+                                <button type="button" id="prevWeekBtn" class="btn btn-outline-secondary btn-sm"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+                                <strong id="weekLabel" class="text-primary fs-5">Tuần hiện tại</strong>
+                                <button type="button" id="nextWeekBtn" class="btn btn-outline-secondary btn-sm"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+                            </div>
+                            <div class="week-grid" id="weekGrid" aria-live="polite">
+                                <!-- Days will be rendered here -->
+                            </div>
+                        </div>
+                        <div id="noDoctorMsg" class="booking-empty">Chọn bác sĩ để xem lịch làm việc.</div>
 
                         <div class="booking-time-grid booking-time-grid--expanded">
-                        <div class="booking-field">
+                        <div class="booking-field" style="display: none;">
                             <label asp-for="NgayKham">Ngày khám</label>
                             <input asp-for="NgayKham" type="date" id="dateInput" min="@Model.MinNgayKham.ToString("yyyy-MM-dd")" value="@Model.NgayKham?.ToString("yyyy-MM-dd")" />
                             <span asp-validation-for="NgayKham"></span>
@@ -199,7 +209,12 @@
             const specialtySelect = document.getElementById("specialtySelect");
             const doctorInput = document.getElementById("doctorInput");
             const doctorList = document.getElementById("doctorList");
-            const scheduleList = document.getElementById("scheduleList");
+            const weekCalendar = document.getElementById("weekCalendar");
+            const noDoctorMsg = document.getElementById("noDoctorMsg");
+            const weekGrid = document.getElementById("weekGrid");
+            const prevWeekBtn = document.getElementById("prevWeekBtn");
+            const nextWeekBtn = document.getElementById("nextWeekBtn");
+            const weekLabel = document.getElementById("weekLabel");
             const dateInput = document.getElementById("dateInput");
             const timeSlotSelect = document.getElementById("timeSlotSelect");
             const durationSelect = document.getElementById("durationSelect");
@@ -248,6 +263,11 @@
                 const minute = String(minutes % 60).padStart(2, "0");
                 return `${hour}:${minute}`;
             }
+            
+            let currentWeekStart = new Date();
+            const todayDay = currentWeekStart.getDay() || 7;
+            currentWeekStart.setDate(currentWeekStart.getDate() - todayDay + 1);
+            currentWeekStart.setHours(0, 0, 0, 0);
 
             function renderDoctors() {
                 const specialtyId = specialtySelect.value;
@@ -279,24 +299,69 @@
             function renderSchedules() {
                 const items = selectedSchedules();
                 if (!doctorInput.value) {
-                    scheduleList.innerHTML = "<p class=\"booking-empty\">Chọn bác sĩ để xem lịch làm việc.</p>";
+                    weekCalendar.style.display = "none";
+                    noDoctorMsg.style.display = "block";
+                    noDoctorMsg.textContent = "Chọn bác sĩ để xem lịch làm việc.";
                     updateAvailableShifts();
                     return;
                 }
 
                 if (!items.length) {
-                    scheduleList.innerHTML = "<p class=\"booking-empty\">Bác sĩ chưa có lịch làm việc đang hoạt động.</p>";
+                    weekCalendar.style.display = "none";
+                    noDoctorMsg.style.display = "block";
+                    noDoctorMsg.textContent = "Bác sĩ chưa có lịch làm việc đang hoạt động.";
                     updateAvailableShifts();
                     return;
                 }
 
-                scheduleList.innerHTML = items.map(item => `
-                    <button type="button" class="schedule-chip" data-day="${item.NgayTrongTuan}" data-shift="${item.CaLamViec}">
-                        <strong>${item.NgayTrongTuan} - ${item.CaLamViec}</strong>
-                        <span>${item.TenPhongKham}${item.ViTri ? `, ${item.ViTri}` : ""}</span>
-                    </button>
-                `).join("");
+                weekCalendar.style.display = "block";
+                noDoctorMsg.style.display = "none";
+                renderWeekCalendar();
                 updateAvailableShifts();
+            }
+
+            function renderWeekCalendar() {
+                const endOfWeek = new Date(currentWeekStart);
+                endOfWeek.setDate(currentWeekStart.getDate() + 6);
+
+                weekLabel.textContent = `Tuần từ ${String(currentWeekStart.getDate()).padStart(2,"0")}/${String(currentWeekStart.getMonth()+1).padStart(2,"0")} - ${String(endOfWeek.getDate()).padStart(2,"0")}/${String(endOfWeek.getMonth()+1).padStart(2,"0")}`;
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const doctorDays = selectedSchedules().map(item => item.NgayTrongTuan);
+                let gridHtml = "";
+
+                for (let i = 0; i < 7; i++) {
+                    const date = new Date(currentWeekStart);
+                    date.setDate(currentWeekStart.getDate() + i);
+                    
+                    const dayIndex = date.getDay();
+                    const dayName = dayNames[dayIndex];
+                    const dateString = formatDateInput(date);
+                    
+                    const isPast = date < today;
+                    const hasSchedule = doctorDays.includes(dayName);
+                    const isSelected = dateString === dateInput.value;
+                    const isDisabled = isPast || !hasSchedule;
+
+                    gridHtml += `
+                        <div class="week-day-btn ${isDisabled ? "is-disabled" : ""} ${isSelected ? "is-selected" : ""}" 
+                             data-date="${dateString}" 
+                             data-disabled="${isDisabled}">
+                            <strong>${dayName}</strong>
+                            <span>${String(date.getDate()).padStart(2,"0")}/${String(date.getMonth()+1).padStart(2,"0")}</span>
+                        </div>
+                    `;
+                }
+
+                weekGrid.innerHTML = gridHtml;
+                
+                // Disable prev btn if we are at the current week
+                const currentRealWeekStart = new Date();
+                currentRealWeekStart.setDate(currentRealWeekStart.getDate() - (currentRealWeekStart.getDay() || 7) + 1);
+                currentRealWeekStart.setHours(0,0,0,0);
+                prevWeekBtn.disabled = currentWeekStart <= currentRealWeekStart;
             }
 
             function updateAvailableShifts() {
@@ -305,8 +370,20 @@
                     .filter(item => item.NgayTrongTuan === dateName)
                     .map(item => item.CaLamViec);
 
+                const now = new Date();
+                const isToday = dateInput.value === formatDateInput(now);
+                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
                 shiftInputs.forEach(input => {
-                    const enabled = available.includes(input.value);
+                    let enabled = available.includes(input.value);
+
+                    if (enabled && isToday) {
+                        const range = shiftRanges[input.value];
+                        if (range && toMinutes(range.end) <= currentMinutes) {
+                            enabled = false;
+                        }
+                    }
+
                     input.disabled = Boolean(doctorInput.value && dateInput.value && !enabled);
                     input.closest("label").classList.toggle("is-disabled", input.disabled);
                     if (input.disabled && input.checked) {
@@ -361,7 +438,16 @@
                     const end = toMinutes(range.end);
                     const options = [];
 
+                    const now = new Date();
+                    const isToday = dateVal === formatDateInput(now);
+                    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
                     for (let current = start; current + duration <= end; current += duration) {
+                        // Skip past time slots if booking for today
+                        if (isToday && current <= currentMinutes) {
+                            continue;
+                        }
+
                         const from = toTimeLabel(current);
                         const to = toTimeLabel(current + duration);
                         const slotStartMinutes = current;
@@ -386,7 +472,11 @@
                     }
 
                     if (!options.length) {
-                        timeSlotSelect.innerHTML = "<option value=\"\">Đã kín lịch, vui lòng chọn ngày/ca khác</option>";
+                        if (isToday && currentMinutes >= toMinutes(range.start)) {
+                            timeSlotSelect.innerHTML = "<option value=\"\">Ca khám này đã trôi qua, vui lòng chọn ca khác</option>";
+                        } else {
+                            timeSlotSelect.innerHTML = "<option value=\"\">Đã kín lịch, vui lòng chọn ngày/ca khác</option>";
+                        }
                     } else {
                         timeSlotSelect.innerHTML = options.map(option => `<option value="${option.value}">${option.label}</option>`).join("");
                         if (options.some(option => option.value === previousValue)) {
@@ -518,29 +608,39 @@
                 renderSchedules();
             });
 
-            scheduleList.addEventListener("click", event => {
-                const button = event.target.closest("[data-day][data-shift]");
-                if (!button) {
+            weekGrid.addEventListener("click", event => {
+                const btn = event.target.closest(".week-day-btn");
+                if (!btn) return;
+                
+                if (btn.dataset.disabled === "true") {
+                    if (window.showToast) {
+                        window.showToast("Bác sĩ không có lịch làm việc vào ngày này hoặc ngày đã qua.", "warning");
+                    }
                     return;
                 }
-
-                const today = new Date();
-                const selected = new Date(dateInput.value ? `${dateInput.value}T00:00:00` : today);
-                const targetDay = dayNames.indexOf(button.dataset.day);
-                const offset = (targetDay - selected.getDay() + 7) % 7;
-                selected.setDate(selected.getDate() + offset);
-                dateInput.value = formatDateInput(selected);
-
-                const shift = shiftInputs.find(item => item.value === button.dataset.shift);
-                if (shift) {
-                    shift.checked = true;
-                }
-
+                
+                dateInput.value = btn.dataset.date;
+                shiftInputs.forEach(input => input.checked = false); // reset shift
+                
+                renderWeekCalendar();
                 updateAvailableShifts();
+            });
+            
+            prevWeekBtn.addEventListener("click", () => {
+                currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+                renderWeekCalendar();
+            });
+            
+            nextWeekBtn.addEventListener("click", () => {
+                currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+                renderWeekCalendar();
             });
 
             specialtySelect.addEventListener("change", renderDoctors);
-            dateInput.addEventListener("change", updateAvailableShifts);
+            dateInput.addEventListener("change", () => {
+                renderWeekCalendar();
+                updateAvailableShifts();
+            });
             shiftInputs.forEach(input => input.addEventListener("change", updateAvailableShifts));
             timeSlotSelect.addEventListener("change", updateConfirmation);
             durationSelect.addEventListener("change", renderTimeSlots);
@@ -553,6 +653,16 @@
                     renderTimeSlots();
                     renderDoctors();
                 });
+            });
+
+            document.getElementById("shiftOptions").addEventListener("click", event => {
+                const label = event.target.closest("label.is-disabled");
+                if (label) {
+                    const shiftName = label.querySelector("span")?.textContent || "Ca này";
+                    if (window.showToast) {
+                        window.showToast(`${shiftName} không khả dụng (đã qua giờ hoặc bác sĩ không có lịch).`, "warning");
+                    }
+                }
             });
 
             renderDoctors();

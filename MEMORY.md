@@ -1,5 +1,16 @@
 # MEMORY - HeThongDatLichVaKhamBenh
 
+## Cập nhật mới nhất - Đăng ký & Nhắc lịch Email
+
+- **Đăng ký tài khoản Bệnh nhân:** Hoàn thiện luồng tạo tài khoản mới cho bệnh nhân tại `Account/Register`. 
+  - Lưu đồng thời vào `NguoiDung` và `BenhNhan` bằng Transaction (`IDbContextTransaction`).
+  - Mật khẩu băm bằng SHA256 (lưu chuỗi Hex) tương thích hoàn toàn với schema gốc (giống SQL `HASHBYTES`).
+  - Ràng buộc: điện thoại 10 số, kiểm tra định dạng email hợp lệ, khóa chặn năm sinh của bệnh nhân về tối đa 120 tuổi.
+- **Hệ thống Nhắc lịch Tự động (Email):** Xây dựng class `EmailService` sử dụng thư viện `System.Net.Mail.SmtpClient`.
+  - Tự động gửi thư bất đồng bộ (fire-and-forget) khi bệnh nhân **Đặt lịch** thành công hoặc **Hủy lịch** khám.
+  - Sử dụng cấu hình `EmailSettings` trong `appsettings.Development.json`.
+  - Các thư được format bằng HTML chuyên nghiệp kèm thông tin: Bác sĩ, Phòng khám, Ngày giờ và Mã lịch hẹn.
+
 ## Cập nhật mới nhất - Tích hợp Thanh toán & Giao diện
 
 - **Thanh toán MoMo (Sandbox):** Hoàn tất tích hợp API MoMo cho bệnh nhân tại trang `HoaDon/Index`. Tính năng bao gồm:

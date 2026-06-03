@@ -32,22 +32,23 @@ Danh sách này giúp chia nhỏ việc code với AI. Khi làm chức năng nà
 
 ## Module tài khoản
 
-- Đăng ký bệnh nhân.
-- Đăng nhập/đăng xuất.
-- Hash mật khẩu.
-- Trang thông tin cá nhân.
-- Cập nhật thông tin cá nhân.
-- Chặn tài khoản bị khóa.
-- Phân quyền route theo vai trò.
+- [x] Đăng ký bệnh nhân.
+- [x] Đăng nhập/đăng xuất.
+- [x] Hash mật khẩu.
+- [x] Trang thông tin cá nhân.
+- [x] Cập nhật thông tin cá nhân.
+- [x] Chặn tài khoản bị khóa.
+- [x] Phân quyền route theo vai trò.
 
 ## Module đặt lịch
 
-- Danh sách chuyên khoa.
-- Danh sách bác sĩ theo chuyên khoa.
-- Xem lịch làm việc bác sĩ.
-- Đặt lịch khám.
-- Kiểm tra ca khám hợp lệ.
-- Danh sách lịch hẹn của bệnh nhân.
+- [x] Danh sách chuyên khoa.
+- [x] Danh sách bác sĩ theo chuyên khoa.
+- [x] Xem lịch làm việc bác sĩ.
+- [x] Đặt lịch khám.
+- [x] Kiểm tra ca khám hợp lệ.
+- [x] Danh sách lịch hẹn của bệnh nhân.
+- [x] Tích hợp hệ thống Email nhắc lịch tự động.
 - Đổi lịch hẹn.
 - Hủy lịch hẹn.
 - Bác sĩ xem lịch khám trong ngày.
