@@ -1,4 +1,4 @@
-﻿@model HeThongDatLichVaKhamBenh.Models.ViewModels.BaoCaoViewModel
+@model HeThongDatLichVaKhamBenh.Models.ViewModels.BaoCaoViewModel
 @{
     Layout = null;
     ViewData["Title"] = "Báo cáo thống kê";
@@ -299,7 +299,7 @@
                             <tr>
                                 <td><strong>@hd.MaHoaDon</strong></td>
                                 <td>@hd.TenBenhNhan</td>
-                                <td>@hd.NgayLap.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@hd.NgayLap.ToString("dd/MM/yyyy")</td>
                                 <td style="text-align: right; font-weight:700; color:#10b981;">@hd.TongTien.ToString("N0") đ</td>
                             </tr>
                         }

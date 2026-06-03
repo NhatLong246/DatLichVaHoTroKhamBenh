@@ -193,6 +193,10 @@
                                         <p>Đơn thuốc chỉ lưu trạng thái đã kê đơn, không cộng vào hóa đơn thanh toán.</p>
                                     </div>
                                 </div>
+                                <div class="exam-search" style="margin-bottom: 1rem;">
+                                    <label for="medicineSearch" class="visually-hidden">Tìm kiếm thuốc</label>
+                                    <input id="medicineSearch" type="search" placeholder="Tìm kiếm thuốc..." />
+                                </div>
                                 <div class="data-table-wrap">
                                     <table class="data-table medical-table exam-table">
                                         <thead>
@@ -205,10 +209,10 @@
                                                 <th>Cách dùng</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody id="medicineTableBody">
                                             @for (var i = 0; i < Model.Thuocs.Count; i++)
                                             {
-                                                <tr>
+                                                <tr class="medicine-row" data-name="@Model.Thuocs[i].TenThuoc.ToLowerInvariant()">
                                                     <td>
                                                         <input type="hidden" asp-for="Thuocs[i].MaThuoc" />
                                                         <input type="hidden" asp-for="Thuocs[i].TenThuoc" />
@@ -234,6 +238,8 @@
                                             }
                                         </tbody>
                                     </table>
+                                </div>
+                                <div id="medicinePagination" class="pagination-controls" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 1rem; margin-bottom: 1rem;">
                                 </div>
                                 <label class="exam-field exam-note">
                                     <span>Ghi chú đơn thuốc</span>
@@ -303,6 +309,85 @@
                     panels.forEach((panel) => panel.classList.toggle("is-active", panel.dataset.examPanel === tab));
                 });
             });
+
+            // Pagination and Search for Medicines
+            const itemsPerPage = 4;
+            let currentMedicinePage = 1;
+            const medSearchInput = document.getElementById("medicineSearch");
+            const medTbody = document.getElementById("medicineTableBody");
+            const medPagination = document.getElementById("medicinePagination");
+            
+            if (medTbody && medSearchInput && medPagination) {
+                const allMedRows = Array.from(medTbody.querySelectorAll("tr.medicine-row"));
+                let filteredMedRows = [...allMedRows];
+
+                function renderMedTable() {
+                    allMedRows.forEach(row => row.style.display = "none");
+                    const start = (currentMedicinePage - 1) * itemsPerPage;
+                    const end = start + itemsPerPage;
+                    filteredMedRows.slice(start, end).forEach(row => row.style.display = "");
+                    renderMedPagination();
+                }
+
+                function renderMedPagination() {
+                    medPagination.innerHTML = "";
+                    const totalPages = Math.ceil(filteredMedRows.length / itemsPerPage);
+                    if (totalPages <= 1) return;
+
+                    const prevBtn = document.createElement("button");
+                    prevBtn.type = "button";
+                    prevBtn.textContent = "Trước";
+                    prevBtn.className = "exam-button exam-button--ghost";
+                    prevBtn.style.padding = "4px 12px";
+                    prevBtn.disabled = currentMedicinePage === 1;
+                    prevBtn.onclick = () => { 
+                        if (currentMedicinePage > 1) { 
+                            currentMedicinePage--; 
+                            renderMedTable(); 
+                        } 
+                    };
+                    medPagination.appendChild(prevBtn);
+
+                    const pageInfo = document.createElement("span");
+                    pageInfo.textContent = `Trang ${currentMedicinePage} / ${totalPages}`;
+                    pageInfo.style.fontSize = "14px";
+                    medPagination.appendChild(pageInfo);
+
+                    const nextBtn = document.createElement("button");
+                    nextBtn.type = "button";
+                    nextBtn.textContent = "Sau";
+                    nextBtn.className = "exam-button exam-button--ghost";
+                    nextBtn.style.padding = "4px 12px";
+                    nextBtn.disabled = currentMedicinePage === totalPages;
+                    nextBtn.onclick = () => { 
+                        if (currentMedicinePage < totalPages) { 
+                            currentMedicinePage++; 
+                            renderMedTable(); 
+                        } 
+                    };
+                    medPagination.appendChild(nextBtn);
+                }
+
+                medSearchInput.addEventListener("input", function() {
+                    const keyword = this.value.trim().toLowerCase();
+                    filteredMedRows = allMedRows.filter(row => {
+                        const name = row.dataset.name || "";
+                        return name.includes(keyword);
+                    });
+                    currentMedicinePage = 1;
+                    renderMedTable();
+                });
+
+                // Prevent form submission when pressing Enter in search box
+                medSearchInput.addEventListener("keydown", function(e) {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                    }
+                });
+
+                // Initial render
+                renderMedTable();
+            }
         })();
     </script>
 </body>

@@ -1,5 +1,15 @@
 # MEMORY - HeThongDatLichVaKhamBenh
 
+## Cập nhật mới nhất - Tích hợp Thanh toán & Giao diện
+
+- **Thanh toán MoMo (Sandbox):** Hoàn tất tích hợp API MoMo cho bệnh nhân tại trang `HoaDon/Index`. Tính năng bao gồm:
+  - Tạo QR Code thanh toán lấy từ `deeplink` (kích hoạt app MoMo native) hoặc `payUrl` qua QuickChart.
+  - Tự động kiểm tra trạng thái thanh toán (Auto-polling) mỗi 3s bằng AJAX.
+  - Giao diện thanh toán dùng Modal đẹp mắt với hiệu ứng chờ.
+- **Báo cáo & Thống kê:** Đã sửa lỗi `FormatException` khi hiển thị ngày lập hóa đơn (dùng chuẩn `.ToString("dd/MM/yyyy")` cho `DateOnly`).
+- **Khám bệnh bác sĩ:** Tính năng kê đơn thuốc đã được bổ sung phân trang (4 thuốc/trang) và thanh tìm kiếm thuốc động (dữ liệu thật từ CSDL).
+- **Cài đặt bác sĩ:** Nâng cấp toàn diện giao diện `Views/CaiDat/BacSi.cshtml` sang phong cách hiện đại (Bootstrap 5 Cards, Floating Labels, Toggle Password) đồng bộ với bệnh nhân.
+
 ## Cập nhật mới nhất - Báo cáo & Quản trị (Admin)
 
 - Đã triển khai trang **Báo cáo thống kê** tại `Views/BaoCao/Index.cshtml` (Controller: `BaoCaoController`), hỗ trợ tính tổng doanh thu từ hóa đơn đã thanh toán và đếm lượt khám bệnh từ lịch sử theo khoảng thời gian/chuyên khoa/bác sĩ.

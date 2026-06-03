@@ -182,6 +182,57 @@
                             <button type="submit">Thanh toán</button>
                         </div>
                     </form>
+
+                    <div class="momo-modal-backdrop" id="momoModal" style="display: none;">
+                        <div class="momo-modal-content">
+                            <div class="momo-modal-header" style="background-color: #A50064; color: white; padding: 15px; text-align: center; border-radius: 12px 12px 0 0;">
+                                <h3 style="margin: 0; font-size: 1.25rem; font-weight: bold;">Thanh toán qua MoMo</h3>
+                            </div>
+                            <div class="momo-modal-body" style="padding: 20px; text-align: center; background: white; border-radius: 0 0 12px 12px;">
+                                <p style="color: #666; margin-bottom: 15px;">Vui lòng quét mã QR bên dưới bằng ứng dụng MoMo để thanh toán.</p>
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; display: inline-block; margin-bottom: 20px;">
+                                    <img id="momoQrImage" src="" alt="MoMo QR Code" style="width: 200px; height: 200px; object-fit: contain;" />
+                                </div>
+                                <div style="margin-bottom: 20px;">
+                                    <p style="margin: 0; color: #666; font-size: 0.9rem;">Tổng tiền</p>
+                                    <strong id="momoAmount" style="font-size: 1.5rem; color: #A50064;"></strong>
+                                </div>
+                                <p style="font-size: 0.85rem; color: #888; margin-bottom: 20px; font-style: italic;">
+                                    (Môi trường phát triển: Bấm nút bên dưới để giả lập quét thành công)
+                                </p>
+                                <div style="display: flex; gap: 10px; justify-content: center;">
+                                    <button type="button" id="momoCancelBtn" class="booking-button text-muted" style="min-width: 120px; border: 1px solid #ddd; background: white; padding: 8px 16px; border-radius: 6px;">Hủy / Đóng</button>
+                                    <button type="button" id="momoSimulateBtn" class="booking-button" style="background-color: #A50064; color: white; border: none; min-width: 120px; padding: 8px 16px; border-radius: 6px; font-weight: 600; display: none;">Giả lập đã quét</button>
+                                </div>
+                                <div id="momoStatusText" style="margin-top: 15px; font-weight: bold; color: #A50064; display: none;">
+                                    Đang chờ thanh toán...
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <style>
+                    .momo-modal-backdrop {
+                        position: fixed;
+                        top: 0; left: 0; right: 0; bottom: 0;
+                        background: rgba(0,0,0,0.6);
+                        z-index: 1050;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        animation: fadeIn 0.2s ease;
+                    }
+                    .momo-modal-content {
+                        background: white;
+                        border-radius: 12px;
+                        width: 90%;
+                        max-width: 400px;
+                        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                        animation: slideUp 0.3s ease;
+                    }
+                    @@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                    @@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+                    </style>
                 </div>
             </section>
         }
@@ -297,6 +348,79 @@
                 }
 
                 selectInvoice(Number(button.dataset.invoiceIndex));
+            });
+
+            // Handle MoMo QR Modal
+            const momoModal = document.getElementById("momoModal");
+            const momoQrImage = document.getElementById("momoQrImage");
+            const momoAmount = document.getElementById("momoAmount");
+            const momoCancelBtn = document.getElementById("momoCancelBtn");
+            const momoSimulateBtn = document.getElementById("momoSimulateBtn");
+
+            let momoPollingInterval = null;
+            const momoStatusText = document.getElementById("momoStatusText");
+
+            paymentForm.addEventListener("submit", async function(event) {
+                if (paymentMethod.value === "Chuyển khoản") {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                    
+                    const invoice = invoices[selectedIndex];
+                    const details = invoice.ChiTietHoaDons || [];
+                    const total = Number(invoice.TongTien || details.reduce((sum, item) => sum + Number(item.ThanhTien || 0), 0));
+                    
+                    momoAmount.textContent = formatMoney(total);
+                    momoQrImage.src = "https://cdn.dribbble.com/users/1186261/screenshots/3718681/_______.gif"; // Loading spinner
+                    momoModal.style.display = "flex";
+                    momoStatusText.style.display = "none";
+                    momoSimulateBtn.style.display = "none";
+
+                    try {
+                        const response = await fetch(`/HoaDon/CreateMoMoPayment?maHoaDon=${invoice.MaHoaDon}`, { method: "POST" });
+                        const result = await response.json();
+
+                        if (result.success) {
+                            momoQrImage.src = result.qrCodeUrl;
+                            momoStatusText.style.display = "block";
+                            momoSimulateBtn.style.display = "inline-block"; // Keep it just in case testing is needed without phone
+
+                            // Start polling every 3 seconds
+                            momoPollingInterval = setInterval(async () => {
+                                const checkResponse = await fetch(`/HoaDon/CheckMoMoPaymentStatus?maHoaDon=${invoice.MaHoaDon}&orderId=${result.orderId}`, { method: "POST" });
+                                const checkResult = await checkResponse.json();
+                                if (checkResult.success) {
+                                    clearInterval(momoPollingInterval);
+                                    momoStatusText.textContent = "Thanh toán thành công! Đang tải lại...";
+                                    momoStatusText.style.color = "green";
+                                    setTimeout(() => window.location.reload(), 1500);
+                                }
+                            }, 3000);
+
+                        } else {
+                            momoStatusText.style.display = "block";
+                            momoStatusText.style.color = "red";
+                            momoStatusText.textContent = result.message || "Lỗi tạo mã QR MoMo.";
+                            momoQrImage.style.display = "none";
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        momoStatusText.style.display = "block";
+                        momoStatusText.style.color = "red";
+                        momoStatusText.textContent = "Lỗi kết nối Server.";
+                        momoQrImage.style.display = "none";
+                    }
+                }
+            }, true);
+
+            momoCancelBtn.addEventListener("click", () => {
+                momoModal.style.display = "none";
+                if (momoPollingInterval) clearInterval(momoPollingInterval);
+            });
+
+            momoSimulateBtn.addEventListener("click", () => {
+                momoModal.style.display = "none";
+                if (momoPollingInterval) clearInterval(momoPollingInterval);
+                paymentForm.submit(); // fallback submit direct
             });
 
             selectInvoice(0);

@@ -1,5 +1,7 @@
 using HeThongDatLichVaKhamBenh.Models.EF;
 using HeThongDatLichVaKhamBenh.Models.ViewModels;
+using HeThongDatLichVaKhamBenh.Services;
+using HeThongDatLichVaKhamBenh.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +12,12 @@ public class HoaDonController : Controller
     private static readonly string[] ValidPaymentMethods = ["Tiền mặt", "Thẻ", "Chuyển khoản", "Bảo hiểm"];
 
     private readonly ApplicationDbContext _context;
+    private readonly IMoMoService _momoService;
 
-    public HoaDonController(ApplicationDbContext context)
+    public HoaDonController(ApplicationDbContext context, IMoMoService momoService)
     {
         _context = context;
+        _momoService = momoService;
     }
 
     [HttpGet]
@@ -80,6 +84,77 @@ public class HoaDonController : Controller
         TempData["HoaDonSuccess"] = $"Thanh toán hóa đơn {hoaDon.MaHoaDon} thành công.";
         return RedirectToAction(nameof(Index));
     }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateMoMoPayment(string maHoaDon)
+    {
+        var redirect = RequirePatientRole();
+        if (redirect != null) return Json(new { success = false, message = "Vui lòng đăng nhập." });
+
+        var benhNhan = await GetCurrentPatientAsync();
+        if (benhNhan == null) return Json(new { success = false, message = "Không tìm thấy hồ sơ bệnh nhân." });
+
+        var hoaDon = await _context.HoaDons
+            .Include(h => h.ChiTietHoaDons)
+            .FirstOrDefaultAsync(x => x.MaHoaDon == maHoaDon && x.MaBenhNhan == benhNhan.MaBenhNhan);
+
+        if (hoaDon == null || hoaDon.TrangThai != "Chưa thanh toán")
+        {
+            return Json(new { success = false, message = "Hóa đơn không tồn tại hoặc đã thanh toán." });
+        }
+
+        long totalAmount = (long)(hoaDon.TongTien ?? hoaDon.ChiTietHoaDons.Sum(x => (x.TienKham ?? 0) + (x.TienThuoc ?? 0)));
+        if (totalAmount <= 0)
+        {
+            return Json(new { success = false, message = "Số tiền thanh toán không hợp lệ." });
+        }
+
+        string orderId = $"{hoaDon.MaHoaDon}_{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
+        string orderInfo = $"Thanh toan hoa don kham benh {hoaDon.MaHoaDon}";
+
+        var response = await _momoService.CreatePaymentAsync(orderId, orderInfo, totalAmount);
+        
+        if (response != null && response.resultCode == 0)
+        {
+            // Use deeplink for QR generation if available. This forces the MoMo app to open the native 
+            // payment screen instead of a webview when scanned. If deeplink is empty, fallback to payUrl.
+            string qrContent = !string.IsNullOrEmpty(response.deeplink) ? response.deeplink : (response.payUrl ?? "");
+            string finalQrUrl = $"https://quickchart.io/qr?size=300&text={Uri.EscapeDataString(qrContent)}";
+            
+            return Json(new { success = true, qrCodeUrl = finalQrUrl, orderId = orderId });
+        }
+
+        string errorMsg = response?.message ?? "Không thể tạo mã thanh toán từ MoMo lúc này. Hãy thử lại sau.";
+        return Json(new { success = false, message = $"Lỗi MoMo: {errorMsg}" });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CheckMoMoPaymentStatus(string maHoaDon, string orderId)
+    {
+        var redirect = RequirePatientRole();
+        if (redirect != null) return Json(new { success = false });
+
+        var hoaDon = await _context.HoaDons.FirstOrDefaultAsync(x => x.MaHoaDon == maHoaDon);
+        if (hoaDon == null) return Json(new { success = false });
+
+        if (hoaDon.TrangThai == "Đã thanh toán") return Json(new { success = true, message = "Đã thanh toán trước đó" });
+
+        var response = await _momoService.QueryPaymentAsync(orderId, Guid.NewGuid().ToString());
+
+        // resultCode == 0 means Transaction Success in MoMo
+        if (response != null && response.resultCode == 0)
+        {
+            hoaDon.TrangThai = "Đã thanh toán";
+            hoaDon.HinhThucThanhToan = "Chuyển khoản";
+            await _context.SaveChangesAsync();
+
+            TempData["HoaDonSuccess"] = $"Thanh toán hóa đơn {hoaDon.MaHoaDon} qua MoMo thành công.";
+            return Json(new { success = true });
+        }
+
+        return Json(new { success = false });
+    }
+
 
     private async Task<HoaDonViewModel?> BuildHoaDonModelAsync()
     {
