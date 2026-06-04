@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -38,6 +38,12 @@ public partial class PhieuKham
 
     [InverseProperty("MaPhieuKhamNavigation")]
     public virtual ICollection<DonThuoc> DonThuocs { get; set; } = new List<DonThuoc>();
+
+    [InverseProperty("MaPhieuKhamNavigation")]
+    public virtual ICollection<ChiSoSinhTon> ChiSoSinhTons { get; set; } = new List<ChiSoSinhTon>();
+
+    [InverseProperty("MaPhieuKhamNavigation")]
+    public virtual ICollection<HoSoDicom> HoSoDicoms { get; set; } = new List<HoSoDicom>();
 
     [ForeignKey("MaDangKy")]
     [InverseProperty("PhieuKhams")]

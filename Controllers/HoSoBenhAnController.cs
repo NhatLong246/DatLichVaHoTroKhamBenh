@@ -45,6 +45,10 @@ public class HoSoBenhAnController : Controller
             .Include(x => x.PhieuKhams)
                 .ThenInclude(x => x.ChiTietDichVuKhams)
                     .ThenInclude(x => x.MaDichVuNavigation)
+            .Include(x => x.PhieuKhams)
+                .ThenInclude(x => x.ChiSoSinhTons)
+            .Include(x => x.PhieuKhams)
+                .ThenInclude(x => x.HoSoDicoms)
             .Where(x => x.MaBenhNhan == benhNhan.MaBenhNhan && x.PhieuKhams.Any())
             .OrderByDescending(x => x.NgayKham)
             .ThenByDescending(x => x.GioKham)
@@ -104,7 +108,27 @@ public class HoSoBenhAnController : Controller
                         DonGia = dichVu.DonGia,
                         ThanhTien = dichVu.ThanhTien ?? dichVu.SoLuong * dichVu.DonGia
                     })
-                    .ToList()
+                    .ToList(),
+                ChiSoSinhTon = phieu.ChiSoSinhTons.Select(cs => new ChiSoSinhTonViewModel
+                {
+                    HuyetApTamThu = cs.HuyetApTamThu,
+                    HuyetApTamTruong = cs.HuyetApTamTruong,
+                    NhipTim = cs.NhipTim,
+                    ChieuCao = cs.ChieuCao,
+                    CanNang = cs.CanNang,
+                    BMI = cs.BMI,
+                    DuongHuyet = cs.DuongHuyet,
+                    GhiChu = cs.GhiChu ?? string.Empty
+                }).FirstOrDefault(),
+                HoSoDicoms = phieu.HoSoDicoms.Select(ds => new HoSoDicomViewModel
+                {
+                    MaHoSo = ds.MaHoSo,
+                    TenFile = ds.TenFile,
+                    DuongDanFile = ds.DuongDanFile,
+                    LoaiHinhAnh = ds.LoaiHinhAnh ?? string.Empty,
+                    NgayTaiLen = ds.NgayTaiLen,
+                    KichThuoc = ds.KichThuoc
+                }).ToList()
             }))
             .OrderByDescending(x => x.NgayKham)
             .ThenByDescending(x => x.GioKham)

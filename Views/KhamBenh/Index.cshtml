@@ -152,7 +152,7 @@
                         </div>
                     </dl>
 
-                    <form asp-controller="KhamBenh" asp-action="HoanThanh" method="post" class="exam-form confirm-form" data-confirm-title="Hoàn thành ca khám" data-confirm-message="Lưu hồ sơ khám, đơn thuốc, dịch vụ chỉ định và tạo hóa đơn thanh toán?" data-confirm-ok="Hoàn thành">
+                    <form asp-controller="KhamBenh" asp-action="HoanThanh" method="post" enctype="multipart/form-data" class="exam-form confirm-form" data-confirm-title="Hoàn thành ca khám" data-confirm-message="Lưu hồ sơ khám, đơn thuốc, dịch vụ chỉ định và tạo hóa đơn thanh toán?" data-confirm-ok="Hoàn thành">
                         @Html.AntiForgeryToken()
                         <input type="hidden" asp-for="SelectedMaDangKy" />
                         <div asp-validation-summary="ModelOnly" class="booking-alert booking-alert--danger"></div>
@@ -176,6 +176,63 @@
                                     <span>Hướng điều trị</span>
                                     <textarea asp-for="HuongDieuTri" disabled="@(!canEdit)" placeholder="Nhập hướng điều trị, theo dõi hoặc tái khám"></textarea>
                                     <span asp-validation-for="HuongDieuTri"></span>
+                                </label>
+                            </div>
+                        </section>
+
+                        <section class="exam-panel">
+                            <div class="panel-heading">
+                                <h2>Chỉ số sinh tồn (Vital Signs)</h2>
+                                <p>Các trường không bắt buộc. Sẽ được vẽ biểu đồ theo dõi trên hồ sơ bệnh án.</p>
+                            </div>
+                            <div class="exam-form-grid" style="grid-template-columns: repeat(3, 1fr);">
+                                <label class="exam-field">
+                                    <span>Huyết áp tâm thu (mmHg)</span>
+                                    <input type="number" asp-for="HuyetApTamThu" disabled="@(!canEdit)" placeholder="VD: 120" />
+                                    <span asp-validation-for="HuyetApTamThu"></span>
+                                </label>
+                                <label class="exam-field">
+                                    <span>Huyết áp tâm trương (mmHg)</span>
+                                    <input type="number" asp-for="HuyetApTamTruong" disabled="@(!canEdit)" placeholder="VD: 80" />
+                                    <span asp-validation-for="HuyetApTamTruong"></span>
+                                </label>
+                                <label class="exam-field">
+                                    <span>Nhịp tim (bpm)</span>
+                                    <input type="number" asp-for="NhipTim" disabled="@(!canEdit)" placeholder="VD: 75" />
+                                    <span asp-validation-for="NhipTim"></span>
+                                </label>
+                                <label class="exam-field">
+                                    <span>Chiều cao (cm)</span>
+                                    <input type="number" step="0.1" asp-for="ChieuCao" disabled="@(!canEdit)" placeholder="VD: 170" />
+                                    <span asp-validation-for="ChieuCao"></span>
+                                </label>
+                                <label class="exam-field">
+                                    <span>Cân nặng (kg)</span>
+                                    <input type="number" step="0.1" asp-for="CanNang" disabled="@(!canEdit)" placeholder="VD: 65.5" />
+                                    <span asp-validation-for="CanNang"></span>
+                                </label>
+                                <label class="exam-field">
+                                    <span>Đường huyết (mmol/L)</span>
+                                    <input type="number" step="0.1" asp-for="DuongHuyet" disabled="@(!canEdit)" placeholder="VD: 5.5" />
+                                    <span asp-validation-for="DuongHuyet"></span>
+                                </label>
+                                <label class="exam-field exam-field--wide" style="grid-column: 1 / -1;">
+                                    <span>Ghi chú sinh tồn</span>
+                                    <textarea asp-for="GhiChuSinhTon" disabled="@(!canEdit)" placeholder="Ghi chú thêm về chỉ số sinh tồn"></textarea>
+                                    <span asp-validation-for="GhiChuSinhTon"></span>
+                                </label>
+                            </div>
+                        </section>
+
+                        <section class="exam-panel">
+                            <div class="panel-heading">
+                                <h2>Hình ảnh Y tế (DICOM)</h2>
+                                <p>Tải lên ảnh chụp X-Quang, MRI, CT chuẩn DICOM (.dcm)</p>
+                            </div>
+                            <div class="exam-form-grid">
+                                <label class="exam-field exam-field--wide">
+                                    <span>Chọn file DICOM</span>
+                                    <input type="file" name="DicomFiles" multiple accept=".dcm" disabled="@(!canEdit)" />
                                 </label>
                             </div>
                         </section>
@@ -226,12 +283,24 @@
                                                     </td>
                                                     <td><input class="exam-number" asp-for="Thuocs[i].SoLuong" min="1" disabled="@(!canEdit)" /></td>
                                                     <td>
-                                                        <input class="exam-input" asp-for="Thuocs[i].LieuLuong" placeholder="VD: 1 viên/lần" disabled="@(!canEdit)" />
+                                                        <datalist id="lieuluong-@i">
+                                                            <option value="1 @Model.Thuocs[i].DonViTinh.ToLowerInvariant()/lần"></option>
+                                                            <option value="2 @Model.Thuocs[i].DonViTinh.ToLowerInvariant()/lần"></option>
+                                                            <option value="1/2 @Model.Thuocs[i].DonViTinh.ToLowerInvariant()/lần"></option>
+                                                        </datalist>
+                                                        <input class="exam-input" asp-for="Thuocs[i].LieuLuong" list="lieuluong-@i" placeholder="VD: 1 viên/lần" disabled="@(!canEdit)" autocomplete="off" />
                                                         <span asp-validation-for="Thuocs[i].LieuLuong"></span>
                                                     </td>
                                                     <td><input class="exam-number" asp-for="Thuocs[i].SoNgayDung" min="1" disabled="@(!canEdit)" /></td>
                                                     <td>
-                                                        <input class="exam-input" asp-for="Thuocs[i].CachDung" placeholder="VD: Sau ăn sáng" disabled="@(!canEdit)" />
+                                                        <datalist id="cachdung-@i">
+                                                            <option value="Sau ăn sáng"></option>
+                                                            <option value="Sau ăn sáng, tối"></option>
+                                                            <option value="Sáng, trưa, chiều (sau ăn)"></option>
+                                                            <option value="Trước ăn 30 phút"></option>
+                                                            <option value="Tối trước khi ngủ"></option>
+                                                        </datalist>
+                                                        <input class="exam-input" asp-for="Thuocs[i].CachDung" list="cachdung-@i" placeholder="VD: Sau ăn sáng" disabled="@(!canEdit)" autocomplete="off" />
                                                         <span asp-validation-for="Thuocs[i].CachDung"></span>
                                                     </td>
                                                 </tr>

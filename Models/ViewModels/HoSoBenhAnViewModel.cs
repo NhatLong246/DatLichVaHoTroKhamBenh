@@ -51,7 +51,33 @@ public class LanKhamViewModel
 
     public List<DichVuHoSoViewModel> DichVuDaDung { get; set; } = new();
 
+    public ChiSoSinhTonViewModel? ChiSoSinhTon { get; set; }
+
+    public List<HoSoDicomViewModel> HoSoDicoms { get; set; } = new();
+
     public decimal TongTienDichVu => DichVuDaDung.Sum(x => x.ThanhTien);
+}
+
+public class HoSoDicomViewModel
+{
+    public int MaHoSo { get; set; }
+    public string TenFile { get; set; } = string.Empty;
+    public string DuongDanFile { get; set; } = string.Empty;
+    public string LoaiHinhAnh { get; set; } = string.Empty;
+    public DateTime? NgayTaiLen { get; set; }
+    public decimal? KichThuoc { get; set; }
+}
+
+public class ChiSoSinhTonViewModel
+{
+    public int? HuyetApTamThu { get; set; }
+    public int? HuyetApTamTruong { get; set; }
+    public int? NhipTim { get; set; }
+    public decimal? ChieuCao { get; set; }
+    public decimal? CanNang { get; set; }
+    public decimal? BMI { get; set; }
+    public decimal? DuongHuyet { get; set; }
+    public string GhiChu { get; set; } = string.Empty;
 }
 
 public class DonThuocHoSoViewModel

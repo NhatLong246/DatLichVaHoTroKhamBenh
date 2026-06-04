@@ -84,6 +84,13 @@ public class LichKhamController : Controller
             return View(await BuildDatLichModelAsync(model));
         }
 
+        var hasUnpaidInvoice = await _context.HoaDons.AnyAsync(x => x.MaBenhNhan == benhNhan.MaBenhNhan && x.TrangThai == "Chưa thanh toán");
+        if (hasUnpaidInvoice)
+        {
+            ModelState.AddModelError(string.Empty, "Bạn đang có hóa đơn chưa thanh toán. Vui lòng thanh toán tại mục Hóa đơn trước khi đặt lịch mới.");
+            return View(await BuildDatLichModelAsync(model));
+        }
+
         if (!model.NgayKham.HasValue)
         {
             ModelState.AddModelError(nameof(model.NgayKham), "Vui lòng chọn ngày khám.");

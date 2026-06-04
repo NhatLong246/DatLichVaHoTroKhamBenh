@@ -6,8 +6,9 @@
 
 - Dashboard bác sĩ (`Dashboard/BacSi`) đã lấy dữ liệu thật từ database, không còn dùng số liệu/bệnh nhân gán cứng.
 - Trang `KhamBenh/Index`: hàng chờ bệnh nhân trong ngày, tiếp nhận bệnh nhân, lập phiếu khám, kê đơn thuốc, chọn dịch vụ, hoàn thành ca khám.
-- Luồng hoàn thành ca khám tạo `PhieuKham`, `ChiTietDichVuKham`, `DonThuoc` nếu có thuốc, `HoaDon` và `ChiTietHoaDon`.
-- Hóa đơn từ màn khám bệnh chỉ tính tiền khám/dịch vụ, không tính tiền thuốc.
+- **Hồ sơ Bệnh án Điện tử (EMR):** Bác sĩ có thể nhập **Chỉ số sinh tồn** (Huyết áp, Nhịp tim, Cân nặng, v.v.) và tải lên **Hồ sơ DICOM** ngay trong ca khám. Bảng kê đơn thuốc hỗ trợ dropdown thông minh chọn nhanh đơn vị tính/liều lượng/cách dùng.
+- Luồng hoàn thành ca khám tạo `PhieuKham`, `ChiTietDichVuKham`, `DonThuoc` nếu có thuốc, `HoaDon` và `ChiTietHoaDon`. Đồng thời gửi **Email tự động** thông báo hóa đơn mới cho bệnh nhân.
+- Hóa đơn từ màn khám bệnh chỉ tính tiền khám/dịch vụ, không tính tiền thuốc. Trạng thái đơn thuốc tự động lưu là `Đã kê đơn`.
 - Trang `LichLamViec/Index`: lưới lịch làm việc tuần hiện tại theo `LichLamViec`, ô xanh cho ca đã phân công, panel bệnh nhân đã đặt lịch theo ngày/ca.
 - Trang `CaiDat/BacSi`: xem thông tin bác sĩ/tài khoản, cập nhật điện thoại/địa chỉ, đổi mật khẩu.
 - Sidebar bác sĩ đã nối các mục: `Tổng quan`, `Khám bệnh`, `Lịch làm việc`, `Cài đặt`.
@@ -16,7 +17,6 @@ Việc cần làm tiếp:
 
 - Bổ sung test hoặc kiểm tra thủ công đầy đủ với database seed thật cho luồng bác sĩ hoàn thành ca khám.
 - Xem xét chính sách sửa hoặc hủy phiếu khám/hóa đơn sau khi đã hoàn thành ca khám.
-- Nếu muốn trạng thái đơn thuốc là `Đã kê đơn`, cần cập nhật CHECK constraint trong `btl_table.sql` và entity/logic liên quan; hiện vẫn giữ trạng thái hợp lệ theo schema là `Chờ cấp thuốc`.
 - Hoàn thiện màn quản trị để CRUD bác sĩ, lịch làm việc, dịch vụ, thuốc và dữ liệu nền phục vụ demo.
 
 Danh sách này giúp chia nhỏ việc code với AI. Khi làm chức năng nào, chỉ lấy đúng phần đó để tránh lan man.
@@ -219,9 +219,10 @@ Việc cần làm tiếp:
 Đã hoàn thành:
 
 - Dashboard bệnh nhân nối tới các màn hình chính: đặt lịch, lịch hẹn, hồ sơ bệnh án, hóa đơn, cài đặt.
+- **Quản lý Đặt lịch:** Hệ thống tự động **chặn đặt lịch mới** nếu phát hiện bệnh nhân đang có hóa đơn chưa thanh toán.
 - Trang `LichKham/QuanLy`: theo dõi lịch sử đặt khám và hủy lịch hợp lệ.
-- Trang `HoSoBenhAn/Index`: xem lịch sử khám bệnh, chi tiết khám, đơn thuốc và dịch vụ đã dùng.
-- Trang `HoaDon/Index`: xem danh sách/chi tiết hóa đơn, xác nhận thanh toán hóa đơn `Chưa thanh toán`.
+- Trang `HoSoBenhAn/Index`: xem lịch sử khám bệnh, chi tiết khám, đơn thuốc và dịch vụ đã dùng. Bệnh nhân có thể theo dõi xu hướng sức khỏe qua **Biểu đồ Sinh tồn (Line Chart)** và xem phim X-Quang/MRI trực tiếp bằng **Trình xem DICOM (Cornerstone.js)** tích hợp sẵn.
+- Trang `HoaDon/Index`: xem danh sách/chi tiết hóa đơn, xác nhận thanh toán hóa đơn `Chưa thanh toán` (bao gồm thanh toán qua **MoMo**). Tự động gửi **Email xác nhận thanh toán** thành công.
 - Trang `CaiDat/Index`: xem thông tin cá nhân/tài khoản, cập nhật điện thoại/địa chỉ, đổi mật khẩu.
 - `wwwroot/js/dashboard.js` đã mở rộng modal custom cho các form xác nhận như đăng xuất, hủy lịch, thanh toán và đổi mật khẩu.
 - Toàn bộ giao diện Bệnh nhân đã được lột xác (Revamped) lên chuẩn UI/UX hiện đại với Metric Cards, SVG Icons nền Pastel, hiệu ứng Hover, và bố cục dạng Ticket/Panel nổi, tính năng Toggle Mật khẩu.
@@ -229,8 +230,6 @@ Việc cần làm tiếp:
 Việc cần làm tiếp:
 
 - Tạo dữ liệu thật hoặc seed data đầy đủ cho `PhieuKham`, `DonThuoc`, `ChiTietDonThuoc`, `ChiTietDichVuKham`, `HoaDon`, `ChiTietHoaDon` để demo đủ các tab.
-- Hoàn thiện luồng bác sĩ lập phiếu khám, kê đơn, chỉ định dịch vụ.
-- Hoàn thiện luồng tạo hóa đơn tự động từ chi phí dịch vụ và thuốc.
 - Cân nhắc chính sách cho sửa thông tin cá nhân nhạy cảm như họ tên, ngày sinh, giới tính nếu sau này cần quy trình xác minh.
 
 ## Cập nhật tiến độ màn hình Quản trị (Admin)

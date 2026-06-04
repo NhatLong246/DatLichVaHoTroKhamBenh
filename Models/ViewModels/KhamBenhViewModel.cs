@@ -36,6 +36,31 @@ public class KhamBenhViewModel
     [StringLength(1000, ErrorMessage = "Ghi chú đơn thuốc không được vượt quá 1000 ký tự.")]
     public string? GhiChuDonThuoc { get; set; }
 
+    // EMR Vital Signs
+    [Range(0, 300, ErrorMessage = "Huyết áp tâm thu không hợp lệ.")]
+    public int? HuyetApTamThu { get; set; }
+
+    [Range(0, 200, ErrorMessage = "Huyết áp tâm trương không hợp lệ.")]
+    public int? HuyetApTamTruong { get; set; }
+
+    [Range(0, 300, ErrorMessage = "Nhịp tim không hợp lệ.")]
+    public int? NhipTim { get; set; }
+
+    [Range(0, 300, ErrorMessage = "Chiều cao không hợp lệ.")]
+    public decimal? ChieuCao { get; set; }
+
+    [Range(0, 500, ErrorMessage = "Cân nặng không hợp lệ.")]
+    public decimal? CanNang { get; set; }
+
+    [Range(0, 100, ErrorMessage = "Đường huyết không hợp lệ.")]
+    public decimal? DuongHuyet { get; set; }
+
+    [StringLength(1000, ErrorMessage = "Ghi chú sinh tồn không vượt quá 1000 ký tự.")]
+    public string? GhiChuSinhTon { get; set; }
+
+    // EMR DICOM Upload
+    public Microsoft.AspNetCore.Http.IFormFileCollection? DicomFiles { get; set; }
+
     public KhamBenhPatientViewModel? BenhNhanDangChon { get; set; }
 
     public string? SuccessMessage { get; set; }

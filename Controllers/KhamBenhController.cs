@@ -14,15 +14,17 @@ public class KhamBenhController : Controller
     private const string TrangThaiHuy = "Hủy";
     private const string TrangThaiPhieuDangXuLy = "Đang xử lý";
     private const string TrangThaiPhieuHoanThanh = "Hoàn thành";
-    private const string TrangThaiDonThuocChoCap = "Chờ cấp thuốc";
+    private const string TrangThaiDonThuocChoCap = "Đã kê đơn";
     private const string TrangThaiHoaDonChuaThanhToan = "Chưa thanh toán";
     private const string TrangThaiDichVuHoatDong = "Hoạt động";
 
     private readonly ApplicationDbContext _context;
+    private readonly HeThongDatLichVaKhamBenh.Services.IEmailService _emailService;
 
-    public KhamBenhController(ApplicationDbContext context)
+    public KhamBenhController(ApplicationDbContext context, HeThongDatLichVaKhamBenh.Services.IEmailService emailService)
     {
         _context = context;
+        _emailService = emailService;
     }
 
     [HttpGet]
@@ -171,6 +173,63 @@ public class KhamBenhController : Controller
         phieuKham.HuongDieuTri = model.HuongDieuTri?.Trim();
         phieuKham.TrangThai = TrangThaiPhieuHoanThanh;
 
+        if (model.HuyetApTamThu.HasValue || model.HuyetApTamTruong.HasValue || model.NhipTim.HasValue ||
+            model.ChieuCao.HasValue || model.CanNang.HasValue || model.DuongHuyet.HasValue || !string.IsNullOrWhiteSpace(model.GhiChuSinhTon))
+        {
+            decimal? bmi = null;
+            if (model.ChieuCao.HasValue && model.ChieuCao > 0 && model.CanNang.HasValue && model.CanNang > 0)
+            {
+                var heightInMeters = model.ChieuCao.Value / 100m;
+                bmi = model.CanNang.Value / (heightInMeters * heightInMeters);
+                bmi = Math.Round(bmi.Value, 2);
+            }
+
+            _context.ChiSoSinhTons.Add(new ChiSoSinhTon
+            {
+                MaPhieuKham = phieuKham.MaPhieuKham,
+                HuyetApTamThu = model.HuyetApTamThu,
+                HuyetApTamTruong = model.HuyetApTamTruong,
+                NhipTim = model.NhipTim,
+                ChieuCao = model.ChieuCao,
+                CanNang = model.CanNang,
+                BMI = bmi,
+                DuongHuyet = model.DuongHuyet,
+                GhiChu = model.GhiChuSinhTon?.Trim()
+            });
+        }
+
+        if (model.DicomFiles != null && model.DicomFiles.Count > 0)
+        {
+            var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "dicom");
+            if (!Directory.Exists(uploadDir))
+            {
+                Directory.CreateDirectory(uploadDir);
+            }
+
+            foreach (var file in model.DicomFiles)
+            {
+                if (file.Length > 0 && file.FileName.EndsWith(".dcm", StringComparison.OrdinalIgnoreCase))
+                {
+                    var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
+                    var filePath = Path.Combine(uploadDir, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    _context.HoSoDicoms.Add(new HoSoDicom
+                    {
+                        MaPhieuKham = phieuKham.MaPhieuKham,
+                        TenFile = Path.GetFileName(file.FileName),
+                        DuongDanFile = $"/uploads/dicom/{fileName}",
+                        LoaiHinhAnh = "Ảnh DICOM",
+                        KichThuoc = Math.Round((decimal)file.Length / 1024m / 1024m, 2)
+                    });
+                }
+            }
+        }
+
         var oldDichVu = phieuKham.ChiTietDichVuKhams.ToList();
         if (oldDichVu.Count > 0)
         {
@@ -243,7 +302,7 @@ public class KhamBenhController : Controller
         {
             MaHoaDon = hoaDon.MaHoaDon,
             MaPhieuKham = phieuKham.MaPhieuKham,
-            MaDonThuoc = null,
+            MaDonThuoc = newDonThuoc?.MaDonThuoc,
             TienKham = tienDichVu,
             TienThuoc = 0,
             GhiChu = newDonThuoc == null
@@ -252,6 +311,30 @@ public class KhamBenhController : Controller
         });
 
         await _context.SaveChangesAsync();
+
+        var patientEmail = lichKham.MaBenhNhanNavigation?.MaNguoiDungNavigation?.Email;
+        if (!string.IsNullOrEmpty(patientEmail))
+        {
+            var emailSubject = $"Thông báo hóa đơn khám bệnh mới - {hoaDon.MaHoaDon}";
+            var emailBody = $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;'>
+                    <div style='background-color: #0f766e; padding: 20px; text-align: center; color: white;'>
+                        <h2 style='margin: 0;'>Hóa đơn mới</h2>
+                    </div>
+                    <div style='padding: 20px; color: #374151;'>
+                        <p>Xin chào <strong>{lichKham.MaBenhNhanNavigation?.HoTen}</strong>,</p>
+                        <p>Bác sĩ đã hoàn tất ca khám của bạn và một hóa đơn mới đã được tạo trên hệ thống.</p>
+                        <ul style='list-style: none; padding: 0;'>
+                            <li style='margin-bottom: 10px;'><strong>Mã hóa đơn:</strong> {hoaDon.MaHoaDon}</li>
+                            <li style='margin-bottom: 10px;'><strong>Ngày lập:</strong> {hoaDon.NgayLap:dd/MM/yyyy}</li>
+                            <li style='margin-bottom: 10px;'><strong>Tổng tiền:</strong> {hoaDon.TongTien:N0} VNĐ</li>
+                        </ul>
+                        <p style='margin-top: 20px;'>Vui lòng đăng nhập vào hệ thống và truy cập mục <strong>Hóa đơn</strong> để tiến hành thanh toán. Xin lưu ý rằng bạn sẽ không thể đặt lịch khám mới nếu có hóa đơn chưa thanh toán.</p>
+                        <p>Trân trọng,<br>Hệ thống Đặt lịch Khám bệnh</p>
+                    </div>
+                </div>";
+            _ = _emailService.SendEmailAsync(patientEmail, emailSubject, emailBody);
+        }
 
         TempData["KhamBenhSuccess"] = $"Đã hoàn thành ca khám và tạo hóa đơn {hoaDon.MaHoaDon}.";
         return RedirectToAction(nameof(Index));

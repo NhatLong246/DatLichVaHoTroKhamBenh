@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using HeThongDatLichVaKhamBenh.Models.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +45,10 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<PhongKham> PhongKhams { get; set; }
 
     public virtual DbSet<Thuoc> Thuocs { get; set; }
+
+    public virtual DbSet<ChiSoSinhTon> ChiSoSinhTons { get; set; }
+
+    public virtual DbSet<HoSoDicom> HoSoDicoms { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -214,6 +218,30 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.MaThuoc).HasName("PK__Thuoc__4BB1F620AC73EA25");
 
             entity.Property(e => e.SoLuongTon).HasDefaultValue(0);
+        });
+
+        modelBuilder.Entity<ChiSoSinhTon>(entity =>
+        {
+            entity.HasKey(e => e.MaChiSo).HasName("PK_ChiSoSinhTon");
+            entity.Property(e => e.NgayDo).HasDefaultValueSql("(getdate())");
+
+            entity.HasOne(d => d.MaPhieuKhamNavigation)
+                .WithMany(p => p.ChiSoSinhTons)
+                .HasForeignKey(d => d.MaPhieuKham)
+                .HasConstraintName("FK_ChiSoSinhTon_PhieuKham")
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<HoSoDicom>(entity =>
+        {
+            entity.HasKey(e => e.MaHoSo).HasName("PK_HoSoDicom");
+            entity.Property(e => e.NgayTaiLen).HasDefaultValueSql("(getdate())");
+
+            entity.HasOne(d => d.MaPhieuKhamNavigation)
+                .WithMany(p => p.HoSoDicoms)
+                .HasForeignKey(d => d.MaPhieuKham)
+                .HasConstraintName("FK_HoSoDicom_PhieuKham")
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         OnModelCreatingPartial(modelBuilder);

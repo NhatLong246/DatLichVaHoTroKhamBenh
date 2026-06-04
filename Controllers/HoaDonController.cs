@@ -1,7 +1,7 @@
 using HeThongDatLichVaKhamBenh.Models.EF;
 using HeThongDatLichVaKhamBenh.Models.ViewModels;
 using HeThongDatLichVaKhamBenh.Services;
-using HeThongDatLichVaKhamBenh.Models.ViewModels;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,11 +13,13 @@ public class HoaDonController : Controller
 
     private readonly ApplicationDbContext _context;
     private readonly IMoMoService _momoService;
+    private readonly HeThongDatLichVaKhamBenh.Services.IEmailService _emailService;
 
-    public HoaDonController(ApplicationDbContext context, IMoMoService momoService)
+    public HoaDonController(ApplicationDbContext context, IMoMoService momoService, HeThongDatLichVaKhamBenh.Services.IEmailService emailService)
     {
         _context = context;
         _momoService = momoService;
+        _emailService = emailService;
     }
 
     [HttpGet]
@@ -80,6 +82,30 @@ public class HoaDonController : Controller
         hoaDon.HinhThucThanhToan = hinhThucThanhToan;
         hoaDon.TrangThai = "Đã thanh toán";
         await _context.SaveChangesAsync();
+
+        var patientEmail = benhNhan.MaNguoiDungNavigation?.Email;
+        if (!string.IsNullOrEmpty(patientEmail))
+        {
+            var emailSubject = $"Xác nhận thanh toán thành công - Hóa đơn {hoaDon.MaHoaDon}";
+            var emailBody = $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;'>
+                    <div style='background-color: #10b981; padding: 20px; text-align: center; color: white;'>
+                        <h2 style='margin: 0;'>Thanh toán thành công</h2>
+                    </div>
+                    <div style='padding: 20px; color: #374151;'>
+                        <p>Xin chào <strong>{benhNhan.HoTen}</strong>,</p>
+                        <p>Chúng tôi đã nhận được thanh toán cho hóa đơn của bạn.</p>
+                        <ul style='list-style: none; padding: 0;'>
+                            <li style='margin-bottom: 10px;'><strong>Mã hóa đơn:</strong> {hoaDon.MaHoaDon}</li>
+                            <li style='margin-bottom: 10px;'><strong>Tổng tiền:</strong> {hoaDon.TongTien:N0} VNĐ</li>
+                            <li style='margin-bottom: 10px;'><strong>Hình thức:</strong> {hoaDon.HinhThucThanhToan}</li>
+                        </ul>
+                        <p style='margin-top: 20px;'>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</p>
+                        <p>Trân trọng,<br>Hệ thống Đặt lịch Khám bệnh</p>
+                    </div>
+                </div>";
+            _ = _emailService.SendEmailAsync(patientEmail, emailSubject, emailBody);
+        }
 
         TempData["HoaDonSuccess"] = $"Thanh toán hóa đơn {hoaDon.MaHoaDon} thành công.";
         return RedirectToAction(nameof(Index));
@@ -147,6 +173,32 @@ public class HoaDonController : Controller
             hoaDon.TrangThai = "Đã thanh toán";
             hoaDon.HinhThucThanhToan = "Chuyển khoản";
             await _context.SaveChangesAsync();
+
+            var benhNhan = await GetCurrentPatientAsync();
+            var patientEmail = benhNhan?.MaNguoiDungNavigation?.Email;
+            if (!string.IsNullOrEmpty(patientEmail))
+            {
+                var emailSubject = $"Xác nhận thanh toán qua MoMo thành công - Hóa đơn {hoaDon.MaHoaDon}";
+                var emailBody = $@"
+                    <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;'>
+                        <div style='background-color: #10b981; padding: 20px; text-align: center; color: white;'>
+                            <h2 style='margin: 0;'>Thanh toán thành công (MoMo)</h2>
+                        </div>
+                        <div style='padding: 20px; color: #374151;'>
+                            <p>Xin chào <strong>{benhNhan?.HoTen}</strong>,</p>
+                            <p>Giao dịch thanh toán qua ví MoMo cho hóa đơn của bạn đã thành công.</p>
+                            <ul style='list-style: none; padding: 0;'>
+                                <li style='margin-bottom: 10px;'><strong>Mã hóa đơn:</strong> {hoaDon.MaHoaDon}</li>
+                                <li style='margin-bottom: 10px;'><strong>Mã giao dịch:</strong> {orderId}</li>
+                                <li style='margin-bottom: 10px;'><strong>Tổng tiền:</strong> {hoaDon.TongTien:N0} VNĐ</li>
+                                <li style='margin-bottom: 10px;'><strong>Hình thức:</strong> MoMo (Chuyển khoản)</li>
+                            </ul>
+                            <p style='margin-top: 20px;'>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</p>
+                            <p>Trân trọng,<br>Hệ thống Đặt lịch Khám bệnh</p>
+                        </div>
+                    </div>";
+                _ = _emailService.SendEmailAsync(patientEmail, emailSubject, emailBody);
+            }
 
             TempData["HoaDonSuccess"] = $"Thanh toán hóa đơn {hoaDon.MaHoaDon} qua MoMo thành công.";
             return Json(new { success = true });
@@ -236,7 +288,9 @@ public class HoaDonController : Controller
             return null;
         }
 
-        return await _context.BenhNhans.FirstOrDefaultAsync(x => x.MaNguoiDung == maNguoiDung);
+        return await _context.BenhNhans
+            .Include(x => x.MaNguoiDungNavigation)
+            .FirstOrDefaultAsync(x => x.MaNguoiDung == maNguoiDung);
     }
 
     private IActionResult? RequirePatientRole()

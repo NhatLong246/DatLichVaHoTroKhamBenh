@@ -9,7 +9,7 @@ Nguồn chính: `btl_table.sql`.
 - `BacSi` có nhiều `LichLamViec` và nhiều `DangKyLichKham`.
 - `BenhNhan` có nhiều `DangKyLichKham` và nhiều `HoaDon`.
 - `DangKyLichKham` có nhiều `PhieuKham`.
-- `PhieuKham` có nhiều dịch vụ khám, nhiều đơn thuốc và nhiều chi tiết hóa đơn.
+- `PhieuKham` có nhiều dịch vụ khám, nhiều đơn thuốc, nhiều chi tiết hóa đơn, nhiều chỉ số sinh tồn và hồ sơ DICOM.
 - `DonThuoc` có nhiều `ChiTietDonThuoc`.
 - `HoaDon` có nhiều `ChiTietHoaDon`.
 
@@ -126,7 +126,23 @@ Danh mục thuốc.
 
 - Khóa chính: `MaDonThuoc`.
 - FK: `MaPhieuKham -> PhieuKham`.
-- Trạng thái: `Chờ cấp thuốc`, `Đã cấp thuốc`, `Hủy`.
+- Trạng thái: `Chờ cấp thuốc`, `Đã cấp thuốc`, `Hủy`, `Đã kê đơn`.
+
+### ChiSoSinhTon (Mới - EMR)
+
+Lưu trữ các chỉ số sức khỏe của bệnh nhân tại thời điểm khám.
+
+- Khóa chính: `MaChiSo` (Identity).
+- FK: `MaPhieuKham -> PhieuKham`.
+- Chứa các thông tin: Huyết áp tâm thu/tâm trương, nhịp tim, chiều cao, cân nặng, đường huyết, BMI.
+
+### HoSoDicom (Mới - EMR)
+
+Lưu trữ đường dẫn các file ảnh y tế (X-Quang, MRI, CT) theo chuẩn DICOM.
+
+- Khóa chính: `MaHoSo` (Identity).
+- FK: `MaPhieuKham -> PhieuKham`.
+- `FilePath`: Đường dẫn lưu trữ file thật trong hệ thống.
 
 ### ChiTietDonThuoc
 
